@@ -6,9 +6,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(ALL_PROJECT_LIBRARIES
     OpenGL::GL
 	OpenGL::GLU
-	glfw)	# <- target name, contains absolute path to library
-
-SET(PROJECT_SOURCES "src/main.cpp")
+	glm
+	glfw	# <- target name, contains absolute path to library
+	glog)
+SET(PROJECT_SOURCES 
+	"src/main.cpp"
+	"../core/src/shadercompiler.cpp")
 
 add_executable(Rendering-Triangle ${OPTIONS} ${PROJECT_SOURCES} ${GL3W_SOURCES})
 

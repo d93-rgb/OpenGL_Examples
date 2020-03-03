@@ -1,13 +1,26 @@
+#include <GL/gl3w.h>
+
 namespace ogl_examples
 {
 
 class ShaderCompiler
 {
 public:
-	ShaderCompiler(const std::string& shader_src) = default;
+	ShaderCompiler(const std::string& vertex_src, const std::string& fragment_src);
 
-	bool set_shader_source_file(const std::string& src);
-	bool compile() const;
+	GLuint get_program_id();
+
+private:
+	void compile(const std::string& type);
+	void check_errors(GLuint shader, const std::string& type) const;
+	void link();
+	void create_program();
+
+	unsigned int vertex, fragment;
+	std::string vertexPath;
+	std::string fragPath;
+
+	GLint program_id;
 };
 
 
