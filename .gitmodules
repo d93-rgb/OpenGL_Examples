@@ -1,3 +1,9 @@
 [submodule "OpenGL_Examples/ext/glfw"]
 	path = OpenGL_Examples/ext/glfw
 	url = https://github.com/glfw/glfw
+[submodule "OpenGL_Examples/ext/glog"]
+	path = OpenGL_Examples/ext/glog
+	url = https://github.com/google/glog
+[submodule "OpenGL_Examples/ext/gtest"]
+	path = OpenGL_Examples/ext/gtest
+	url = https://github.com/google/googletest
