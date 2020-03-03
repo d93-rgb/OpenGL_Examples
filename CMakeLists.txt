@@ -1,9 +1,17 @@
-﻿# CMakeList.txt : Top-level CMake project file, do global configuration
-# and include sub-projects here.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.9)
+cmake_policy(SET CMP0048 NEW)
+project(OpenGL_Examples VERSION 1.0)
 
-project ("OpenGL_Examples")
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+	message(STATUS "*** Setting build type to 'Release' ***")
+	set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+    "MinSizeRel" "RelWithDebInfo")
+elseif (NOT CMAKE_BUILD_TYPE)
+	message(STATUS "*** Setting build type to 'Release' ***")
+	set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+else()
+	message(STATUS "*** ${CMAKE_BUILD_TYPE} build ***")
+endif()
 
-# Include sub-projects.
-add_subdirectory ("OpenGL_Examples")
+add_subdirectory(OpenGL_Examples)
