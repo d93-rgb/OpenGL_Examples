@@ -102,6 +102,11 @@ GLuint ShaderCompiler::get_program_id()
 	return program_id;
 }
 
+void ShaderCompiler::use_program()
+{
+	glUseProgram(program_id);
+}
+
 void ShaderCompiler::check_errors(GLuint shader, const std::string& type) const
 {
 	GLint success;

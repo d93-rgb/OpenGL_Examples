@@ -9,6 +9,7 @@ public:
 	ShaderCompiler(const std::string& vertex_src, const std::string& fragment_src);
 
 	GLuint get_program_id();
+	void use_program();
 
 private:
 	void compile(const std::string& type);
