@@ -16,8 +16,7 @@ public:
 
 	void run();
 
-private:
-	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+protected:
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 	const GLint screenWidth = 800;
@@ -28,7 +27,7 @@ private:
 
 	GLFWwindow* window;
 
-	std::unique_ptr<Renderer> renderer;
+	std::shared_ptr<Renderer> current_renderer;
 };
 
 

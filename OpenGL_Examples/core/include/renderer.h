@@ -17,8 +17,6 @@ public:
 
 protected:
 	std::unique_ptr<ShaderCompiler> sc;
-	std::unique_ptr<WindowManager> wm;
-
 };
 
 class TriangleRenderer : public Renderer

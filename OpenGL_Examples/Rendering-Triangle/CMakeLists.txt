@@ -15,13 +15,17 @@ SET(PROJECT_SOURCES
 	"../core/src/shadercompiler.cpp"
 	"../core/src/renderer.cpp"
 	"../core/src/windowmanager.cpp"
-	"../core/src/camera.cpp")
+	"../core/src/camera.cpp"
+	"../core/src/renderingdevice.cpp"
+	"../core/src/graphicscontext.cpp")
 
 SET(PROJECT_HEADERS 
 	"../core/include/shadercompiler.h"
 	"../core/include/renderer.h"
 	"../core/include/windowmanager.h"
-	"../core/include/camera.h")
+	"../core/include/camera.h"
+	"../core/include/renderingdevice.h"
+	"../core/include/graphicscontext.h")
 
 
 

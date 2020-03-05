@@ -3,6 +3,17 @@
 namespace ogl_examples
 {
 
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	}
+}
+
+static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+}
+
 WindowManager::WindowManager(GLuint screen_width, GLuint screen_height)
 {
 	int error_code;
@@ -57,23 +68,12 @@ void WindowManager::run()
 	while (!glfwWindowShouldClose(window)) {
 		glfwWaitEvents();
 
-		renderer->render();
+		current_renderer->render();
 		
 		glfwSwapBuffers(window);
 	}
 
 	glfwTerminate();
-}
-
-void WindowManager::key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	}
-}
-
-void WindowManager::framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height);
 }
 
 } // namespace ogl_examples
