@@ -3,7 +3,6 @@
 
 #include "opengl_examples.h"
 #include "shadercompiler.h"
-#include "windowmanager.h"
 
 namespace ogl_examples
 {
@@ -11,9 +10,8 @@ namespace ogl_examples
 class Renderer
 {
 public:
-	Renderer();
 
-	virtual void render();
+	virtual void render() = 0;
 
 protected:
 	std::unique_ptr<ShaderCompiler> sc;
@@ -21,6 +19,7 @@ protected:
 
 class TriangleRenderer : public Renderer
 {
+public:
 	TriangleRenderer();
 
 	void render();

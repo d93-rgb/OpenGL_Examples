@@ -3,7 +3,6 @@
 #include "renderer.h"
 #include "windowmanager.h"
 
-
 namespace ogl_examples
 {
 
@@ -15,8 +14,8 @@ public:
 	void run();
 
 protected:
-	std::unique_ptr<WindowManager> sc;
-	std::unique_ptr<Renderer> sc;
+	std::unique_ptr<WindowManager> wm;
+	std::shared_ptr<Renderer> sc;
 };
 
 

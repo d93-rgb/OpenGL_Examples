@@ -16,12 +16,9 @@ public:
 
 	void run();
 
+	void set_renderer(const std::shared_ptr<Renderer>& renderer);
+
 protected:
-	void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-
-	const GLint screenWidth = 800;
-	const GLint screenHeight = 600;
-
 	GLuint screen_width;
 	GLuint screen_height;
 

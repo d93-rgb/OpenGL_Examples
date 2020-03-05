@@ -28,7 +28,6 @@ SET(PROJECT_HEADERS
 	"../core/include/graphicscontext.h")
 
 
-
 add_executable(Rendering-Triangle ${OPTIONS} ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${GL3W_SOURCES})
 
 target_link_libraries(Rendering-Triangle ${ALL_PROJECT_LIBRARIES})

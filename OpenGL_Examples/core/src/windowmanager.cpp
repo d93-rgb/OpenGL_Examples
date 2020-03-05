@@ -14,7 +14,8 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-WindowManager::WindowManager(GLuint screen_width, GLuint screen_height)
+WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
+	screen_width(screen_width), screen_height(screen_height)
 {
 	int error_code;
 	const char* error_description;
@@ -30,11 +31,12 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	window = glfwCreateWindow(
-		screenWidth,
-		screenHeight,
+		screen_width,
+		screen_height,
 		"Rendering-Triangle Example",
 		nullptr,
 		nullptr);
@@ -60,11 +62,12 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height)
 
 	glEnable(GL_DEPTH_TEST);
 
-	glViewport(0, 0, screenWidth, screenHeight);
+	glViewport(0, 0, screen_width, screen_height);
 }
 
 void WindowManager::run()
 {
+	glfwShowWindow(window);
 	while (!glfwWindowShouldClose(window)) {
 		glfwWaitEvents();
 
@@ -74,6 +77,11 @@ void WindowManager::run()
 	}
 
 	glfwTerminate();
+}
+
+void WindowManager::set_renderer(const std::shared_ptr<Renderer>& renderer)
+{
+	current_renderer = renderer;
 }
 
 } // namespace ogl_examples
