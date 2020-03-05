@@ -71,5 +71,20 @@ include_directories (
   core/include
 )
 
+	# Visual Studio filters inside the solution explorer
+if(MSVC)
+    #SET(OPTIONS WIN32)
+	MESSAGE(STATUS "Detected Visual Studio as IDE")
+	# source files
+	SOURCE_GROUP ("Source Files\\core" REGULAR_EXPRESSION core/src/.*)
+
+	# header files
+	SOURCE_GROUP ("Header Files\\core" REGULAR_EXPRESSION core/include/.*)
+
+else(MSVC)
+	SOURCE_GROUP (core REGULAR_EXPRESSION core/src/.*)
+endif()
+
+
 add_subdirectory(Rendering-Triangle)
 

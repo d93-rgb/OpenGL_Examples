@@ -21,7 +21,7 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	GLFWwindow* window = glfwCreateWindow(
+	window = glfwCreateWindow(
 		screenWidth,
 		screenHeight,
 		"Rendering-Triangle Example",
@@ -47,7 +47,22 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height)
 		std::exit(1);
 	}
 
+	glEnable(GL_DEPTH_TEST);
+
 	glViewport(0, 0, screenWidth, screenHeight);
+}
+
+void WindowManager::run()
+{
+	while (!glfwWindowShouldClose(window)) {
+		glfwWaitEvents();
+
+		renderer->render();
+		
+		glfwSwapBuffers(window);
+	}
+
+	glfwTerminate();
 }
 
 void WindowManager::key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
