@@ -9,7 +9,7 @@ namespace ogl_examples
 {
 
 ShaderCompiler::ShaderCompiler(const std::string& vertex_src, const std::string& fragment_src) :
-vertexPath(vertex_src), fragPath(fragment_src), vertex(0), fragment(0)
+vertexPath(vertex_src), fragPath(fragment_src), vertex(0), fragment(0), program_id(0)
 {
 	create_program();
 }

@@ -12,9 +12,10 @@ public:
 
 	RenderingManager(const std::shared_ptr<Renderer> renderer);
 
-	void run() const;
+	void run();
 
-	void change_renderer(const std::shared_ptr<Renderer>& new_renderer);
+	void change_renderer(std::shared_ptr<Renderer> new_renderer);
+
 
 	void recompile_shaders();
 

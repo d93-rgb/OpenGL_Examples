@@ -4,6 +4,7 @@
 namespace ogl_examples
 {
 
+
 TriangleRendererParameter::TriangleRendererParameter()
 {
 

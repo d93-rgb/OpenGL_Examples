@@ -1,4 +1,3 @@
-#include "opengl_examples.h"
 #include "renderingdevice.h"
 
 int main(int argc, char *argv[])

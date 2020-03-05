@@ -2,6 +2,9 @@
 
 namespace ogl_examples
 {
+int current_scene_flag = 0;
+int old_scene_flag = 0;
+
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -14,9 +17,17 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		current_scene_flag = (current_scene_flag + 1) % 2;
+	}
+}
+
+
 WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
-	screen_width(screen_width), screen_height(screen_height),
-	rm(new RenderingManager())
+	screen_width(screen_width), screen_height(screen_height)
 {
 	int error_code;
 	const char* error_description;
@@ -54,7 +65,9 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
 
 	if (gl3wInit()) {
 		LOG(ERROR) << "failed to initialize OpenGL";
@@ -64,6 +77,8 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 	glEnable(GL_DEPTH_TEST);
 
 	glViewport(0, 0, screen_width, screen_height);
+
+	rm.reset(new RenderingManager());
 }
 
 void WindowManager::run()

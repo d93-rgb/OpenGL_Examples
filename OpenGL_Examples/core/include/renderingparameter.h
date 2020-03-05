@@ -7,15 +7,17 @@ namespace ogl_examples
 class RenderingParameter
 {
 public:
-	RenderingParameter();
 
 protected:
 
 };
 
+
 class TriangleRendererParameter : public RenderingParameter
 {
+public:
 	TriangleRendererParameter();
+
 };
 
 } // namespace ogl_examples

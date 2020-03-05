@@ -4,7 +4,7 @@ namespace ogl_examples
 {
 
 RenderingManager::RenderingManager() :
-	current_renderer(new TriangleRenderer())
+	current_renderer(new TriangleRenderer(std::make_shared<TriangleRendererParameter>()))
 {
 
 }
@@ -15,15 +15,24 @@ RenderingManager::RenderingManager(const std::shared_ptr<Renderer> renderer) :
 
 }
 
-void RenderingManager::run() const
+void RenderingManager::run()
 {
+	static bool i = true;
+	if (current_scene_flag != old_scene_flag)
+	{
+		old_scene_flag = current_scene_flag;
+		(i = !i) ? change_renderer(std::make_shared<TriangleRenderer>(std::make_shared<TriangleRendererParameter>())) :
+			change_renderer(std::make_shared<BlueTriangleRenderer>(std::make_shared < TriangleRendererParameter>()));
+	}
+
 	current_renderer->use_program();
 	current_renderer->render();
 }
 
-void RenderingManager::change_renderer(const std::shared_ptr<Renderer>& new_renderer)
+
+void RenderingManager::change_renderer(std::shared_ptr<Renderer> new_renderer)
 {
-	current_renderer = new_renderer;
+	current_renderer = std::move(new_renderer);
 }
 
 void RenderingManager::recompile_shaders()
