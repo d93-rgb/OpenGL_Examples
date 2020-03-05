@@ -15,6 +15,7 @@ TriangleRenderer::TriangleRenderer()
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
+	glBindVertexArray(0);
 }
 
 void TriangleRenderer::render()
@@ -24,7 +25,6 @@ void TriangleRenderer::render()
 	sc->use_program();
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
-
 }
 
 } // namespace ogl_examples

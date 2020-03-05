@@ -11,7 +11,8 @@ class RenderingDevice
 public:
 	RenderingDevice();
 
-	void run();
+	void change_renderer(const std::shared_ptr<Renderer> new_renderer);
+	void run() const;
 
 protected:
 	std::unique_ptr<WindowManager> wm;

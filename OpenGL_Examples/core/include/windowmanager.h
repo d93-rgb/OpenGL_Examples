@@ -3,7 +3,7 @@
 #include "GLFW/glfw3.h"
 
 #include "opengl_examples.h"
-#include "renderer.h"
+#include "renderingmanager.h"
 
 
 namespace ogl_examples
@@ -16,15 +16,13 @@ public:
 
 	void run();
 
-	void set_renderer(const std::shared_ptr<Renderer>& renderer);
-
 protected:
 	GLuint screen_width;
 	GLuint screen_height;
 
 	GLFWwindow* window;
 
-	std::shared_ptr<Renderer> current_renderer;
+	std::shared_ptr<RenderingManager> rm;
 };
 
 

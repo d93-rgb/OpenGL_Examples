@@ -15,7 +15,8 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
-	screen_width(screen_width), screen_height(screen_height)
+	screen_width(screen_width), screen_height(screen_height),
+	rm(new RenderingManager())
 {
 	int error_code;
 	const char* error_description;
@@ -71,17 +72,12 @@ void WindowManager::run()
 	while (!glfwWindowShouldClose(window)) {
 		glfwWaitEvents();
 
-		current_renderer->render();
+		rm->run();
 		
 		glfwSwapBuffers(window);
 	}
 
 	glfwTerminate();
-}
-
-void WindowManager::set_renderer(const std::shared_ptr<Renderer>& renderer)
-{
-	current_renderer = renderer;
 }
 
 } // namespace ogl_examples

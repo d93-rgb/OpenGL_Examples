@@ -10,6 +10,15 @@ set(ALL_PROJECT_LIBRARIES
 	glfw	# <- target name, contains absolute path to library
 	glog)
 
+SET(PROJECT_HEADERS 
+	"../core/include/shadercompiler.h"
+	"../core/include/renderer.h"
+	"../core/include/windowmanager.h"
+	"../core/include/camera.h"
+	"../core/include/renderingdevice.h"
+	"../core/include/graphicscontext.h"
+	"../core/include/renderingmanager.h")
+
 SET(PROJECT_SOURCES 
 	"src/main.cpp"
 	"../core/src/shadercompiler.cpp"
@@ -17,16 +26,8 @@ SET(PROJECT_SOURCES
 	"../core/src/windowmanager.cpp"
 	"../core/src/camera.cpp"
 	"../core/src/renderingdevice.cpp"
-	"../core/src/graphicscontext.cpp")
-
-SET(PROJECT_HEADERS 
-	"../core/include/shadercompiler.h"
-	"../core/include/renderer.h"
-	"../core/include/windowmanager.h"
-	"../core/include/camera.h"
-	"../core/include/renderingdevice.h"
-	"../core/include/graphicscontext.h")
-
+	"../core/src/graphicscontext.cpp"
+	"../core/src/renderingmanager.cpp")
 
 add_executable(Rendering-Triangle ${OPTIONS} ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${GL3W_SOURCES})
 

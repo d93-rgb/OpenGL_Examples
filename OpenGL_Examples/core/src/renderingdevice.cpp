@@ -10,7 +10,7 @@ RenderingDevice::RenderingDevice() :
 	wm->set_renderer(sc);
 }
 
-void RenderingDevice::run()
+void RenderingDevice::run() const
 {
 	wm->run();
 }
