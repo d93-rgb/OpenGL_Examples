@@ -80,4 +80,9 @@ void WindowManager::run()
 	glfwTerminate();
 }
 
+void WindowManager::set_renderering_manager(const std::shared_ptr<RenderingManager>& new_rm)
+{
+	this->rm = new_rm;
+}
+
 } // namespace ogl_examples

@@ -13,6 +13,10 @@ public:
 
 	virtual void render() = 0;
 
+	virtual void recompile() = 0;
+
+	virtual void use_program();
+
 protected:
 	std::unique_ptr<ShaderCompiler> sc;
 };
@@ -23,6 +27,8 @@ public:
 	TriangleRenderer();
 
 	void render();
+
+	void recompile();
 
 private:
 	unsigned int VAO;

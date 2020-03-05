@@ -1,6 +1,6 @@
 #pragma once
 #include "opengl_examples.h"
-#include "renderer.h"
+#include "renderingmanager.h"
 #include "windowmanager.h"
 
 namespace ogl_examples
@@ -16,7 +16,7 @@ public:
 
 protected:
 	std::unique_ptr<WindowManager> wm;
-	std::shared_ptr<Renderer> sc;
+	std::shared_ptr<RenderingManager> rm;
 };
 
 

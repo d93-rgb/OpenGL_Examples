@@ -3,7 +3,12 @@
 namespace ogl_examples
 {
 
-TriangleRenderer::TriangleRenderer()
+void Renderer::use_program()
+{
+	sc->use_program();
+}
+
+TriangleRenderer::TriangleRenderer(const std::shared_ptr<TriangleRendererParameter>& render_params)
 {
 	//std::string file_path = std::string(__FILE__);
 	//file_path = file_path.substr(0, file_path.find_last_of("\\/"));
@@ -22,9 +27,13 @@ void TriangleRenderer::render()
 {
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	sc->use_program();
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
+}
+
+void TriangleRenderer::recompile()
+{
+	sc->create_program();
 }
 
 } // namespace ogl_examples

@@ -5,9 +5,9 @@ namespace ogl_examples
 
 RenderingDevice::RenderingDevice() :
 	wm(new WindowManager(800, 600)),
-	sc(new TriangleRenderer())
+	rm(new RenderingManager())
 {
-	wm->set_renderer(sc);
+	wm->set_renderering_manager(rm);
 }
 
 void RenderingDevice::run() const

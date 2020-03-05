@@ -16,6 +16,8 @@ public:
 
 	void run();
 
+	void set_renderering_manager(const std::shared_ptr<RenderingManager>& new_rm);
+
 protected:
 	GLuint screen_width;
 	GLuint screen_height;

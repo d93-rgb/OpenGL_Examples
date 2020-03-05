@@ -17,7 +17,8 @@ SET(PROJECT_HEADERS
 	"../core/include/camera.h"
 	"../core/include/renderingdevice.h"
 	"../core/include/graphicscontext.h"
-	"../core/include/renderingmanager.h")
+	"../core/include/renderingmanager.h"
+	"../core/include/renderingparameter.h")
 
 SET(PROJECT_SOURCES 
 	"src/main.cpp"
@@ -27,7 +28,8 @@ SET(PROJECT_SOURCES
 	"../core/src/camera.cpp"
 	"../core/src/renderingdevice.cpp"
 	"../core/src/graphicscontext.cpp"
-	"../core/src/renderingmanager.cpp")
+	"../core/src/renderingmanager.cpp"
+	"../core/src/renderingparameter.cpp")
 
 add_executable(Rendering-Triangle ${OPTIONS} ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${GL3W_SOURCES})
 

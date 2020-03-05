@@ -11,12 +11,12 @@ public:
 
 	GLuint get_program_id();
 	void use_program();
+	void create_program();
 
 private:
 	void compile(const std::string& type);
 	void check_errors(GLuint shader, const std::string& type) const;
 	void link();
-	void create_program();
 
 	unsigned int vertex, fragment;
 	std::string vertexPath;

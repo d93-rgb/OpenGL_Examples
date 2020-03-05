@@ -92,6 +92,11 @@ void ShaderCompiler::link()
 
 void ShaderCompiler::create_program()
 {
+	if (glIsProgram(program_id))
+	{
+		glDeleteProgram(program_id);
+	}
+
 	compile("vertex");
 	compile("fragment");
 	link(); 
@@ -104,6 +109,7 @@ GLuint ShaderCompiler::get_program_id()
 
 void ShaderCompiler::use_program()
 {
+	assert(glIsProgram(program_id)); // should never happen normally
 	glUseProgram(program_id);
 }
 
