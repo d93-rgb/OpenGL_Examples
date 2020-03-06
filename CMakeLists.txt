@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.9)
 cmake_policy(SET CMP0048 NEW)
-project(OpenGL_Examples VERSION 1.0)
+#project(OpenGL_Examples VERSION 1.0)
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	message(STATUS "*** Setting build type to 'Release' ***")
