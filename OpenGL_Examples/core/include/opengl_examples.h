@@ -1,6 +1,7 @@
 #pragma once
 
 #define GLM_FORCE_RADIANS
+#include <memory>
 #include <glm/glm.hpp>
 
 #include <glog/logging.h>
