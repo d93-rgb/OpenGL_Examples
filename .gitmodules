@@ -10,6 +10,3 @@
 [submodule "OpenGL_Examples/ext/glm"]
 	path = OpenGL_Examples/ext/glm
 	url = https://github.com/g-truc/glm
-[submodule "OpenGL_Examples/ext/gl3w"]
-	path = OpenGL_Examples/ext/gl3w
-	url = https://github.com/skaslev/gl3w

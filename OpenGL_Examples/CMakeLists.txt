@@ -36,8 +36,8 @@ include_directories (
 
 # gl3w 
 ###########################################################################
+add_subdirectory(ext/gl3w)
 include_directories(ext/gl3w/include)
-set(GL3W_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/ext/gl3w/src/gl3w.c)
 ###########################################################################
 
 ###########################################################################

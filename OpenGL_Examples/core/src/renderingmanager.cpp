@@ -41,4 +41,9 @@ void RenderingManager::recompile_shaders()
 	current_renderer->recompile();
 }
 
+void RenderingManager::add_renderer(std::shared_ptr<Renderer> renderer)
+{
+	renderers.push_back(std::move(renderer));
+}
+
 } // namespace ogl_examples

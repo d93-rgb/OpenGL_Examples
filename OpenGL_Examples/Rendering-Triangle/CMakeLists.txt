@@ -8,6 +8,7 @@ set(ALL_PROJECT_LIBRARIES
 	OpenGL::GLU
 	glm
 	glfw	# <- target name, contains absolute path to library
+	gl3w
 	glog)
 
 SET(PROJECT_HEADERS 

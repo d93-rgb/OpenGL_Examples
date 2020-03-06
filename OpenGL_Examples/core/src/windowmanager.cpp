@@ -74,10 +74,6 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 		std::exit(1);
 	}
 
-	glEnable(GL_DEPTH_TEST);
-
-	glViewport(0, 0, screen_width, screen_height);
-
 	rm.reset(new RenderingManager());
 }
 
