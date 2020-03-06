@@ -8,11 +8,11 @@ if(NOT MSVC)
 	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -ldl")
 else(NOT MSVC)
 	# important flag, for __FILE__ macro to have absolute path 
-	SET(COMP_FLAGS "/FC")
+	SET(COMP_FLAGS "/FC /EHsc")
 	SET(CMAKE_CXX_FLAGS "${COMP_FLAGS}")
 	# alternatively, add the following line after add_executable
 	#target_compile_options(minimal_opengl_example PUBLIC /FC)
-	add_definitions("/EHsc")
+	#add_definitions("/EHsc")
 endif(NOT MSVC)
 
 ###########################################################################
@@ -36,7 +36,7 @@ include_directories (
 
 # gl3w 
 ###########################################################################
-add_subdirectory(ext/gl3w)
+set(OPENGL_EXAMPLES_GL3W_SOURCES ../ext/gl3w/src/gl3w.c)
 include_directories(ext/gl3w/include)
 ###########################################################################
 

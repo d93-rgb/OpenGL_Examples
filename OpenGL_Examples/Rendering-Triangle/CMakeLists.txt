@@ -8,7 +8,6 @@ set(ALL_PROJECT_LIBRARIES
 	OpenGL::GLU
 	glm
 	glfw	# <- target name, contains absolute path to library
-	gl3w
 	glog)
 
 SET(PROJECT_HEADERS 
@@ -33,11 +32,7 @@ SET(PROJECT_SOURCES
 	"../core/src/renderingparameter.cpp")
 
 	
-set_source_files_properties("${CMAKE_BINARY_DIR}/OpenGL_Examples/ext/gl3w/src/gl3w.c" GENERATED)
-
-add_executable(Rendering-Triangle ${OPTIONS} ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${GL3W_SOURCES})
-
-add_dependencies(Rendering-Triangle gl3w)
+add_executable(Rendering-Triangle ${OPTIONS} ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${OPENGL_EXAMPLES_GL3W_SOURCES})
 
 target_link_libraries(Rendering-Triangle ${ALL_PROJECT_LIBRARIES})
 

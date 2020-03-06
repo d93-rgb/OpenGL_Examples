@@ -11,6 +11,7 @@ namespace ogl_examples
 class WindowManager;
 class ShaderCompiler;
 class Renderer;
+class GraphicsContext;
 
 class RenderingParameter;
 class TriangleRendererParameter;

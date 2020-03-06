@@ -3,8 +3,7 @@
 #include "GLFW/glfw3.h"
 
 #include "opengl_examples.h"
-#include "renderingmanager.h"
-
+#include "graphicscontext.h"
 
 namespace ogl_examples
 {
@@ -25,6 +24,7 @@ protected:
 	GLFWwindow* window;
 
 	std::shared_ptr<RenderingManager> rm;
+	std::unique_ptr<GraphicsContext> gc;
 };
 
 

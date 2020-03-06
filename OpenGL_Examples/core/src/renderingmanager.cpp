@@ -1,4 +1,5 @@
 #include "renderingmanager.h"
+#include "graphicscontext.h"
 
 namespace ogl_examples
 {

@@ -1,3 +1,4 @@
+#include "renderingmanager.h"
 #include "windowmanager.h"
 
 namespace ogl_examples
@@ -74,6 +75,7 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 		std::exit(1);
 	}
 
+	gc.reset(new GraphicsContext(screen_width, screen_height));
 	rm.reset(new RenderingManager());
 }
 
