@@ -76,7 +76,6 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 	}
 
 	gc.reset(new GraphicsContext(screen_width, screen_height));
-	rm.reset(new RenderingManager());
 }
 
 void WindowManager::run()

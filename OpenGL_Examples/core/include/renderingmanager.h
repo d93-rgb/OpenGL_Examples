@@ -10,6 +10,8 @@ namespace ogl_examples
 class RenderingManager
 {
 public:
+	std::vector<std::shared_ptr<Renderer>> renderers;
+
 	RenderingManager();
 
 	RenderingManager(const std::shared_ptr<Renderer> renderer);
@@ -20,12 +22,8 @@ public:
 
 	void recompile_shaders();
 
-	void add_renderer(std::shared_ptr<Renderer> renderer);
-
 protected:
 	std::shared_ptr<Renderer> current_renderer;
-	std::vector<std::shared_ptr<Renderer>> renderers;
-
 };
 
 
