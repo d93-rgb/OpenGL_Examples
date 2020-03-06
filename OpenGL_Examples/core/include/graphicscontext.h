@@ -14,6 +14,4 @@ protected:
 
 };
 
-};
-
 } // namespace ogl_examples

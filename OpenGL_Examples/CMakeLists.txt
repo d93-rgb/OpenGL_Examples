@@ -12,6 +12,7 @@ else(NOT MSVC)
 	SET(CMAKE_CXX_FLAGS "${COMP_FLAGS}")
 	# alternatively, add the following line after add_executable
 	#target_compile_options(minimal_opengl_example PUBLIC /FC)
+	add_definitions("/EHsc")
 endif(NOT MSVC)
 
 ###########################################################################
