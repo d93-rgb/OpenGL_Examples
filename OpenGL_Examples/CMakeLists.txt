@@ -62,7 +62,6 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 add_subdirectory(ext/glog)
 #SET_PROPERTY(TARGET glog logging_unittest demangle_unittest utilities_unittest stl_logging_unittest PROPERTY FOLDER "ext")
 include_directories (
-  ext/glog/src/windows
   ${CMAKE_BINARY_DIR}/ext/glog/
 )
 ###########################################################################

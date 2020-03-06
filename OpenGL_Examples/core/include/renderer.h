@@ -25,7 +25,7 @@ protected:
 class TriangleRenderer : public Renderer
 {
 public:
-	TriangleRenderer::TriangleRenderer(const std::shared_ptr<TriangleRendererParameter>& render_params);
+	TriangleRenderer(const std::shared_ptr<TriangleRendererParameter>& render_params);
 
 	void render();
 
@@ -36,7 +36,7 @@ private:
 class BlueTriangleRenderer : public Renderer
 {
 public:
-	BlueTriangleRenderer::BlueTriangleRenderer(const std::shared_ptr<TriangleRendererParameter>& render_params);
+	BlueTriangleRenderer(const std::shared_ptr<TriangleRendererParameter>& render_params);
 
 	void render();
 
