@@ -17,6 +17,7 @@ RenderingManager::RenderingManager(const std::shared_ptr<Renderer> renderer) :
 
 void RenderingManager::run()
 {
+	// TODO: inefficient, slow and uses globals - refactoring coming soon
 	static bool i = true;
 	if (current_scene_flag != old_scene_flag)
 	{
