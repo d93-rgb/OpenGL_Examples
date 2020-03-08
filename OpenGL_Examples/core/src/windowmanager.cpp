@@ -68,7 +68,7 @@ void mouse_callback(GLFWwindow* window, double x_pos, double y_pos)
 		old_x_pos = x_pos;
 		old_y_pos = y_pos;
 
-		cube_rot_mat = glm::rotate(glm::mat4(1), 0.05f,
+		cube_rot_mat = glm::rotate(glm::mat4(1), 0.03f,
 			glm::vec3(y_pos_diff, x_pos_diff, 0.0));
 	}
 }

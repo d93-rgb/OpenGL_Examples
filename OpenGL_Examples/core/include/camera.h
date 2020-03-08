@@ -18,7 +18,7 @@ public:
 class OrthographicCamera : public Camera
 {
 public:
-	OrthographicCamera::OrthographicCamera(glm::mat4 lookAt,
+	OrthographicCamera(glm::mat4 lookAt,
 		float left, float right, float top, float bottom, float near, float far);
 
 protected:
@@ -28,7 +28,7 @@ protected:
 class PerspectiveCamera : public Camera
 {
 public:
-	PerspectiveCamera::PerspectiveCamera(glm::mat4 lookAt,
+	PerspectiveCamera(glm::mat4 lookAt,
 		float fovy, float aspect_ratio, float near, float far);
 
 
