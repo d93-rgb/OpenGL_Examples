@@ -7,7 +7,7 @@ namespace ogl_examples
 class Camera
 {
 public:
-	Camera::Camera(glm::mat4 lookAt);
+	Camera(glm::mat4 lookAt);
 
 	glm::mat4 cameraToWorld;
 	glm::mat4 worldToCamera;
