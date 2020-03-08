@@ -47,6 +47,11 @@ void TriangleRenderer::render()
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
 }
 
+void TriangleRenderer::clean()
+{
+	glDeleteVertexArrays(1, &VAO);
+}
+
 BlueTriangleRenderer::BlueTriangleRenderer(const std::shared_ptr<TriangleRendererParameter>& render_params)
 {
 	//std::string file_path = std::string(__FILE__);
@@ -70,6 +75,11 @@ void BlueTriangleRenderer::render()
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
 }
 
+void BlueTriangleRenderer::clean()
+{
+	glDeleteVertexArrays(1, &VAO);
+}
+
 CubeRenderer::CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_params) :
 	render_params(render_params)
 {
@@ -91,12 +101,12 @@ CubeRenderer::CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_
 		};
 
 		float colors[24] = {
-			1.0, 1.0, 1.0,
+			0.0, 0.0, 0.0,
 			0.0, 1.0, 0.0,
 			1.0, 1.0, 0.0,
 			1.0, 0.0, 0.0,
 			1.0, 0.0, 1.0,
-			0.0, 0.0, 0.0,
+			1.0, 1.0, 1.0,
 			0.0, 1.0, 1.0,
 			0.0, 0.0, 1.0
 		};
@@ -107,8 +117,8 @@ CubeRenderer::CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_
 		0, 3, 2,
 		0, 1, 6,
 		0, 6, 7,
-		1, 5, 6,
-		1, 2, 5,
+		1, 6, 5,
+		1, 5, 2,
 		5, 2, 3,
 		5, 3, 4,
 		5, 7, 6,
@@ -135,7 +145,7 @@ CubeRenderer::CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_
 	
 	// colors
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)24);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(cube.vertices)));
 
 	// unbind everything
 	glEnableVertexAttribArray(0);
@@ -169,11 +179,17 @@ CubeRenderer::CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_
 void CubeRenderer::render()
 {
 	float angle = glfwGetTime();
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
 	uniforms.back().set_uniform(glm::rotate(glm::mat4(1), angle, glm::vec3(0.0, 1.0, 0.0)), 1);
-	glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+}
+
+void CubeRenderer::clean()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 }
 
 } // namespace ogl_examples

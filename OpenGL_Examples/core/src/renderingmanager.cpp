@@ -40,4 +40,12 @@ void RenderingManager::recompile_shaders()
 	current_renderer->recompile();
 }
 
+void RenderingManager::clean()
+{
+	for (const auto& r : renderers)
+	{
+		r->clean();
+	}
+}
+
 } // namespace ogl_examples

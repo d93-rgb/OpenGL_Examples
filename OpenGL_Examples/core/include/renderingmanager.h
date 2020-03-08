@@ -22,6 +22,8 @@ public:
 
 	void recompile_shaders();
 
+	void clean();
+
 protected:
 	std::shared_ptr<Renderer> current_renderer;
 };

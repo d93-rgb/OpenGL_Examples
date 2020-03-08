@@ -19,6 +19,8 @@ public:
 
 	virtual void use_program();
 
+    virtual void clean() = 0;
+
     template<typename T>
     void create_uniform(int location, const T* val, GLsizei n);
 
@@ -98,6 +100,8 @@ public:
 	TriangleRenderer(const std::shared_ptr<TriangleRendererParameter>& render_params);
 
 	void render();
+    void clean();
+
 
 private:
 	unsigned int VAO;
@@ -109,6 +113,7 @@ public:
 	BlueTriangleRenderer(const std::shared_ptr<TriangleRendererParameter>& render_params);
 
 	void render();
+    void clean();
 
 private:
 	unsigned int VAO;
@@ -122,6 +127,8 @@ public:
     CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_params);
 
     void render();
+    void clean();
+
 
 private:
     unsigned int VAO;
