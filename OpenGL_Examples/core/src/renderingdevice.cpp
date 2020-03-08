@@ -4,12 +4,15 @@ namespace ogl_examples
 {
 
 RenderingDevice::RenderingDevice() :
-	wm(new WindowManager(800, 600)),
 	rm(new RenderingManager())
 {
+	GLuint screen_width = 800;
+	GLuint screen_height = 600;
 
-	rm->renderers.push_back(std::make_shared<TriangleRenderer>(std::make_shared<TriangleRendererParameter>()));
-	rm->renderers.push_back(std::make_shared<BlueTriangleRenderer>(std::make_shared<TriangleRendererParameter>()));
+	wm.reset(new WindowManager(screen_width, screen_height));
+
+	rm->renderers.push_back(std::make_shared<CubeRenderer>(std::make_shared<CubeRendererParameter>(wm.get())));
+	rm->renderers.push_back(std::make_shared<BlueTriangleRenderer>(std::make_shared<TriangleRendererParameter>(wm.get())));
 	rm->change_renderer(rm->renderers.front());
 	
 	wm->set_renderering_manager(rm);

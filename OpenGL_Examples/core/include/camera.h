@@ -9,7 +9,6 @@ class Camera
 public:
 	Camera::Camera(glm::mat4 lookAt);
 
-protected:
 	glm::mat4 cameraToWorld;
 	glm::mat4 worldToCamera;
 	glm::mat4 worldToRaster;

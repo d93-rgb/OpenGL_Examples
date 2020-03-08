@@ -6,7 +6,8 @@ namespace ogl_examples
 {
 Camera::Camera(glm::mat4 lookAt) :
 	cameraToWorld(std::move(glm::inverse(lookAt))),
-	worldToCamera(std::move(lookAt))
+	worldToCamera(std::move(lookAt)),
+	worldToRaster(1)
 {
 
 }

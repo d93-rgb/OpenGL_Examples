@@ -16,6 +16,7 @@ class GraphicsContext;
 
 class RenderingParameter;
 class TriangleRendererParameter;
+class CubeRendererParameter;
 
 extern int current_scene_flag;
 extern int old_scene_flag;

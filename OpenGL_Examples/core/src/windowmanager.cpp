@@ -82,7 +82,7 @@ void WindowManager::run()
 {
 	glfwShowWindow(window);
 	while (!glfwWindowShouldClose(window)) {
-		glfwWaitEvents();
+		glfwPollEvents();
 
 		rm->run();
 		

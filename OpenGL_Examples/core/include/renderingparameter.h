@@ -1,5 +1,6 @@
 #pragma once
 #include "opengl_examples.h"
+#include "GL/gl3w.h"
 
 namespace ogl_examples
 {
@@ -7,16 +8,23 @@ namespace ogl_examples
 class RenderingParameter
 {
 public:
+	const WindowManager* wm;
 
-protected:
-
+	RenderingParameter(const WindowManager* wm);
 };
 
 
 class TriangleRendererParameter : public RenderingParameter
 {
 public:
-	TriangleRendererParameter();
+	TriangleRendererParameter(const WindowManager* wm);
+
+};
+
+class CubeRendererParameter : public RenderingParameter
+{
+public:
+	CubeRendererParameter(const WindowManager* wm);
 
 };
 
