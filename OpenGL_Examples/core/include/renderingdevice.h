@@ -16,7 +16,7 @@ public:
 	void run() const;
 
 protected:
-	std::unique_ptr<WindowManager> wm;
+	std::shared_ptr<WindowManager> wm;
 	std::shared_ptr<RenderingManager> rm;
 };
 

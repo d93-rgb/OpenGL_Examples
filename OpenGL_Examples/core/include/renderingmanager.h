@@ -1,6 +1,4 @@
 #pragma once
-#include <vector>
-
 #include "opengl_examples.h"
 #include "renderer.h"
 

@@ -11,9 +11,9 @@ public:
 
 	virtual void handle_mouse_button(GLFWwindow* window, int button, int action, int mods) = 0;
 
-	virtual void handle_framebuffer_size(GLFWwindow* window, int width, int height);
+	virtual void handle_framebuffer_size(GLFWwindow* window, int width, int height) = 0;
 
-	virtual void handle_key(GLFWwindow* window, int key, int scancode, int action, int mode);
+	virtual void handle_key(GLFWwindow* window, int key, int scancode, int action, int mode) = 0;
 
 
 protected:
@@ -41,7 +41,7 @@ class CubeRendererEventHandler : public EventHandler
 public:
 	CubeRendererEventHandler();
 
-	void set_renderer(std::shared_ptr<CubeRenderer> cr);
+	void set_renderer(CubeRenderer* cr);
 
 	void handle_mouse(GLFWwindow* window, double x_pos, double y_pos);
 
@@ -61,7 +61,7 @@ private:
 	double x_pos_diff;
 	double y_pos_diff;
 
-	std::shared_ptr<CubeRenderer> cr;
+	CubeRenderer* cr;
 };
 
 } // namespace ogl_examples

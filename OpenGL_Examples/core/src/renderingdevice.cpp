@@ -16,6 +16,10 @@ RenderingDevice::RenderingDevice() :
 	rm->renderers.push_back(std::make_shared<CubeRenderer>(
 		std::make_unique<CubeRendererEventHandler>(),
 		std::make_shared<CubeRendererParameter>(wm.get())));
+		
+	dynamic_cast<CubeRendererEventHandler*>(rm->renderers.back()->eh.get())->
+		set_renderer(dynamic_cast<CubeRenderer*>(rm->renderers.back().get()));
+
 	rm->renderers.push_back(std::make_shared<BlueTriangleRenderer>(
 		std::make_unique<TriangleRendererEventHandler>(),
 		std::make_shared<TriangleRendererParameter>(wm.get())));

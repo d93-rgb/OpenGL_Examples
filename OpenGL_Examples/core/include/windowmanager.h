@@ -1,8 +1,9 @@
 #pragma once
+#include "opengl_examples.h"
+
 #include "GL/gl3w.h"
 #include "GLFW/glfw3.h"
 
-#include "opengl_examples.h"
 
 namespace ogl_examples
 {

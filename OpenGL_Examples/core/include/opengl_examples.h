@@ -3,6 +3,8 @@
 #define GLM_FORCE_RADIANS
 #include <memory>
 #include <string>
+#include <vector>
+
 #include <glm/glm.hpp>
 
 #include <glog/logging.h>

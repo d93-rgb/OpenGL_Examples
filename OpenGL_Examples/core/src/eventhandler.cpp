@@ -1,5 +1,7 @@
 #pragma once
+#include "GL/gl3w.h"
 #include "GLFW/glfw3.h"
+
 #include "glm/gtc/matrix_transform.hpp"
 
 #include "eventhandler.h"
@@ -8,6 +10,31 @@
 
 namespace ogl_examples
 {
+
+TriangleRendererEventHandler::TriangleRendererEventHandler()
+{
+
+}
+
+void TriangleRendererEventHandler::handle_mouse(GLFWwindow* window, double x_pos, double y_pos)
+{
+
+}
+
+void TriangleRendererEventHandler::handle_mouse_button(GLFWwindow* window, int button, int action, int mods)
+{
+
+}
+
+void TriangleRendererEventHandler::handle_framebuffer_size(GLFWwindow* window, int width, int height)
+{
+
+}
+
+void TriangleRendererEventHandler::handle_key(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+
+}
 
 CubeRendererEventHandler::CubeRendererEventHandler() :
 	mouse_button_pressed(false),
@@ -21,9 +48,9 @@ CubeRendererEventHandler::CubeRendererEventHandler() :
 
 }
 
-void CubeRendererEventHandler::set_renderer(std::shared_ptr<CubeRenderer> cr)
+void CubeRendererEventHandler::set_renderer(CubeRenderer* cr)
 {
-	this->cr = std::move(cr);
+	this->cr = cr;
 }
 
 void CubeRendererEventHandler::handle_mouse(GLFWwindow* window, double x_pos, double y_pos)
@@ -54,6 +81,11 @@ void CubeRendererEventHandler::handle_mouse(GLFWwindow* window, double x_pos, do
 	}
 }
 
+void CubeRendererEventHandler::handle_framebuffer_size(GLFWwindow* window, int width, int height)
+{
+
+}
+
 void CubeRendererEventHandler::handle_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT)
@@ -69,6 +101,11 @@ void CubeRendererEventHandler::handle_mouse_button(GLFWwindow* window, int butto
 			mouse_button_pressed = false;
 		}
 	}
+}
+
+void CubeRendererEventHandler::handle_key(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+
 }
 
 } // namespace ogl_examples

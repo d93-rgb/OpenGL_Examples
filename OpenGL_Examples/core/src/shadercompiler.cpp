@@ -1,8 +1,6 @@
 #include <fstream>
 #include <sstream>
-#include <string>
 
-#include "opengl_examples.h"
 #include "shadercompiler.h"
 
 namespace ogl_examples
