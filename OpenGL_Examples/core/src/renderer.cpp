@@ -88,6 +88,13 @@ CubeRenderer::CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_
 
 	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
 
+	for (int i = 0; i < 8; ++i) {
+		cube.vertices[i] = 
+			glm::rotate(glm::mat4(1), glm::radians(45.0f), glm::vec3(0, -1, 0)) *
+			glm::rotate(glm::mat4(1), glm::radians(45.0f), glm::vec3(1, 0, 0)) *
+			glm::vec4(cube.vertices[i], 1);
+	}
+
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -114,10 +121,10 @@ CubeRenderer::CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_
 	glBindVertexArray(0);
 
 	cam.reset(new PerspectiveCamera(
-		glm::lookAt(glm::vec3(0.0, 0.0, 2.0),
+		glm::lookAt(glm::vec3(0.0, 0.0, 4.0),
 			glm::vec3(0.0),
 			glm::vec3(0.0, 1.0, 0.0)),
-		glm::radians(90.0),
+		glm::radians(45.0),
 		render_params->wm->screen_width / render_params->wm->screen_height,
 		0.1,
 		100));

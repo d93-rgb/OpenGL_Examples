@@ -135,7 +135,6 @@ void WindowManager::run()
 		glfwWaitEventsTimeout(0.01); // medium CPU usage
 		//glfwWaitEvents(); // almost no CPU usage
 
-
 		rm->run();
 
 		glfwSwapBuffers(window);
