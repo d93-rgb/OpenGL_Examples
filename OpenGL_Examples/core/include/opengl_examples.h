@@ -18,6 +18,10 @@ class RenderingParameter;
 class TriangleRendererParameter;
 class CubeRendererParameter;
 
+class EventHandler;
+class TriangleRendererEventHandler;
+class CubeRendererEventHandler;
+
 extern int current_scene_flag;
 extern int old_scene_flag;
 

@@ -85,6 +85,32 @@ else(MSVC)
 	SOURCE_GROUP (core REGULAR_EXPRESSION core/src/.*)
 endif()
 
+SET(OPENGL_EXAMPLES_PROJECT_HEADERS 
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/shadercompiler.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/renderer.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/windowmanager.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/camera.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/renderingdevice.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/graphicscontext.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/renderingmanager.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/renderingparameter.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/eventhandler.h"
+	CACHE INTERNAL 
+	"OPENGL_EXAMPLES_PROJECT_HEADERS")
+
+SET(OPENGL_EXAMPLES_PROJECT_SOURCES 
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/shadercompiler.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/renderer.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/windowmanager.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/camera.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/renderingdevice.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/graphicscontext.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/renderingmanager.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/renderingparameter.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/eventhandler.cpp"
+	CACHE INTERNAL
+	"OPENGL_EXAMPLES_PROJECT_SOURCES")
+
 
 add_subdirectory(Rendering-Triangle)
 

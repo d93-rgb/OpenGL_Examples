@@ -5,6 +5,7 @@
 #include "shadercompiler.h"
 #include "renderingparameter.h"
 #include "camera.h"
+#include "eventhandler.h"
 
 namespace ogl_examples
 {
@@ -12,6 +13,7 @@ namespace ogl_examples
 class Renderer
 {
 public:
+	std::unique_ptr<EventHandler> eh;
 
 	virtual void render() = 0;
 
@@ -92,6 +94,7 @@ protected:
     std::unique_ptr<ShaderCompiler> sc;
     std::unique_ptr<Camera> cam;
     std::vector<Uniform> uniforms;
+
 };
 
 class TriangleRenderer : public Renderer
@@ -128,7 +131,6 @@ public:
 
     void render();
     void clean();
-
 
 private:
     unsigned int VAO;

@@ -5,13 +5,6 @@
 
 namespace ogl_examples
 {
-static bool mouse_button_pressed = false;
-static double old_x_pos;
-static double old_y_pos;
-static double new_x_pos;
-static double new_y_pos;
-static double x_pos_diff;
-static double y_pos_diff;
 
 int current_scene_flag = 0;
 int old_scene_flag = 0;
@@ -19,57 +12,68 @@ int old_scene_flag = 0;
 bool OGL_EXAMPLES_UPDATE_CUBE_VERTICES = false;
 glm::mat4 cube_rot_mat = glm::mat4(1);
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
+void WindowManager::key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 }
 
-static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void WindowManager::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+void WindowManager::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT)
 	{
 		if (action == GLFW_PRESS)
 		{
-			mouse_button_pressed = true;
-			glfwGetCursorPos(window, &old_x_pos, &old_y_pos);
+			void* data = glfwGetWindowUserPointer(window);
+			WindowManager* w = static_cast<WindowManager*>(data);
+
+			w->mouse_button_pressed = true;
+			glfwGetCursorPos(window, &w->old_x_pos, &w->old_y_pos);
 			//current_scene_flag = (current_scene_flag + 1) % 2;
 		}
 		else if (action == GLFW_RELEASE)
 		{
-			mouse_button_pressed = false;
+			void* data = glfwGetWindowUserPointer(window);
+			WindowManager* w = static_cast<WindowManager*>(data);
+
+			w->mouse_button_pressed = false;
 		}
 	}
 }
 
-void mouse_callback(GLFWwindow* window, double x_pos, double y_pos)
+void WindowManager::mouse_callback(GLFWwindow* window, double x_pos, double y_pos)
 {
-	if (!mouse_button_pressed)
-		return;
-	/*
-	 TODO: CAUTION: y is inverted!
-	*/
-	x_pos_diff = x_pos - old_x_pos;
-	y_pos_diff = y_pos - old_y_pos;
-	if (!(x_pos_diff == 0 && y_pos_diff == 0))
-	{
-		OGL_EXAMPLES_UPDATE_CUBE_VERTICES = true;
-		VLOG(4) << "old_x_pos = " << old_x_pos << ",\told_y_pos = " << old_y_pos;
-		VLOG(4) << "x_pos = " << x_pos << ",\ty_pos = " << y_pos <<
-			", x_pos_diff = " << x_pos_diff <<
-			", y_pos_diff = " << y_pos_diff;
-		VLOG(4) << "rotation axis = (" << y_pos_diff << ", "
-			<< x_pos_diff << ")";
-		old_x_pos = x_pos;
-		old_y_pos = y_pos;
 
+	WindowManager* w = static_cast<WindowManager*>(glfwGetWindowUserPointer(window));
+
+	if (!w->mouse_button_pressed)
+		return;
+
+	w->x_pos_diff = x_pos - w->old_x_pos;
+	w->y_pos_diff = y_pos - w->old_y_pos;
+
+	// TODO: if check not necessary, since mouse_button_callback is always called first
+	//if (!(x_pos_diff == 0 && y_pos_diff == 0))
+	{
+		VLOG(4) << "old_x_pos = " << w->old_x_pos << ",\told_y_pos = " << w->old_y_pos;
+		VLOG(4) << "x_pos = " << x_pos << ",\ty_pos = " << y_pos <<
+			", x_pos_diff = " << w->x_pos_diff <<
+			", y_pos_diff = " << w->y_pos_diff;
+		VLOG(4) << "rotation axis = (" << w->y_pos_diff << ", "
+			<< w->x_pos_diff << ")";
+
+		OGL_EXAMPLES_UPDATE_CUBE_VERTICES = true;
+		w->old_x_pos = x_pos;
+		w->old_y_pos = y_pos;
+
+		// double negation of y_pos_diff, because of y-axis inversion  
 		cube_rot_mat = glm::rotate(glm::mat4(1), 0.03f,
-			glm::vec3(y_pos_diff, x_pos_diff, 0.0));
+			glm::vec3(w->y_pos_diff, w->x_pos_diff, 0.0));
 	}
 }
 
@@ -77,6 +81,7 @@ void mouse_callback(GLFWwindow* window, double x_pos, double y_pos)
 WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 	screen_width(screen_width), screen_height(screen_height)
 {
+	
 	int error_code;
 	const char* error_description;
 
@@ -109,6 +114,8 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 		glfwTerminate();
 		std::exit(1);
 	}
+
+	glfwSetWindowUserPointer(window, this);
 
 	glfwMakeContextCurrent(window);
 
