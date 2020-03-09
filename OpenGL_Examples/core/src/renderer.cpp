@@ -88,10 +88,12 @@ CubeRenderer::CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_
 
 	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
 
+	// TODO: no shape base class done yet, this is a replacement for objToWorld matrix,
+	//		 moving the cube once at initialization and not during the rendering loop
 	for (int i = 0; i < 8; ++i) {
 		cube.vertices[i] = 
 			glm::rotate(glm::mat4(1), glm::radians(45.0f), glm::vec3(0, -1, 0)) *
-			glm::rotate(glm::mat4(1), glm::radians(45.0f), glm::vec3(1, 0, 0)) *
+			glm::rotate(glm::mat4(1), glm::radians(30.0f), glm::vec3(1, 0, 0)) *
 			glm::vec4(cube.vertices[i], 1);
 	}
 
