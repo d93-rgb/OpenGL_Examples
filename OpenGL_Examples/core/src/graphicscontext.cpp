@@ -12,4 +12,6 @@ GraphicsContext::GraphicsContext(int screen_width, int screen_height)
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
+GraphicsContext::~GraphicsContext() = default;
+
 } // namespace ogl_examples

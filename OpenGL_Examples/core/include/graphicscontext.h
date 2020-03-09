@@ -9,6 +9,7 @@ class GraphicsContext
 public:
 	GraphicsContext(int screen_width, int screen_height);
 
+	~GraphicsContext();
 protected:
 
 };

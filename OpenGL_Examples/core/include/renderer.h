@@ -2,10 +2,6 @@
 #include "GL/gl3w.h"
 
 #include "opengl_examples.h"
-#include "shadercompiler.h"
-#include "renderingparameter.h"
-#include "camera.h"
-#include "eventhandler.h"
 
 namespace ogl_examples
 {
@@ -14,6 +10,9 @@ class Renderer
 {
 public:
 	std::unique_ptr<EventHandler> eh;
+
+	Renderer(std::unique_ptr<EventHandler> eh);
+	~Renderer();
 
 	virtual void render() = 0;
 
@@ -100,7 +99,8 @@ protected:
 class TriangleRenderer : public Renderer
 {
 public:
-	TriangleRenderer(const std::shared_ptr<TriangleRendererParameter>& render_params);
+	TriangleRenderer(std::unique_ptr<EventHandler> eh,
+		const std::shared_ptr<TriangleRendererParameter>& render_params);
 
 	void render();
     void clean();
@@ -113,7 +113,8 @@ private:
 class BlueTriangleRenderer : public Renderer
 {
 public:
-	BlueTriangleRenderer(const std::shared_ptr<TriangleRendererParameter>& render_params);
+	BlueTriangleRenderer(std::unique_ptr<EventHandler> eh,
+		const std::shared_ptr<TriangleRendererParameter>& render_params);
 
 	void render();
     void clean();
@@ -127,12 +128,17 @@ class CubeRenderer : public Renderer
 public:
     std::shared_ptr<CubeRendererParameter> render_params;
 
-    CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_params);
+    CubeRenderer(std::unique_ptr<EventHandler> eh, 
+		const std::shared_ptr<CubeRendererParameter>& render_params);
 
     void render();
     void clean();
 
 private:
+	friend class CubeRendererEventHandler;
+	bool update_cube_vertices;
+	glm::mat4 cube_rot_mat;
+
     unsigned int VAO;
     unsigned int VBO;
     unsigned int EBO;

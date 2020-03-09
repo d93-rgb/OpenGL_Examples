@@ -48,4 +48,9 @@ void RenderingManager::clean()
 	}
 }
 
+const Renderer* RenderingManager::get_current_renderer()
+{
+	return current_renderer.get();
+}
+
 } // namespace ogl_examples

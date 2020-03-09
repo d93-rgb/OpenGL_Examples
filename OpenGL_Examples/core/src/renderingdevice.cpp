@@ -1,4 +1,6 @@
 #include "renderingdevice.h"
+#include "renderingparameter.h"
+#include "eventhandler.h"
 
 namespace ogl_examples
 {
@@ -11,12 +13,18 @@ RenderingDevice::RenderingDevice() :
 
 	wm.reset(new WindowManager(screen_width, screen_height));
 
-	rm->renderers.push_back(std::make_shared<CubeRenderer>(std::make_shared<CubeRendererParameter>(wm.get())));
-	rm->renderers.push_back(std::make_shared<BlueTriangleRenderer>(std::make_shared<TriangleRendererParameter>(wm.get())));
+	rm->renderers.push_back(std::make_shared<CubeRenderer>(
+		std::make_unique<CubeRendererEventHandler>(),
+		std::make_shared<CubeRendererParameter>(wm.get())));
+	rm->renderers.push_back(std::make_shared<BlueTriangleRenderer>(
+		std::make_unique<TriangleRendererEventHandler>(),
+		std::make_shared<TriangleRendererParameter>(wm.get())));
 	rm->change_renderer(rm->renderers.front());
 	
 	wm->set_renderering_manager(rm);
 }
+
+RenderingDevice::~RenderingDevice() = default;
 
 void RenderingDevice::run() const
 {

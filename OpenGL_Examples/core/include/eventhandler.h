@@ -7,7 +7,14 @@ namespace ogl_examples
 class EventHandler
 {
 public:
-	EventHandler();
+	virtual void handle_mouse(GLFWwindow* window, double x_pos, double y_pos) = 0;
+
+	virtual void handle_mouse_button(GLFWwindow* window, int button, int action, int mods) = 0;
+
+	virtual void handle_framebuffer_size(GLFWwindow* window, int width, int height);
+
+	virtual void handle_key(GLFWwindow* window, int key, int scancode, int action, int mode);
+
 
 protected:
 
@@ -18,6 +25,13 @@ class TriangleRendererEventHandler : public EventHandler
 public:
 	TriangleRendererEventHandler();
 
+	void handle_mouse(GLFWwindow* window, double x_pos, double y_pos);
+
+	void handle_mouse_button(GLFWwindow* window, int button, int action, int mods);
+
+	void handle_framebuffer_size(GLFWwindow* window, int width, int height);
+
+	void handle_key(GLFWwindow* window, int key, int scancode, int action, int mode);
 protected:
 
 };
@@ -27,8 +41,27 @@ class CubeRendererEventHandler : public EventHandler
 public:
 	CubeRendererEventHandler();
 
-protected:
+	void set_renderer(std::shared_ptr<CubeRenderer> cr);
 
+	void handle_mouse(GLFWwindow* window, double x_pos, double y_pos);
+
+	void handle_mouse_button(GLFWwindow* window, int button, int action, int mods);
+
+	void handle_framebuffer_size(GLFWwindow* window, int width, int height);
+
+	void handle_key(GLFWwindow* window, int key, int scancode, int action, int mode);
+
+private:
+	bool mouse_button_pressed;
+
+	double old_x_pos;
+	double old_y_pos;
+	double new_x_pos;
+	double new_y_pos;
+	double x_pos_diff;
+	double y_pos_diff;
+
+	std::shared_ptr<CubeRenderer> cr;
 };
 
 } // namespace ogl_examples

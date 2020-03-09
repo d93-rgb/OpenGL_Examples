@@ -2,6 +2,7 @@
 
 #define GLM_FORCE_RADIANS
 #include <memory>
+#include <string>
 #include <glm/glm.hpp>
 
 #include <glog/logging.h>
@@ -18,14 +19,18 @@ class RenderingParameter;
 class TriangleRendererParameter;
 class CubeRendererParameter;
 
+class Renderer;
+class CubeRenderer;
+
+class RenderingManager;
+
 class EventHandler;
 class TriangleRendererEventHandler;
 class CubeRendererEventHandler;
 
+class Camera;
+
 extern int current_scene_flag;
 extern int old_scene_flag;
-
-extern bool OGL_EXAMPLES_UPDATE_CUBE_VERTICES;
-extern glm::mat4 cube_rot_mat;
 
 } // namespace ogl_examples

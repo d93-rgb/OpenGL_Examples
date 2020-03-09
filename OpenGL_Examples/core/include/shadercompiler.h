@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <GL/gl3w.h>
 
 namespace ogl_examples

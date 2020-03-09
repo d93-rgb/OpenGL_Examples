@@ -24,8 +24,11 @@ public:
 
 	void clean();
 
+	const Renderer* get_current_renderer();
+
 protected:
 	std::shared_ptr<Renderer> current_renderer;
+
 };
 
 
