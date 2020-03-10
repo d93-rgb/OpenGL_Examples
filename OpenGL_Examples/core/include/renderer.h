@@ -102,8 +102,8 @@ public:
 	TriangleRenderer(std::unique_ptr<EventHandler> eh,
 		const std::shared_ptr<TriangleRendererParameter>& render_params);
 
-	void render();
-    void clean();
+	void render() override;
+    void clean() override;
 
 
 private:
@@ -127,6 +127,8 @@ class CubeRenderer : public Renderer
 {
 public:
     std::shared_ptr<CubeRendererParameter> render_params;
+
+	CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_params);
 
     CubeRenderer(std::unique_ptr<EventHandler> eh, 
 		const std::shared_ptr<CubeRendererParameter>& render_params);

@@ -23,6 +23,10 @@ RenderingDevice::RenderingDevice() :
 	rm->renderers.push_back(std::make_shared<BlueTriangleRenderer>(
 		std::make_unique<TriangleRendererEventHandler>(),
 		std::make_shared<TriangleRendererParameter>(wm.get())));
+
+	dynamic_cast<TriangleRendererEventHandler*>(rm->renderers.back()->eh.get())->
+		set_renderer(dynamic_cast<BlueTriangleRenderer*>(rm->renderers.back().get()));
+
 	rm->change_renderer(rm->renderers.front());
 	
 	wm->set_renderering_manager(rm);

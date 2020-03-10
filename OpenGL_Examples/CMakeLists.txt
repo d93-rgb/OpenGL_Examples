@@ -95,6 +95,7 @@ SET(OPENGL_EXAMPLES_PROJECT_HEADERS
 	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/renderingmanager.h"
 	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/renderingparameter.h"
 	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/eventhandler.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/guiparameter.h"
 	CACHE INTERNAL 
 	"OPENGL_EXAMPLES_PROJECT_HEADERS")
 
@@ -108,6 +109,7 @@ SET(OPENGL_EXAMPLES_PROJECT_SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/renderingmanager.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/renderingparameter.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/eventhandler.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/core/src/guiparameter.cpp"
 	CACHE INTERNAL
 	"OPENGL_EXAMPLES_PROJECT_SOURCES")
 
