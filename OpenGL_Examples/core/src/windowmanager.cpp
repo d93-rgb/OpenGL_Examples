@@ -3,6 +3,10 @@
 #include "graphicscontext.h"
 #include "eventhandler.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 namespace ogl_examples
 {
 
@@ -89,6 +93,18 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 		std::exit(1);
 	}
 
+	// imgui initialization
+		// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 130");
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+
+
 	gc.reset(new GraphicsContext(screen_width, screen_height));
 }
 
@@ -100,12 +116,35 @@ void WindowManager::run()
 		//glfwWaitEventsTimeout(0.01); // medium CPU usage
 		glfwWaitEvents(); // almost no CPU usage
 
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
 		rm->run();
+
+		// render your GUI
+		ImGui::Begin("Cube position/olor");
+		static float rotation = 0.0;
+		ImGui::SliderFloat("rotation", &rotation, 0, 2 * 3.1415);
+		static float translation[] = { 0.0, 0.0 };
+		ImGui::SliderFloat2("position", translation, -1.0, 1.0);
+		static float color[4] = { 1.0f,1.0f,1.0f,1.0f };
+		// color picker
+		ImGui::ColorEdit3("color", color);
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(window);
 	}
 
 	rm->clean();
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 	glfwTerminate();
 }
 

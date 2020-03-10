@@ -66,6 +66,21 @@ include_directories (
 )
 ###########################################################################
 
+# imgui
+###########################################################################
+include_directories(ext/imgui
+	ext/imgui/examples)
+set(OPENGL_EXAMPLES_IMGUI_SOURCES 
+				"${CMAKE_CURRENT_SOURCE_DIR}/ext/imgui/imgui.cpp"
+				"${CMAKE_CURRENT_SOURCE_DIR}/ext/imgui/imgui_draw.cpp" 
+				"${CMAKE_CURRENT_SOURCE_DIR}/ext/imgui/imgui_widgets.cpp"
+				"${CMAKE_CURRENT_SOURCE_DIR}/ext/imgui/examples/imgui_impl_opengl3.cpp"
+				"${CMAKE_CURRENT_SOURCE_DIR}/ext/imgui/examples/imgui_impl_glfw.cpp"
+				CACHE INTERNAL
+				OPENGL_EXAMPLES_IMGUI_SOURCES)
+###########################################################################
+
+
 # core OpenGL_Examples include files
 include_directories (
   core/include

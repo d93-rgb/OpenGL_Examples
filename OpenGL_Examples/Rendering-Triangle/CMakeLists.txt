@@ -10,7 +10,12 @@ set(ALL_PROJECT_LIBRARIES
 	glfw
 	glog)
 	
-add_executable(Rendering-Triangle ${OPTIONS} ${OPENGL_EXAMPLES_PROJECT_HEADERS} ${OPENGL_EXAMPLES_PROJECT_SOURCES} ${OPENGL_EXAMPLES_GL3W_SOURCES} src/main.cpp)
+add_executable(Rendering-Triangle ${OPTIONS} 
+	${OPENGL_EXAMPLES_PROJECT_HEADERS} 
+	${OPENGL_EXAMPLES_PROJECT_SOURCES} 
+	${OPENGL_EXAMPLES_GL3W_SOURCES} 
+	${OPENGL_EXAMPLES_IMGUI_SOURCES}
+	src/main.cpp)
 
 target_link_libraries(Rendering-Triangle ${ALL_PROJECT_LIBRARIES})
 

@@ -58,7 +58,7 @@ CubeRendererEventHandler::CubeRendererEventHandler(std::shared_ptr<GUIParameter>
 
 void CubeRendererEventHandler::handle_mouse(GLFWwindow* window, double x_pos, double y_pos)
 {
-	if (!mouse_button_pressed)
+	if (!mouse_button_pressed || (x_pos == old_x_pos && y_pos == old_y_pos))
 		return;
 
 	x_pos_diff = x_pos - old_x_pos;
