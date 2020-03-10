@@ -11,7 +11,7 @@ class Renderer
 public:
 	std::unique_ptr<EventHandler> eh;
 
-	Renderer(std::unique_ptr<EventHandler> eh);
+	Renderer(std::shared_ptr<GUIParameter> gui_params, std::unique_ptr<EventHandler> eh);
 	~Renderer();
 
 	virtual void render() = 0;
@@ -94,12 +94,14 @@ protected:
     std::unique_ptr<Camera> cam;
     std::vector<Uniform> uniforms;
 
+	std::shared_ptr<GUIParameter> gui_params;
 };
 
 class TriangleRenderer : public Renderer
 {
 public:
-	TriangleRenderer(std::unique_ptr<EventHandler> eh,
+	TriangleRenderer(std::shared_ptr<GUIParameter> gui_params, 
+		std::unique_ptr<EventHandler> eh,
 		const std::shared_ptr<TriangleRendererParameter>& render_params);
 
 	void render() override;
@@ -113,7 +115,9 @@ private:
 class BlueTriangleRenderer : public Renderer
 {
 public:
-	BlueTriangleRenderer(std::unique_ptr<EventHandler> eh,
+	BlueTriangleRenderer(
+		std::shared_ptr<GUIParameter> gui_params,
+		std::unique_ptr<EventHandler> eh,
 		const std::shared_ptr<TriangleRendererParameter>& render_params);
 
 	void render();
@@ -130,17 +134,15 @@ public:
 
 	CubeRenderer(const std::shared_ptr<CubeRendererParameter>& render_params);
 
-    CubeRenderer(std::unique_ptr<EventHandler> eh, 
+    CubeRenderer(
+		std::shared_ptr<GUIParameter> gui_params,
+		std::unique_ptr<EventHandler> eh, 
 		const std::shared_ptr<CubeRendererParameter>& render_params);
 
     void render();
     void clean();
 
 private:
-	friend class CubeRendererEventHandler;
-	bool update_cube_vertices;
-	glm::mat4 cube_rot_mat;
-
     unsigned int VAO;
     unsigned int VBO;
     unsigned int EBO;

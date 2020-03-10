@@ -11,6 +11,13 @@ public:
 
 	~GUIParameter();
 protected:
+	class CubeRendererParams
+	{
+		friend class CubeRenderer;
+
+		bool update_cube_vertices;
+		glm::mat4 cube_rot_mat;
+	} cube_renderer_params;
 
 };
 
