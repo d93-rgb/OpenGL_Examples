@@ -4,6 +4,7 @@
 #include "GL/gl3w.h"
 #include "GLFW/glfw3.h"
 
+#include "imgui.h"
 
 namespace ogl_examples
 {
@@ -37,6 +38,7 @@ protected:
 	std::shared_ptr<RenderingManager> rm;
 	std::unique_ptr<GraphicsContext> gc;
 
+	ImGuiIO* io;
 };
 
 

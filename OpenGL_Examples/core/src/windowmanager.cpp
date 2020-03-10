@@ -29,14 +29,16 @@ void WindowManager::framebuffer_size_callback(GLFWwindow* window, int width, int
 void WindowManager::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	WindowManager* w = static_cast<WindowManager*>(glfwGetWindowUserPointer(window));
-	w->rm->get_current_renderer()->eh->handle_mouse_button(window, button, action, mods);
+	if(!w->io->WantCaptureMouse)
+		w->rm->get_current_renderer()->eh->handle_mouse_button(window, button, action, mods);
 }
 
 void WindowManager::mouse_callback(GLFWwindow* window, double x_pos, double y_pos)
 {
 
 	WindowManager* w = static_cast<WindowManager*>(glfwGetWindowUserPointer(window));
-	w->rm->get_current_renderer()->eh->handle_mouse(window, x_pos, y_pos);
+	if (!w->io->WantCaptureMouse)
+		w->rm->get_current_renderer()->eh->handle_mouse(window, x_pos, y_pos);
 }
 
 
@@ -97,7 +99,13 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 		// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
+
+	// TODO: raw pointer here that's used in static callback function, 
+	//		 not feeling good about this at the moment
+	io = &ImGui::GetIO();
+
+	assert(io);
+
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 130");

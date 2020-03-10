@@ -1,5 +1,6 @@
 #pragma once
 #include "opengl_examples.h"
+#include "imgui.h"
 
 namespace ogl_examples
 {
