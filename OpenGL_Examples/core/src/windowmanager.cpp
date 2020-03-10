@@ -71,6 +71,7 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 		glfwTerminate();
 		std::exit(1);
 	}
+	center_glfw_window(window, glfwGetPrimaryMonitor());
 
 	glfwSetWindowUserPointer(window, this);
 
@@ -111,6 +112,34 @@ void WindowManager::run()
 void WindowManager::set_renderering_manager(const std::shared_ptr<RenderingManager>& new_rm)
 {
 	this->rm = new_rm;
+}
+
+void WindowManager::center_glfw_window(GLFWwindow* window, GLFWmonitor* monitor)
+{
+	int error_code;
+	const char* error_description;
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+	if (!mode)
+	{
+		error_code = glfwGetError(&error_description);
+
+		LOG(ERROR) << error_description;
+		glfwTerminate();
+		std::exit(1);
+	}
+
+	// center window
+	int monitorX, monitorY;
+	glfwGetMonitorPos(monitor, &monitorX, &monitorY);
+
+	int windowWidth, windowHeight;
+	glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+	glfwSetWindowPos(window,
+		monitorX + (mode->width - windowWidth) / 2,
+		monitorY + (mode->height - windowHeight) / 2);
+
 }
 
 } // namespace ogl_examples

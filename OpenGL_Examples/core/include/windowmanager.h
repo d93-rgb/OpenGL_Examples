@@ -21,6 +21,8 @@ public:
 
 	void set_renderering_manager(const std::shared_ptr<RenderingManager>& new_rm);
 
+	void center_glfw_window(GLFWwindow* window, GLFWmonitor* monitor);
+
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 	
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);

@@ -176,10 +176,10 @@ CubeRenderer::CubeRenderer(
 
 void CubeRenderer::render()
 {
-	//float angle = glfwGetTime();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
 
+	//float angle = glfwGetTime();
 	if (gui_params->cube_renderer_params.update_cube_vertices)
 	{
 		gui_params->cube_renderer_params.update_cube_vertices = false;
@@ -192,6 +192,7 @@ void CubeRenderer::render()
 		glBufferData(GL_ARRAY_BUFFER, sizeof(cube), &cube, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
 
