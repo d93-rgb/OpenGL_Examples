@@ -10,3 +10,6 @@
 [submodule "OpenGL_Examples/ext/glm"]
 	path = OpenGL_Examples/ext/glm
 	url = https://github.com/g-truc/glm
+[submodule "OpenGL_Examples/ext/imgui"]
+	path = OpenGL_Examples/ext/imgui
+	url = https://github.com/ocornut/imgui
