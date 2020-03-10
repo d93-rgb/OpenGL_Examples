@@ -10,9 +10,6 @@ GUIParameter::GUIParameter()
 
 }
 
-GUIParameter::~GUIParameter()
-{
+GUIParameter::~GUIParameter() = default;
 
-}
-
-} // namespace ogl_examples#pragma once
+} // namespace ogl_examples

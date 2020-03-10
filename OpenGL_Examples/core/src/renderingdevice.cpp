@@ -1,11 +1,13 @@
 #include "renderingdevice.h"
+#include "windowmanager.h"
+#include "renderingmanager.h"
 #include "renderingparameter.h"
 #include "eventhandler.h"
 
 namespace ogl_examples
 {
 
-RenderingDevice::RenderingDevice() :
+RenderingDevice::RenderingDevice(const std::shared_ptr<GUIParameter>& gui_params) :
 	rm(new RenderingManager())
 {
 	GLuint screen_width = 800;
@@ -14,18 +16,14 @@ RenderingDevice::RenderingDevice() :
 	wm.reset(new WindowManager(screen_width, screen_height));
 
 	rm->renderers.push_back(std::make_shared<CubeRenderer>(
-		std::make_unique<CubeRendererEventHandler>(),
+		gui_params,
+		std::make_unique<CubeRendererEventHandler>(gui_params),
 		std::make_shared<CubeRendererParameter>(wm.get())));
 		
-	dynamic_cast<CubeRendererEventHandler*>(rm->renderers.back()->eh.get())->
-		set_renderer(dynamic_cast<CubeRenderer*>(rm->renderers.back().get()));
-
 	rm->renderers.push_back(std::make_shared<BlueTriangleRenderer>(
-		std::make_unique<TriangleRendererEventHandler>(),
+		gui_params,
+		std::make_unique<TriangleRendererEventHandler>(gui_params),
 		std::make_shared<TriangleRendererParameter>(wm.get())));
-
-	dynamic_cast<TriangleRendererEventHandler*>(rm->renderers.back()->eh.get())->
-		set_renderer(dynamic_cast<BlueTriangleRenderer*>(rm->renderers.back().get()));
 
 	rm->change_renderer(rm->renderers.front());
 	

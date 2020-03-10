@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "renderingparameter.h"
 #include "eventhandler.h"
+#include "guiparameter.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -12,7 +13,10 @@
 namespace ogl_examples
 {
 
-Renderer::Renderer(std::unique_ptr<EventHandler> eh) :
+Renderer::Renderer(
+	std::shared_ptr<GUIParameter> gui_params,
+	std::unique_ptr<EventHandler> eh) :
+	gui_params(std::move(gui_params)),
 	eh(std::move(eh))
 {
 
@@ -36,9 +40,11 @@ inline void Renderer::create_uniform(int location, const T* val, GLsizei n)
 	uniforms.push_back(Uniform(location, val, n));
 }
 
-TriangleRenderer::TriangleRenderer(std::unique_ptr<EventHandler> eh,
+TriangleRenderer::TriangleRenderer(
+	std::shared_ptr<GUIParameter> gui_params,
+	std::unique_ptr<EventHandler> eh,
 	const std::shared_ptr<TriangleRendererParameter>& render_params) :
-	Renderer(std::move(eh))
+	Renderer(std::move(gui_params), std::move(eh))
 {
 	//std::string file_path = std::string(__FILE__);
 	//file_path = file_path.substr(0, file_path.find_last_of("\\/"));
@@ -66,9 +72,11 @@ void TriangleRenderer::clean()
 	glDeleteVertexArrays(1, &VAO);
 }
 
-BlueTriangleRenderer::BlueTriangleRenderer(std::unique_ptr<EventHandler> eh,
+BlueTriangleRenderer::BlueTriangleRenderer(
+	std::shared_ptr<GUIParameter> gui_params,
+	std::unique_ptr<EventHandler> eh,
 	const std::shared_ptr<TriangleRendererParameter>& render_params) :
-	Renderer(std::move(eh))
+	Renderer(std::move(gui_params), std::move(eh))
 {
 	//std::string file_path = std::string(__FILE__);
 	//file_path = file_path.substr(0, file_path.find_last_of("\\/"));
@@ -96,12 +104,12 @@ void BlueTriangleRenderer::clean()
 	glDeleteVertexArrays(1, &VAO);
 }
 
-CubeRenderer::CubeRenderer(std::unique_ptr<EventHandler> eh,
-const std::shared_ptr<CubeRendererParameter>& render_params) :
-	Renderer(std::move(eh)),
-	render_params(render_params),
-	update_cube_vertices(false),
-	cube_rot_mat(1)
+CubeRenderer::CubeRenderer(
+	std::shared_ptr<GUIParameter> gui_params,
+	std::unique_ptr<EventHandler> eh,
+	const std::shared_ptr<CubeRendererParameter>& render_params) :
+	Renderer(std::move(gui_params), std::move(eh)),
+	render_params(render_params)
 {
 	std::string vertexPath = "../../../../OpenGL_Examples/Rendering-Cube/src/shaders/vertex_shader.glsl";
 	std::string fragPath = "../../../../OpenGL_Examples/Rendering-Cube/src/shaders/fragment_shader.glsl";
@@ -111,7 +119,7 @@ const std::shared_ptr<CubeRendererParameter>& render_params) :
 	// TODO: no shape base class done yet, this is a replacement for objToWorld matrix,
 	//		 moving the cube once at initialization and not during the rendering loop
 	for (int i = 0; i < 8; ++i) {
-		cube.vertices[i] = 
+		cube.vertices[i] =
 			glm::rotate(glm::mat4(1), glm::radians(45.0f), glm::vec3(0, -1, 0)) *
 			glm::rotate(glm::mat4(1), glm::radians(30.0f), glm::vec3(1, 0, 0)) *
 			glm::vec4(cube.vertices[i], 1);
@@ -172,11 +180,12 @@ void CubeRenderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
 
-	if (update_cube_vertices)
+	if (gui_params->cube_renderer_params.update_cube_vertices)
 	{
-		update_cube_vertices = false;
+		gui_params->cube_renderer_params.update_cube_vertices = false;
 		for (int i = 0; i < 8; ++i) {
-			cube.vertices[i] = cube_rot_mat * glm::vec4(cube.vertices[i], 1);
+			cube.vertices[i] = gui_params->cube_renderer_params.cube_rot_mat 
+				* glm::vec4(cube.vertices[i], 1);
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);

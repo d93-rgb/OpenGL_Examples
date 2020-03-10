@@ -1,7 +1,5 @@
 #pragma once
 #include "opengl_examples.h"
-#include "renderingmanager.h"
-#include "windowmanager.h"
 
 namespace ogl_examples
 {
@@ -9,7 +7,7 @@ namespace ogl_examples
 class RenderingDevice
 {
 public:
-	RenderingDevice();
+	RenderingDevice(const std::shared_ptr<GUIParameter>& gui_params);
 	~RenderingDevice();
 
 	void change_renderer(const std::shared_ptr<Renderer> new_renderer);

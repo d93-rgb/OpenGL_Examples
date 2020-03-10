@@ -96,8 +96,8 @@ void WindowManager::run()
 	glfwShowWindow(window);
 	while (!glfwWindowShouldClose(window)) {
 		//glfwPollEvents(); // high CPU usage
-		glfwWaitEventsTimeout(0.01); // medium CPU usage
-		//glfwWaitEvents(); // almost no CPU usage
+		//glfwWaitEventsTimeout(0.01); // medium CPU usage
+		glfwWaitEvents(); // almost no CPU usage
 
 		rm->run();
 

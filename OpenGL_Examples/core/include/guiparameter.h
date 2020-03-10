@@ -13,6 +13,12 @@ public:
 
 	class CubeRendererParams
 	{
+	public:
+		CubeRendererParams() :
+			update_cube_vertices(false),
+			cube_rot_mat(1)
+		{}
+	private:
 		friend class CubeRendererEventHandler;
 		friend class CubeRenderer;
 

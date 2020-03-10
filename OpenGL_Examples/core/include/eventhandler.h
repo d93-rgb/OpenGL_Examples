@@ -18,7 +18,7 @@ public:
 
 
 protected:
-	std::shared_ptr<GUIParameter> gui_params
+	std::shared_ptr<GUIParameter> gui_params;
 };
 
 class TriangleRendererEventHandler : public EventHandler

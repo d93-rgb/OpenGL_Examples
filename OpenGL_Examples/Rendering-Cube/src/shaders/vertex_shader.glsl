@@ -12,5 +12,5 @@ out vec3 color;
 void main()
 {
 	color = cube_color;
-    gl_Position = worldToRaster * rotationMat * objToWorld * vec4(cube_pos, 1.0);
+    gl_Position = worldToRaster * objToWorld * vec4(cube_pos, 1.0);
 }

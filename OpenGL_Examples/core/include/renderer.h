@@ -100,7 +100,8 @@ protected:
 class TriangleRenderer : public Renderer
 {
 public:
-	TriangleRenderer(std::shared_ptr<GUIParameter> gui_params, 
+	TriangleRenderer(
+		std::shared_ptr<GUIParameter> gui_params, 
 		std::unique_ptr<EventHandler> eh,
 		const std::shared_ptr<TriangleRendererParameter>& render_params);
 
@@ -120,8 +121,8 @@ public:
 		std::unique_ptr<EventHandler> eh,
 		const std::shared_ptr<TriangleRendererParameter>& render_params);
 
-	void render();
-    void clean();
+	void render() override;
+    void clean() override;
 
 private:
 	unsigned int VAO;
@@ -139,8 +140,8 @@ public:
 		std::unique_ptr<EventHandler> eh, 
 		const std::shared_ptr<CubeRendererParameter>& render_params);
 
-    void render();
-    void clean();
+    void render() override;
+    void clean() override;
 
 private:
     unsigned int VAO;

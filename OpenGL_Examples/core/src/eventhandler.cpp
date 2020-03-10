@@ -12,13 +12,13 @@
 namespace ogl_examples
 {
 EventHandler::EventHandler(std::shared_ptr<GUIParameter> gui_params) :
-	gui_params(gui_params)
+	gui_params(std::move(gui_params))
 {
 
 }
 
 TriangleRendererEventHandler::TriangleRendererEventHandler(std::shared_ptr<GUIParameter> gui_params) :
-	EventHandler(gui_params)
+	EventHandler(std::move(gui_params))
 {
 
 }
@@ -44,7 +44,7 @@ void TriangleRendererEventHandler::handle_key(GLFWwindow* window, int key, int s
 }
 
 CubeRendererEventHandler::CubeRendererEventHandler(std::shared_ptr<GUIParameter> gui_params) :
-	EventHandler(gui_params),
+	EventHandler(std::move(gui_params)),
 	mouse_button_pressed(false),
 	old_x_pos(0),
 	old_y_pos(0),
