@@ -6,12 +6,19 @@
 
 #include "eventhandler.h"
 #include "renderer.h"
+#include "guiparameter.h"
 
 
 namespace ogl_examples
 {
+EventHandler::EventHandler(std::shared_ptr<GUIParameter> gui_params) :
+	gui_params(gui_params)
+{
 
-TriangleRendererEventHandler::TriangleRendererEventHandler()
+}
+
+TriangleRendererEventHandler::TriangleRendererEventHandler(std::shared_ptr<GUIParameter> gui_params) :
+	EventHandler(gui_params)
 {
 
 }
@@ -36,7 +43,8 @@ void TriangleRendererEventHandler::handle_key(GLFWwindow* window, int key, int s
 
 }
 
-CubeRendererEventHandler::CubeRendererEventHandler() :
+CubeRendererEventHandler::CubeRendererEventHandler(std::shared_ptr<GUIParameter> gui_params) :
+	EventHandler(gui_params),
 	mouse_button_pressed(false),
 	old_x_pos(0),
 	old_y_pos(0),
@@ -46,11 +54,6 @@ CubeRendererEventHandler::CubeRendererEventHandler() :
 	y_pos_diff(0)
 {
 
-}
-
-void CubeRendererEventHandler::set_renderer(CubeRenderer* cr)
-{
-	this->cr = cr;
 }
 
 void CubeRendererEventHandler::handle_mouse(GLFWwindow* window, double x_pos, double y_pos)
@@ -71,12 +74,12 @@ void CubeRendererEventHandler::handle_mouse(GLFWwindow* window, double x_pos, do
 		VLOG(4) << "rotation axis = (" << y_pos_diff << ", "
 			<< x_pos_diff << ")";
 
-		cr->update_cube_vertices = true;
+		gui_params->cube_renderer_params.update_cube_vertices = true;
 		old_x_pos = x_pos;
 		old_y_pos = y_pos;
 
 		// double negation of y_pos_diff, because of y-axis inversion  
-		cr->cube_rot_mat = glm::rotate(glm::mat4(1), 0.03f,
+		gui_params->cube_renderer_params.cube_rot_mat = glm::rotate(glm::mat4(1), 0.03f,
 			glm::vec3(y_pos_diff, x_pos_diff, 0.0));
 	}
 }

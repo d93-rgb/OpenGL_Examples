@@ -18,13 +18,13 @@ public:
 
 
 protected:
-	GUIParameter* gui_params;
+	std::shared_ptr<GUIParameter> gui_params
 };
 
 class TriangleRendererEventHandler : public EventHandler
 {
 public:
-	TriangleRendererEventHandler();
+	TriangleRendererEventHandler(std::shared_ptr<GUIParameter> gui_params);
 
 	void handle_mouse(GLFWwindow* window, double x_pos, double y_pos);
 
@@ -40,7 +40,7 @@ protected:
 class CubeRendererEventHandler : public EventHandler
 {
 public:
-	CubeRendererEventHandler();
+	CubeRendererEventHandler(std::shared_ptr<GUIParameter> gui_params);
 
 	void handle_mouse(GLFWwindow* window, double x_pos, double y_pos);
 

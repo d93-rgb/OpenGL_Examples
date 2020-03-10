@@ -10,9 +10,10 @@ public:
 	GUIParameter();
 
 	~GUIParameter();
-protected:
+
 	class CubeRendererParams
 	{
+		friend class CubeRendererEventHandler;
 		friend class CubeRenderer;
 
 		bool update_cube_vertices;
