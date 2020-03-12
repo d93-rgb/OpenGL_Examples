@@ -17,14 +17,17 @@ public:
 	public:
 		CubeRendererParams() :
 			update_cube_vertices(false),
-			cube_rot_mat(1)
+			cube_rot_mat(1),
+			translation_vec(0)
 		{}
 	private:
+		friend class WindowManager;
 		friend class CubeRendererEventHandler;
 		friend class CubeRenderer;
 
 		bool update_cube_vertices;
 		glm::mat4 cube_rot_mat;
+		glm::vec2 translation_vec;
 	} cube_renderer_params;
 
 };

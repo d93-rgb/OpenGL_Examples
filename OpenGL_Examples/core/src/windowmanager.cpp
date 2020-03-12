@@ -2,6 +2,7 @@
 #include "windowmanager.h"
 #include "graphicscontext.h"
 #include "eventhandler.h"
+#include "guiparameter.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -29,7 +30,7 @@ void WindowManager::framebuffer_size_callback(GLFWwindow* window, int width, int
 void WindowManager::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	WindowManager* w = static_cast<WindowManager*>(glfwGetWindowUserPointer(window));
-	if(!w->io->WantCaptureMouse)
+	if (!w->io->WantCaptureMouse)
 		w->rm->get_current_renderer()->eh->handle_mouse_button(window, button, action, mods);
 }
 
@@ -62,6 +63,7 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	//glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwSwapInterval(1); // vsync
 
 	window = glfwCreateWindow(
 		screen_width,
@@ -118,6 +120,12 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 
 void WindowManager::run()
 {
+	static float rotation = 0.0;
+	static float translation[] = { 0.0, 0.0 };
+	static float color[4] = { 1.0f,1.0f,1.0f,1.0f };
+
+	float* t_floats[2] = { &rm->get_current_renderer()->gui_params->cube_renderer_params.translation_vec.x,
+							&rm->get_current_renderer()->gui_params->cube_renderer_params.translation_vec.y };
 	glfwShowWindow(window);
 	while (!glfwWindowShouldClose(window)) {
 		//glfwPollEvents(); // high CPU usage
@@ -132,11 +140,8 @@ void WindowManager::run()
 
 		// render your GUI
 		ImGui::Begin("Cube position/olor");
-		static float rotation = 0.0;
 		ImGui::SliderFloat("rotation", &rotation, 0, 2 * 3.1415);
-		static float translation[] = { 0.0, 0.0 };
-		ImGui::SliderFloat2("position", translation, -1.0, 1.0);
-		static float color[4] = { 1.0f,1.0f,1.0f,1.0f };
+		ImGui::SliderFloat2("position", *t_floats, -1.0, 1.0);
 		// color picker
 		ImGui::ColorEdit3("color", color);
 		ImGui::End();
@@ -144,6 +149,7 @@ void WindowManager::run()
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+		// TODO: limit calls to SwapBuffers for better gpu usage
 		glfwSwapBuffers(window);
 	}
 

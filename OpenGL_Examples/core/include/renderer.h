@@ -1,4 +1,6 @@
 #pragma once
+#include <unordered_map>
+
 #include "GL/gl3w.h"
 
 #include "opengl_examples.h"
@@ -10,6 +12,7 @@ class Renderer
 {
 public:
 	std::unique_ptr<EventHandler> eh;
+	std::shared_ptr<GUIParameter> gui_params;
 
 	Renderer(std::shared_ptr<GUIParameter> gui_params, std::unique_ptr<EventHandler> eh);
 	~Renderer();
@@ -92,9 +95,8 @@ protected:
 
     std::unique_ptr<ShaderCompiler> sc;
     std::unique_ptr<Camera> cam;
-    std::vector<Uniform> uniforms;
+    std::unordered_map<std::string, Uniform> uniforms;
 
-	std::shared_ptr<GUIParameter> gui_params;
 };
 
 class TriangleRenderer : public Renderer

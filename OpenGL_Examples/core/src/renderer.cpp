@@ -160,16 +160,20 @@ CubeRenderer::CubeRenderer(
 		100));
 
 	auto m = glm::mat4(1);
+	auto uniform_name = "worldToRaster";
+
 	sc->use_program();
-	uniforms.push_back(Uniform(glGetUniformLocation(sc->get_program_id(), "worldToRaster")));
+	uniforms[uniform_name] = Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name));
 	//uniforms.back().set_uniform(cam->worldToRaster, 1);
-	uniforms.back().set_uniform(cam->worldToRaster, 1);
+	uniforms.find(uniform_name)->second.set_uniform(cam->worldToRaster, 1);
 
-	uniforms.push_back(Uniform(glGetUniformLocation(sc->get_program_id(), "objToWorld")));
-	uniforms.back().set_uniform(m, 1);
+	uniform_name = "objToWorld";
+	uniforms[uniform_name] = Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name));
+	uniforms.find(uniform_name)->second.set_uniform(m, 1);
 
-	uniforms.push_back(Uniform(glGetUniformLocation(sc->get_program_id(), "rotationMat")));
-	uniforms.back().set_uniform(m, 1);
+	uniform_name = "trans_vec";
+	uniforms[uniform_name] = Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name));
+	uniforms.find(uniform_name)->second.set_uniform(glm::vec4(1), 1);
 
 	glUseProgram(0);
 }
@@ -192,6 +196,9 @@ void CubeRenderer::render()
 		glBufferData(GL_ARRAY_BUFFER, sizeof(cube), &cube, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+
+	uniforms.find("trans_vec")->second.set_uniform(
+		(glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0)), (size_t)1);
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
