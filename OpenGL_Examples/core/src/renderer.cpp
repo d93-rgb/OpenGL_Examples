@@ -167,13 +167,17 @@ CubeRenderer::CubeRenderer(
 	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
 	uniforms.find(uniform_name)->second.set_uniform(cam->worldToRaster, 1);
 
-	uniform_name = "objToWorld";
+	uniform_name = "objToWorld_rot_x";
+	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
+	uniforms.find(uniform_name)->second.set_uniform(m, 1);
+
+	uniform_name = "objToWorld_rot_y";
 	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
 	uniforms.find(uniform_name)->second.set_uniform(m, 1);
 
 	uniform_name = "trans_vec";
 	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
-	uniforms.find(uniform_name)->second.set_uniform(glm::vec4(1), 1);
+	uniforms.find(uniform_name)->second.set_uniform(glm::vec4(0), 1);
 
 	glUseProgram(0);
 }
@@ -183,12 +187,11 @@ void CubeRenderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
 
-	//float angle = glfwGetTime();
 	if (gui_params->cube_renderer_params.update_cube_vertices)
 	{
 		gui_params->cube_renderer_params.update_cube_vertices = false;
 		for (int i = 0; i < 8; ++i) {
-			cube.vertices[i] = gui_params->cube_renderer_params.cube_rot_mat 
+			cube.vertices[i] = gui_params->cube_renderer_params.cube_rot_mat
 				* glm::vec4(cube.vertices[i], 1);
 		}
 
@@ -197,8 +200,29 @@ void CubeRenderer::render()
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	uniforms.find("trans_vec")->second.set_uniform(
-		(glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0)), (size_t)1);
+	if (gui_params->cube_renderer_params.trans_val_changed)
+	{
+		uniforms.find("trans_vec")->second.set_uniform(
+			(glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0)), (size_t)1);
+	}
+
+	if (gui_params->cube_renderer_params.rot_x_val_changed)
+	{
+		uniforms.find("objToWorld_rot_x")->second.set_uniform(
+			glm::rotate(glm::mat4(1),
+				gui_params->cube_renderer_params.rotation_xy.x,
+				glm::vec3(1, 0, 0)),
+			1);
+	}
+
+	if (gui_params->cube_renderer_params.rot_y_val_changed)
+	{
+		uniforms.find("objToWorld_rot_y")->second.set_uniform(
+			glm::rotate(glm::mat4(1),
+				gui_params->cube_renderer_params.rotation_xy.y,
+				glm::vec3(0, 1, 0)),
+			1);
+	}
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }

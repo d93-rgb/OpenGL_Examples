@@ -120,12 +120,14 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 
 void WindowManager::run()
 {
-	static float rotation = 0.0;
 	static float translation[] = { 0.0, 0.0 };
 	static float color[4] = { 1.0f,1.0f,1.0f,1.0f };
 
-	float* t_floats[2] = { &rm->get_current_renderer()->gui_params->cube_renderer_params.translation_vec.x,
-							&rm->get_current_renderer()->gui_params->cube_renderer_params.translation_vec.y };
+	auto& gui_params = rm->get_current_renderer()->gui_params;
+	float* t_floats = static_cast<float*>(&gui_params->cube_renderer_params.translation_vec.x);
+	float* xy_rot_floats = static_cast<float*>(&gui_params->cube_renderer_params.rotation_xy.x);
+
+
 	glfwShowWindow(window);
 	while (!glfwWindowShouldClose(window)) {
 		//glfwPollEvents(); // high CPU usage
@@ -139,9 +141,13 @@ void WindowManager::run()
 		rm->run();
 
 		// render your GUI
-		ImGui::Begin("Cube position/olor");
-		ImGui::SliderFloat("rotation", &rotation, 0, 2 * 3.1415);
-		ImGui::SliderFloat2("position", *t_floats, -1.0, 1.0);
+		ImGui::Begin("Cube position/color");
+		gui_params->cube_renderer_params.rot_x_val_changed  = 
+			ImGui::SliderFloat("x-rotation", &xy_rot_floats[0], 0, 2 * 3.1415);
+		gui_params->cube_renderer_params.rot_y_val_changed = 
+			ImGui::SliderFloat("y-rotation", &xy_rot_floats[1], 0, 2 * 3.1415);
+		gui_params->cube_renderer_params.trans_val_changed = 
+			ImGui::SliderFloat2("position", t_floats, -1.0, 1.0);
 		// color picker
 		ImGui::ColorEdit3("color", color);
 		ImGui::End();
