@@ -160,19 +160,19 @@ CubeRenderer::CubeRenderer(
 		100));
 
 	auto m = glm::mat4(1);
-	auto uniform_name = "worldToRaster";
 
 	sc->use_program();
-	uniforms[uniform_name] = Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name));
-	//uniforms.back().set_uniform(cam->worldToRaster, 1);
+
+	auto uniform_name = "worldToRaster";
+	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
 	uniforms.find(uniform_name)->second.set_uniform(cam->worldToRaster, 1);
 
 	uniform_name = "objToWorld";
-	uniforms[uniform_name] = Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name));
+	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
 	uniforms.find(uniform_name)->second.set_uniform(m, 1);
 
 	uniform_name = "trans_vec";
-	uniforms[uniform_name] = Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name));
+	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
 	uniforms.find(uniform_name)->second.set_uniform(glm::vec4(1), 1);
 
 	glUseProgram(0);
