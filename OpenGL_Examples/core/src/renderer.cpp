@@ -8,6 +8,7 @@
 #include "guiparameter.h"
 
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/rotate_vector.hpp"
 
 
 namespace ogl_examples
@@ -187,44 +188,79 @@ void CubeRenderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
 
-	if (gui_params->cube_renderer_params.update_cube_vertices)
-	{
-		gui_params->cube_renderer_params.update_cube_vertices = false;
-		for (int i = 0; i < 8; ++i) {
-			cube.vertices[i] = gui_params->cube_renderer_params.cube_rot_mat
-				* glm::vec4(cube.vertices[i], 1);
-		}
-
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(cube), &cube, GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
-
 	if (gui_params->cube_renderer_params.trans_val_changed)
 	{
 		uniforms.find("trans_vec")->second.set_uniform(
 			(glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0)), (size_t)1);
 	}
 
+	if (update_vertices())
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(cube), &cube, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+}
+
+bool CubeRenderer::update_vertices()
+{
+	static float old_rot_x_val = 0;
+	static float old_rot_y_val = 0;
+	static float diff_val;
+
 	if (gui_params->cube_renderer_params.rot_x_val_changed)
 	{
-		uniforms.find("objToWorld_rot_x")->second.set_uniform(
+		/*uniforms.find("objToWorld_rot_x")->second.set_uniform(
 			glm::rotate(glm::mat4(1),
 				gui_params->cube_renderer_params.rotation_xy.x,
 				glm::vec3(1, 0, 0)),
-			1);
+			1);*/
+
+		diff_val = gui_params->cube_renderer_params.rotation_xy.x - old_rot_x_val;
+		old_rot_x_val = gui_params->cube_renderer_params.rotation_xy.x;
+
+		for (int i = 0; i < 8; ++i) 
+		{
+			cube.vertices[i] = glm::rotateX(cube.vertices[i], diff_val);
+		}
 	}
 
 	if (gui_params->cube_renderer_params.rot_y_val_changed)
 	{
-		uniforms.find("objToWorld_rot_y")->second.set_uniform(
+		/*uniforms.find("objToWorld_rot_y")->second.set_uniform(
 			glm::rotate(glm::mat4(1),
 				gui_params->cube_renderer_params.rotation_xy.y,
 				glm::vec3(0, 1, 0)),
-			1);
+			1);*/
+		diff_val = gui_params->cube_renderer_params.rotation_xy.y - old_rot_y_val;
+		old_rot_y_val = gui_params->cube_renderer_params.rotation_xy.y;
+
+		for (int i = 0; i < 8; ++i) 
+		{
+			cube.vertices[i] = glm::rotateY(cube.vertices[i], diff_val);
+		}
 	}
 
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	return rotate_vertices_mouse() ||
+		gui_params->cube_renderer_params.rot_x_val_changed ||
+		gui_params->cube_renderer_params.rot_y_val_changed;
+}
+
+bool CubeRenderer::rotate_vertices_mouse()
+{
+	if (gui_params->cube_renderer_params.update_cube_vertices)
+	{
+		gui_params->cube_renderer_params.update_cube_vertices = false;
+		for (int i = 0; i < 8; ++i)
+		{
+			cube.vertices[i] = gui_params->cube_renderer_params.cube_rot_mat
+				* glm::vec4(cube.vertices[i], 1);
+		}
+		return true;
+	}
+	return false;
 }
 
 void CubeRenderer::clean()

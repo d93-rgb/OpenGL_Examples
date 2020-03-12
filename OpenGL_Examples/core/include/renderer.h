@@ -143,6 +143,8 @@ public:
 		const std::shared_ptr<CubeRendererParameter>& render_params);
 
     void render() override;
+	bool update_vertices();
+	bool rotate_vertices_mouse();
     void clean() override;
 
 private:
