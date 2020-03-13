@@ -36,9 +36,9 @@ void Renderer::recompile()
 }
 
 template<typename T>
-inline void Renderer::create_uniform(int location, const T* val, GLsizei n)
+inline void Renderer::create_uniform(const std::string& uniform_name, int location, const T* val, GLsizei n)
 {
-	uniforms.push_back(Uniform(location, val, n));
+	uniforms.emplace(uniform_name, Uniform(uniform_name, location, val, n));
 }
 
 TriangleRenderer::TriangleRenderer(
@@ -161,24 +161,33 @@ CubeRenderer::CubeRenderer(
 		100));
 
 	auto m = glm::mat4(1);
+	auto t_vec = glm::vec4(0);
 
 	sc->use_program();
 
 	auto uniform_name = "worldToRaster";
-	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
-	uniforms.find(uniform_name)->second.set_uniform(cam->worldToRaster, 1);
+	create_uniform(uniform_name,
+			glGetUniformLocation(sc->get_program_id(), uniform_name),
+			&cam->worldToRaster,
+			1);
 
 	uniform_name = "objToWorld_rot_x";
-	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
-	uniforms.find(uniform_name)->second.set_uniform(m, 1);
+	create_uniform(uniform_name,
+		glGetUniformLocation(sc->get_program_id(), uniform_name),
+		&m,
+		1);
 
 	uniform_name = "objToWorld_rot_y";
-	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
-	uniforms.find(uniform_name)->second.set_uniform(m, 1);
+	create_uniform(uniform_name,
+		glGetUniformLocation(sc->get_program_id(), uniform_name),
+		&m,
+		1);
 
 	uniform_name = "trans_vec";
-	uniforms.emplace(uniform_name, Uniform(glGetUniformLocation(sc->get_program_id(), uniform_name)));
-	uniforms.find(uniform_name)->second.set_uniform(glm::vec4(0), 1);
+	create_uniform(uniform_name,
+		glGetUniformLocation(sc->get_program_id(), uniform_name),
+		&t_vec,
+		1);
 
 	glUseProgram(0);
 }
@@ -191,7 +200,7 @@ void CubeRenderer::render()
 	if (gui_params->cube_renderer_params.trans_val_changed)
 	{
 		uniforms.find("trans_vec")->second.set_uniform(
-			(glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0)), (size_t)1);
+			(&glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0)), (size_t)1);
 	}
 
 	if (update_vertices())
@@ -219,11 +228,12 @@ bool CubeRenderer::update_vertices()
 				glm::vec3(1, 0, 0)),
 			1);*/
 
-		//diff_val = gui_params->cube_renderer_params.rotation_xy.x - old_rot_x_val;
-		//old_rot_x_val = gui_params->cube_renderer_params.rotation_xy.x;
+			//diff_val = gui_params->cube_renderer_params.rotation_xy.x - old_rot_x_val;
+			//old_rot_x_val = gui_params->cube_renderer_params.rotation_xy.x;
 
-		for (int i = 0; i < 8; ++i) 
+		for (int i = 0; i < 8; ++i)
 		{
+			// TODO: Change sign!
 			cube.vertices[i] = glm::rotateX(cube.vertices[i], angle_rad);
 		}
 	}
@@ -235,10 +245,10 @@ bool CubeRenderer::update_vertices()
 				gui_params->cube_renderer_params.rotation_xy.y,
 				glm::vec3(0, 1, 0)),
 			1);*/
-		//diff_val = gui_params->cube_renderer_params.rotation_xy.y - old_rot_y_val;
-		//old_rot_y_val = gui_params->cube_renderer_params.rotation_xy.y;
+			//diff_val = gui_params->cube_renderer_params.rotation_xy.y - old_rot_y_val;
+			//old_rot_y_val = gui_params->cube_renderer_params.rotation_xy.y;
 
-		for (int i = 0; i < 8; ++i) 
+		for (int i = 0; i < 8; ++i)
 		{
 			cube.vertices[i] = glm::rotateY(cube.vertices[i], angle_rad);
 		}
