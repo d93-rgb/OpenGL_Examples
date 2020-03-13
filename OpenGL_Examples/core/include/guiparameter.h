@@ -32,6 +32,7 @@ public:
 		glm::vec2 rotation_xy{ 0 };
 	} cube_renderer_params;
 
+	std::string current_renderer_name;
 };
 
 } // namespace ogl_examples#pragma once
