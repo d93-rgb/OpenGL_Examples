@@ -123,7 +123,7 @@ void WindowManager::run()
 	static float translation[] = { 0.0, 0.0 };
 	static float color[4] = { 1.0f,1.0f,1.0f,1.0f };
 
-	auto& gui_params = rm->get_current_renderer()->gui_params;
+	auto gui_params = rm->get_gui_params();
 	float* t_floats = static_cast<float*>(&gui_params->cube_renderer_params.translation_vec.x);
 	float* xy_rot_floats = static_cast<float*>(&gui_params->cube_renderer_params.rotation_xy.x);
 
@@ -143,14 +143,17 @@ void WindowManager::run()
 
 		// render your GUI
 		ImGui::Begin("Rotation / Position");
-		static int i = 0;
-		ImGui::Combo("test", &i, "a\0b\0c");
-		gui_params->cube_renderer_params.rot_x_val_changed =
-			ImGui::SliderFloat("x-rotation", &xy_rot_floats[0], 0, 2 * 3.1415);
-		gui_params->cube_renderer_params.rot_y_val_changed =
-			ImGui::SliderFloat("y-rotation", &xy_rot_floats[1], 0, 2 * 3.1415);
-		gui_params->cube_renderer_params.trans_val_changed =
-			ImGui::SliderFloat2("position", t_floats, -1.0, 1.0);
+		static int choice = 0;
+		ImGui::Combo("Scene", &choice, "RGB Cube\0RGB Triangle\0Tetrahedron");
+		if (choice == 0)
+		{
+			gui_params->cube_renderer_params.rot_x_val_changed =
+				ImGui::SliderFloat("x-rotation", &xy_rot_floats[0], 0, 2 * 3.1415);
+			gui_params->cube_renderer_params.rot_y_val_changed =
+				ImGui::SliderFloat("y-rotation", &xy_rot_floats[1], 0, 2 * 3.1415);
+			gui_params->cube_renderer_params.trans_val_changed =
+				ImGui::SliderFloat2("position", t_floats, -1.0, 1.0);
+		}
 		ImGui::End();
 
 		ImGui::Render();

@@ -6,17 +6,21 @@ namespace ogl_examples
 
 RenderingManager::RenderingManager()
 {
-
 }
 
-RenderingManager::RenderingManager(const std::shared_ptr<Renderer> renderer) :
+RenderingManager::RenderingManager(std::shared_ptr<Renderer> renderer) :
 	current_renderer(renderer)
 {
+}
 
+RenderingManager::RenderingManager(std::shared_ptr<GUIParameter> gui_params) :
+	gui_params(gui_params)
+{
 }
 
 void RenderingManager::run()
 {
+	// TODO: Change to example scenes
 	static bool i = true;
 	if (current_scene_flag != old_scene_flag)
 	{
@@ -51,6 +55,11 @@ void RenderingManager::clean()
 const Renderer* RenderingManager::get_current_renderer()
 {
 	return current_renderer.get();
+}
+
+GUIParameter* RenderingManager::get_gui_params()
+{
+	return gui_params.get();
 }
 
 } // namespace ogl_examples

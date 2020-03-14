@@ -8,7 +8,7 @@ namespace ogl_examples
 {
 
 RenderingDevice::RenderingDevice(const std::shared_ptr<GUIParameter>& gui_params) :
-	rm(new RenderingManager())
+	rm(new RenderingManager(gui_params))
 {
 	GLuint screen_width = 800;
 	GLuint screen_height = 600;
