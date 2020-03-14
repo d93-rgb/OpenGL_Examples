@@ -216,9 +216,9 @@ void CubeRenderer::render()
 bool CubeRenderer::update_vertices()
 {
 	static constexpr float angle_rad = 0.03f;
-	/*static float old_rot_x_val = 0;
+	static float old_rot_x_val = 0;
 	static float old_rot_y_val = 0;
-	static float diff_val;*/
+	//static float diff_val;
 
 	if (gui_params->cube_renderer_params.rot_x_val_changed)
 	{
@@ -229,13 +229,13 @@ bool CubeRenderer::update_vertices()
 			1);*/
 
 			//diff_val = gui_params->cube_renderer_params.rotation_xy.x - old_rot_x_val;
-			//old_rot_x_val = gui_params->cube_renderer_params.rotation_xy.x;
 
 		for (int i = 0; i < 8; ++i)
 		{
-			// TODO: Change sign!
-			cube.vertices[i] = glm::rotateX(cube.vertices[i], angle_rad);
+			cube.vertices[i] = glm::rotateX(cube.vertices[i], 
+				(old_rot_x_val < gui_params->cube_renderer_params.rotation_xy.x ? 1 : -1) * angle_rad);
 		}
+		old_rot_x_val = gui_params->cube_renderer_params.rotation_xy.x;
 	}
 
 	if (gui_params->cube_renderer_params.rot_y_val_changed)
@@ -246,12 +246,14 @@ bool CubeRenderer::update_vertices()
 				glm::vec3(0, 1, 0)),
 			1);*/
 			//diff_val = gui_params->cube_renderer_params.rotation_xy.y - old_rot_y_val;
-			//old_rot_y_val = gui_params->cube_renderer_params.rotation_xy.y;
 
 		for (int i = 0; i < 8; ++i)
 		{
-			cube.vertices[i] = glm::rotateY(cube.vertices[i], angle_rad);
+			cube.vertices[i] = glm::rotateY(cube.vertices[i], 
+				(old_rot_y_val < gui_params->cube_renderer_params.rotation_xy.y ? 1 : -1) * angle_rad);
 		}
+		old_rot_y_val = gui_params->cube_renderer_params.rotation_xy.y;
+
 	}
 
 	return rotate_vertices_mouse() ||
