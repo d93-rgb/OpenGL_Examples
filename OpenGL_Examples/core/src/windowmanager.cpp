@@ -68,7 +68,7 @@ WindowManager::WindowManager(GLuint screen_width, GLuint screen_height) :
 	window = glfwCreateWindow(
 		screen_width,
 		screen_height,
-		"Rendering-Triangle Example",
+		"OpenGL Example",
 		nullptr,
 		nullptr);
 
@@ -129,27 +129,28 @@ void WindowManager::run()
 
 
 	glfwShowWindow(window);
+	int init = 0;
 	while (!glfwWindowShouldClose(window)) {
 		//glfwPollEvents(); // high CPU usage
 		//glfwWaitEventsTimeout(0.01); // medium CPU usage
-		glfwWaitEvents(); // almost no CPU usage
+		glfwWaitEvents(); // low CPU usage
+
+		rm->run();
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		rm->run();
-
 		// render your GUI
-		ImGui::Begin("Cube position/color");
-		gui_params->cube_renderer_params.rot_x_val_changed  = 
+		ImGui::Begin("Rotation / Position");
+		static int i = 0;
+		ImGui::Combo("test", &i, "a\0b\0c");
+		gui_params->cube_renderer_params.rot_x_val_changed =
 			ImGui::SliderFloat("x-rotation", &xy_rot_floats[0], 0, 2 * 3.1415);
-		gui_params->cube_renderer_params.rot_y_val_changed = 
+		gui_params->cube_renderer_params.rot_y_val_changed =
 			ImGui::SliderFloat("y-rotation", &xy_rot_floats[1], 0, 2 * 3.1415);
-		gui_params->cube_renderer_params.trans_val_changed = 
+		gui_params->cube_renderer_params.trans_val_changed =
 			ImGui::SliderFloat2("position", t_floats, -1.0, 1.0);
-		// color picker
-		ImGui::ColorEdit3("color", color);
 		ImGui::End();
 
 		ImGui::Render();

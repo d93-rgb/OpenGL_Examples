@@ -233,7 +233,7 @@ bool CubeRenderer::update_vertices()
 		for (int i = 0; i < 8; ++i)
 		{
 			cube.vertices[i] = glm::rotateX(cube.vertices[i], 
-				(old_rot_x_val < gui_params->cube_renderer_params.rotation_xy.x ? 1 : -1) * angle_rad);
+				gui_params->cube_renderer_params.rotation_xy.x - old_rot_x_val);
 		}
 		old_rot_x_val = gui_params->cube_renderer_params.rotation_xy.x;
 	}
@@ -250,7 +250,7 @@ bool CubeRenderer::update_vertices()
 		for (int i = 0; i < 8; ++i)
 		{
 			cube.vertices[i] = glm::rotateY(cube.vertices[i], 
-				(old_rot_y_val < gui_params->cube_renderer_params.rotation_xy.y ? 1 : -1) * angle_rad);
+				gui_params->cube_renderer_params.rotation_xy.y - old_rot_y_val);
 		}
 		old_rot_y_val = gui_params->cube_renderer_params.rotation_xy.y;
 
