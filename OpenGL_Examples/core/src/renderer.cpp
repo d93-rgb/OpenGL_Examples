@@ -36,7 +36,7 @@ void Renderer::recompile()
 }
 
 template<typename T>
-inline void Renderer::create_uniform(const std::string& uniform_name, int location, const T* val, GLsizei n)
+inline void Renderer::create_uniform(const std::string& uniform_name, int location, const T& val, GLsizei n)
 {
 	uniforms.emplace(uniform_name, Uniform(uniform_name, location, val, n));
 }
@@ -168,25 +168,25 @@ CubeRenderer::CubeRenderer(
 	auto uniform_name = "worldToRaster";
 	create_uniform(uniform_name,
 			glGetUniformLocation(sc->get_program_id(), uniform_name),
-			&cam->worldToRaster,
+			cam->worldToRaster,
 			1);
 
 	uniform_name = "objToWorld_rot_x";
 	create_uniform(uniform_name,
 		glGetUniformLocation(sc->get_program_id(), uniform_name),
-		&m,
+		m,
 		1);
 
 	uniform_name = "objToWorld_rot_y";
 	create_uniform(uniform_name,
 		glGetUniformLocation(sc->get_program_id(), uniform_name),
-		&m,
+		m,
 		1);
 
 	uniform_name = "trans_vec";
 	create_uniform(uniform_name,
 		glGetUniformLocation(sc->get_program_id(), uniform_name),
-		&t_vec,
+		t_vec,
 		1);
 
 	glUseProgram(0);
@@ -200,7 +200,7 @@ void CubeRenderer::render()
 	if (gui_params->cube_renderer_params.trans_val_changed)
 	{
 		uniforms.find("trans_vec")->second.set_uniform(
-			(&glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0)), (size_t)1);
+			(glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0)), (size_t)1);
 	}
 
 	if (update_vertices())
