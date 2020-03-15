@@ -127,6 +127,15 @@ void WindowManager::run()
 	float* t_floats = static_cast<float*>(&gui_params->cube_renderer_params.translation_vec.x);
 	float* xy_rot_floats = static_cast<float*>(&gui_params->cube_renderer_params.rotation_xy.x);
 
+	using namespace std::string_literals;
+	std::string scene_choices = ""s;
+	for (int i = 0; i < gui_params->scene_map.size(); ++i)
+	{
+		//for (auto& c : gui_params->scene_map.find(i)->second)
+		{
+			scene_choices += gui_params->scene_map.find(i)->second + "\0"s;
+		}
+	}
 
 	glfwShowWindow(window);
 	int init = 0;
@@ -142,17 +151,17 @@ void WindowManager::run()
 		ImGui::NewFrame();
 
 		// render your GUI
-		ImGui::Begin("Rotation / Position");
-		static int choice = 0;
-		ImGui::Combo("Scene", &choice, "RGB Cube\0RGB Triangle\0Tetrahedron");
-		if (choice == 0)
+		ImGui::Begin("Scene choice & options");
+		gui_params->switch_renderer = ImGui::Combo("Scene", &gui_params->scene_choice, &scene_choices[0]);
+
+		if (gui_params->scene_choice == 0)
 		{
 			gui_params->cube_renderer_params.rot_x_val_changed =
 				ImGui::SliderFloat("x-rotation", &xy_rot_floats[0], 0, 2 * 3.1415);
 			gui_params->cube_renderer_params.rot_y_val_changed =
 				ImGui::SliderFloat("y-rotation", &xy_rot_floats[1], 0, 2 * 3.1415);
 			gui_params->cube_renderer_params.trans_val_changed =
-				ImGui::SliderFloat2("position", t_floats, -1.0, 1.0);
+				ImGui::SliderFloat2("translation", t_floats, -1.0, 1.0);
 		}
 		ImGui::End();
 

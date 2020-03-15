@@ -73,7 +73,7 @@ void TriangleRenderer::clean()
 	glDeleteVertexArrays(1, &VAO);
 }
 
-BlueTriangleRenderer::BlueTriangleRenderer(
+SDFRenderer::SDFRenderer(
 	std::shared_ptr<GUIParameter> gui_params,
 	std::unique_ptr<EventHandler> eh,
 	const std::shared_ptr<TriangleRendererParameter>& render_params) :
@@ -92,7 +92,7 @@ BlueTriangleRenderer::BlueTriangleRenderer(
 	glBindVertexArray(0);
 }
 
-void BlueTriangleRenderer::render()
+void SDFRenderer::render()
 {
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -100,7 +100,7 @@ void BlueTriangleRenderer::render()
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
 }
 
-void BlueTriangleRenderer::clean()
+void SDFRenderer::clean()
 {
 	glDeleteVertexArrays(1, &VAO);
 }

@@ -1,5 +1,6 @@
 #include "renderingmanager.h"
 #include "graphicscontext.h"
+#include "guiparameter.h"
 
 namespace ogl_examples
 {
@@ -20,13 +21,10 @@ RenderingManager::RenderingManager(std::shared_ptr<GUIParameter> gui_params) :
 
 void RenderingManager::run()
 {
-	// TODO: Change to example scenes
-	static bool i = true;
-	if (current_scene_flag != old_scene_flag)
+
+	if (gui_params->switch_renderer)
 	{
-		old_scene_flag = current_scene_flag;
-		assert(renderers.size() > 1);
-		(i = !i) ? current_renderer = renderers[0] : current_renderer = renderers[1];
+		current_renderer = renderers.find(gui_params->scene_choice)->second;
 	}
 
 	current_renderer->use_program();
@@ -48,7 +46,7 @@ void RenderingManager::clean()
 {
 	for (const auto& r : renderers)
 	{
-		r->clean();
+		r.second->clean();
 	}
 }
 

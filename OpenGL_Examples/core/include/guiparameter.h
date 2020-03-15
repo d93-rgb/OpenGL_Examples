@@ -32,7 +32,9 @@ public:
 		glm::vec2 rotation_xy{ 0 };
 	} cube_renderer_params;
 
-	std::string current_renderer_name;
+	bool switch_renderer = false;
+	int scene_choice = 0;
+	std::unordered_map<int, std::string> scene_map;
 };
 
 } // namespace ogl_examples#pragma once

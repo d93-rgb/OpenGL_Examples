@@ -8,7 +8,7 @@ namespace ogl_examples
 class RenderingManager
 {
 public:
-	std::vector<std::shared_ptr<Renderer>> renderers;
+	std::unordered_map<int, std::shared_ptr<Renderer>> renderers;
 
 	RenderingManager();
 

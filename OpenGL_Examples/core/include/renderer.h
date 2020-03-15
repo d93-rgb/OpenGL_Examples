@@ -123,10 +123,10 @@ private:
 	unsigned int VAO;
 };
 
-class BlueTriangleRenderer : public Renderer
+class SDFRenderer : public Renderer
 {
 public:
-	BlueTriangleRenderer(
+	SDFRenderer(
 		std::shared_ptr<GUIParameter> gui_params,
 		std::unique_ptr<EventHandler> eh,
 		const std::shared_ptr<TriangleRendererParameter>& render_params);
