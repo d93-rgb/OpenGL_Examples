@@ -3,6 +3,7 @@
 #include "renderingmanager.h"
 #include "renderingparameter.h"
 #include "eventhandler.h"
+#include "guiparameter.h"
 
 namespace ogl_examples
 {
@@ -10,10 +11,7 @@ namespace ogl_examples
 RenderingDevice::RenderingDevice(const std::shared_ptr<GUIParameter>& gui_params) :
 	rm(new RenderingManager(gui_params))
 {
-	GLuint screen_width = 800;
-	GLuint screen_height = 600;
-
-	wm.reset(new WindowManager(screen_width, screen_height));
+	wm.reset(new WindowManager(gui_params->screen_width, gui_params->screen_height));
 
 	int renderer_count = 0;
 	rm->renderers.emplace(renderer_count++, 
@@ -29,7 +27,7 @@ RenderingDevice::RenderingDevice(const std::shared_ptr<GUIParameter>& gui_params
 			std::make_shared<TriangleRendererParameter>(wm.get())));
 
 	rm->renderers.emplace(renderer_count++,
-		std::make_shared<BlueTriangleRenderer>(
+		std::make_shared<SDFRenderer>(
 		gui_params,
 		std::make_unique<TriangleRendererEventHandler>(gui_params),
 		std::make_shared<TriangleRendererParameter>(wm.get())));

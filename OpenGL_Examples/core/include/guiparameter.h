@@ -1,4 +1,6 @@
 #pragma once
+#include "GL/gl3w.h"
+
 #include "opengl_examples.h"
 #include "imgui.h"
 
@@ -12,11 +14,15 @@ public:
 
 	~GUIParameter();
 
+	GLuint screen_width = 800;
+	GLuint screen_height = 600;
+
 	class CubeRendererParams
 	{
 	public:
 		CubeRendererParams()
 		{}
+
 	private:
 		friend class WindowManager;
 		friend class CubeRendererEventHandler;

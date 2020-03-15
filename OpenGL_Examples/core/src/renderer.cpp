@@ -82,14 +82,22 @@ SDFRenderer::SDFRenderer(
 	//std::string file_path = std::string(__FILE__);
 	//file_path = file_path.substr(0, file_path.find_last_of("\\/"));
 
-	std::string vertexPath = "../../../../OpenGL_Examples/Rendering-Triangle/src/shaders/vertex_shader2.glsl";
-	std::string fragPath = "../../../../OpenGL_Examples/Rendering-Triangle/src/shaders/fragment_shader.glsl";
+	std::string vertexPath = "../../../../OpenGL_Examples/Rendering-SDF/src/shaders/vertex_shader.glsl";
+	std::string fragPath = "../../../../OpenGL_Examples/Rendering-SDF/src/shaders/fragment_shader.glsl";
 
 	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
 
+	sc->use_program();
+
+	auto uniform_name = "resolution";
+	create_uniform(uniform_name,
+		glGetUniformLocation(sc->get_program_id(), uniform_name),
+		glm::vec2(gui_params->screen_width, gui_params->screen_height),
+		1);
+	
+	glUseProgram(0);
+
 	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glBindVertexArray(0);
 }
 
 void SDFRenderer::render()
@@ -97,12 +105,11 @@ void SDFRenderer::render()
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 }
 
 void SDFRenderer::clean()
 {
-	glDeleteVertexArrays(1, &VAO);
 }
 
 CubeRenderer::CubeRenderer(
