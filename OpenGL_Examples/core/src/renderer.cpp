@@ -110,6 +110,7 @@ void SDFRenderer::render()
 
 void SDFRenderer::clean()
 {
+	glDeleteVertexArrays(1, &VAO);
 }
 
 CubeRenderer::CubeRenderer(
