@@ -161,7 +161,7 @@ CubeRenderer::CubeRenderer(
 			glm::vec3(0.0),
 			glm::vec3(0.0, 1.0, 0.0)),
 		glm::radians(45.0),
-		render_params->wm->screen_width / render_params->wm->screen_height,
+		static_cast<float>(this->gui_params->screen_width) / this->gui_params->screen_height,
 		0.1,
 		100));
 
@@ -342,10 +342,32 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 
 	sc->use_program();
 
-	auto uniform_name = "color";
+	float ar = static_cast<float>(this->gui_params->screen_width) / this->gui_params->screen_height;
+	cam.reset(new OrthographicCamera(
+		glm::lookAt(glm::vec3(0.0, 0.0, 5.0),
+			glm::vec3(0.0),
+			glm::vec3(0.0, 1.0, 0.0)),
+		-1.0,
+		1.0,
+		1.0 / ar,
+		-1.0 / ar,
+		0.1,
+		100));
+
+	auto color = glm::vec3(0.2, 1.0, 0.6);
+
+	sc->use_program();
+
+	auto uniform_name = "worldToRaster";
 	create_uniform(uniform_name,
 		glGetUniformLocation(sc->get_program_id(), uniform_name),
-		glm::vec3(0.7, 1.0, 0.5),
+		cam->worldToRaster,
+		1);
+
+	uniform_name = "color";
+	create_uniform(uniform_name,
+		glGetUniformLocation(sc->get_program_id(), uniform_name),
+		color,
 		1);
 
 	glUseProgram(0);
