@@ -32,6 +32,12 @@ RenderingDevice::RenderingDevice(const std::shared_ptr<GUIParameter>& gui_params
 		std::make_unique<TriangleRendererEventHandler>(gui_params),
 		std::make_shared<TriangleRendererParameter>(wm.get())));
 
+	rm->renderers.emplace(renderer_count++,
+		std::make_shared<FourierSeriesRenderer>(
+			gui_params,
+			std::make_unique<FourierSeriesRendererEventHandler>(gui_params),
+			std::make_shared<FourierSeriesRendererParameter>(wm.get())));
+
 	rm->change_renderer(rm->renderers.find(0)->second);
 	
 	wm->set_renderering_manager(rm);

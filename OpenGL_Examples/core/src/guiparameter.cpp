@@ -11,6 +11,7 @@ GUIParameter::GUIParameter()
 	scene_map.emplace(i++, "RGB Cube");
 	scene_map.emplace(i++, "RGB Triangle");
 	scene_map.emplace(i++, "Circle SDF");
+	scene_map.emplace(i++, "Fourier Series");
 }
 
 GUIParameter::~GUIParameter() = default;

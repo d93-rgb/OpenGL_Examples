@@ -206,8 +206,6 @@ class FourierSeriesRenderer : public Renderer
 public:
 	std::shared_ptr<FourierSeriesRendererParameter> render_params;
 
-	FourierSeriesRenderer(const std::shared_ptr<FourierSeriesRendererParameter>& render_params);
-
 	FourierSeriesRenderer(
 		std::shared_ptr<GUIParameter> gui_params,
 		std::unique_ptr<EventHandler> eh,
@@ -216,10 +214,38 @@ public:
 	void render() override;
 	void clean() override;
 
+	void create_ring(float radius, float thickness, int n);
+	
+	void create_line(float length, float width);
+	void create_arrow(float base_length, float height);
+	void create_vector();
+
 private:
+	struct Ring
+	{
+		std::vector<glm::vec2> vertices;
+
+		std::vector<int> indices;
+	};
+
+	struct Vector
+	{
+		std::vector<glm::vec2> line;
+		std::vector<glm::vec2> arrow;
+
+	};
+	
+	struct VectorRingPair
+	{
+		Vector v;
+		Ring r;
+	};
+
 	unsigned int VAO;
 	unsigned int VBO;
 	unsigned int EBO;
+
+	std::vector<VectorRingPair> vr_pairs;
 };
 
 } // namespace ogl_examples

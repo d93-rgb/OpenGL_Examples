@@ -33,4 +33,5 @@ public:
 	FourierSeriesRendererParameter(const WindowManager* wm);
 
 };
+
 } // namespace ogl_examples

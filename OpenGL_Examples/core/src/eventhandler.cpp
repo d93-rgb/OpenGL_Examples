@@ -111,4 +111,30 @@ void CubeRendererEventHandler::handle_key(GLFWwindow* window, int key, int scanc
 
 }
 
+FourierSeriesRendererEventHandler::FourierSeriesRendererEventHandler(std::shared_ptr<GUIParameter> gui_params) :
+	EventHandler(std::move(gui_params))
+{
+
+}
+
+void FourierSeriesRendererEventHandler::handle_mouse(GLFWwindow* window, double x_pos, double y_pos)
+{
+
+}
+
+void FourierSeriesRendererEventHandler::handle_mouse_button(GLFWwindow* window, int button, int action, int mods)
+{
+
+}
+
+void FourierSeriesRendererEventHandler::handle_framebuffer_size(GLFWwindow* window, int width, int height)
+{
+
+}
+
+void FourierSeriesRendererEventHandler::handle_key(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+
+}
+
 } // namespace ogl_examples

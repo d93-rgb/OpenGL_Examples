@@ -91,7 +91,7 @@ SDFRenderer::SDFRenderer(
 		glGetUniformLocation(sc->get_program_id(), uniform_name),
 		glm::vec2(gui_params->screen_width, gui_params->screen_height),
 		1);
-	
+
 	glUseProgram(0);
 
 	glGenVertexArrays(1, &VAO);
@@ -172,9 +172,9 @@ CubeRenderer::CubeRenderer(
 
 	auto uniform_name = "worldToRaster";
 	create_uniform(uniform_name,
-			glGetUniformLocation(sc->get_program_id(), uniform_name),
-			cam->worldToRaster,
-			1);
+		glGetUniformLocation(sc->get_program_id(), uniform_name),
+		cam->worldToRaster,
+		1);
 
 	uniform_name = "objToWorld_rot_x";
 	create_uniform(uniform_name,
@@ -237,7 +237,7 @@ bool CubeRenderer::update_vertices()
 
 		for (int i = 0; i < 8; ++i)
 		{
-			cube.vertices[i] = glm::rotateX(cube.vertices[i], 
+			cube.vertices[i] = glm::rotateX(cube.vertices[i],
 				gui_params->cube_renderer_params.rotation_xy.x - old_rot_x_val);
 		}
 		old_rot_x_val = gui_params->cube_renderer_params.rotation_xy.x;
@@ -254,7 +254,7 @@ bool CubeRenderer::update_vertices()
 
 		for (int i = 0; i < 8; ++i)
 		{
-			cube.vertices[i] = glm::rotateY(cube.vertices[i], 
+			cube.vertices[i] = glm::rotateY(cube.vertices[i],
 				gui_params->cube_renderer_params.rotation_xy.y - old_rot_y_val);
 		}
 		old_rot_y_val = gui_params->cube_renderer_params.rotation_xy.y;
@@ -288,6 +288,116 @@ void CubeRenderer::clean()
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
+}
+
+FourierSeriesRenderer::FourierSeriesRenderer(
+	std::shared_ptr<GUIParameter> gui_params,
+	std::unique_ptr<EventHandler> eh,
+	const std::shared_ptr<FourierSeriesRendererParameter>& render_params) :
+	Renderer(std::move(gui_params), std::move(eh)),
+	render_params(render_params)
+{
+	std::string vertexPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/vertex_shader.glsl";
+	std::string fragPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/fragment_shader.glsl";
+
+	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
+
+	create_ring(0.1, 0.01, 100);
+
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vr_pairs.front().r.vertices), &vr_pairs.front().r.vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vr_pairs.front().r.indices), &vr_pairs.front().r.indices, GL_STATIC_DRAW);
+
+	// vertices
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	// colors
+	//glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(cube.vertices)));
+
+	// unbind everything
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	sc->use_program();
+
+	auto uniform_name = "color";
+	create_uniform(uniform_name,
+		glGetUniformLocation(sc->get_program_id(), uniform_name),
+		glm::vec3(1),
+		1);
+
+	glUseProgram(0);
+}
+
+void FourierSeriesRenderer::render()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBindVertexArray(VAO);
+
+	glDrawElements(GL_TRIANGLES, sizeof(vr_pairs.front().r.indices), GL_UNSIGNED_INT, 0);
+}
+
+void FourierSeriesRenderer::clean()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
+}
+
+void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
+{
+	if (!n)
+	{
+		LOG(ERROR) << "n must be greater than 0";
+		std::exit(1);
+	}
+
+	Ring r;
+
+	for (int i = 0; i < n; ++i)
+	{
+		r.vertices.push_back(glm::vec2(
+			radius * cos(i * TWO_PI / n),
+			radius * sin(i * TWO_PI / n)
+		));
+	}
+
+	for (int i = 0; i < n; ++i)
+	{
+		r.vertices.push_back(glm::vec2(
+			(radius - thickness) * cos(i * TWO_PI / n),
+			(radius - thickness) * sin(i * TWO_PI / n)
+		));
+	}
+
+	for (int i = 0; i < n; ++i)
+	{
+		// first triangle
+		r.indices.push_back(i);
+		r.indices.push_back(i + 1);
+		r.indices.push_back(i + n);
+
+		// second triangle
+		r.indices.push_back(i + 1);
+		r.indices.push_back(i + n + 1);
+		r.indices.push_back(i + n);
+	}
+
+	VectorRingPair vr_pair;
+	vr_pair.r = std::move(r);
+
+	vr_pairs.push_back(std::move(vr_pair));
 }
 
 } // namespace ogl_examples

@@ -6,6 +6,9 @@
 #include <vector>
 #include <unordered_map>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include <glm/glm.hpp>
 
 #include <glog/logging.h>
@@ -37,4 +40,5 @@ class TriangleRendererEventHandler;
 class CubeRendererEventHandler;
 class FourierSeriesRendererEventHandler;
 
+constexpr double TWO_PI = 2 * M_PI;
 } // namespace ogl_examples
