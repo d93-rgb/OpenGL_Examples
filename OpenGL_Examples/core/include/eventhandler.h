@@ -61,4 +61,21 @@ private:
 	double y_pos_diff;
 };
 
+class FourierSeriesRendererEventHandler : public EventHandler
+{
+public:
+	FourierSeriesRendererEventHandler(std::shared_ptr<GUIParameter> gui_params);
+
+	void handle_mouse(GLFWwindow* window, double x_pos, double y_pos);
+
+	void handle_mouse_button(GLFWwindow* window, int button, int action, int mods);
+
+	void handle_framebuffer_size(GLFWwindow* window, int width, int height);
+
+	void handle_key(GLFWwindow* window, int key, int scancode, int action, int mode);
+protected:
+
+};
+
+
 } // namespace ogl_examples

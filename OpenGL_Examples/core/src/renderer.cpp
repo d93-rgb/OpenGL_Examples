@@ -79,9 +79,6 @@ SDFRenderer::SDFRenderer(
 	const std::shared_ptr<TriangleRendererParameter>& render_params) :
 	Renderer(std::move(gui_params), std::move(eh))
 {
-	//std::string file_path = std::string(__FILE__);
-	//file_path = file_path.substr(0, file_path.find_last_of("\\/"));
-
 	std::string vertexPath = "../../../../OpenGL_Examples/Rendering-SDF/src/shaders/vertex_shader.glsl";
 	std::string fragPath = "../../../../OpenGL_Examples/Rendering-SDF/src/shaders/fragment_shader.glsl";
 

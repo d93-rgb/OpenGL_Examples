@@ -201,4 +201,25 @@ private:
 
 };
 
+class FourierSeriesRenderer : public Renderer
+{
+public:
+	std::shared_ptr<FourierSeriesRendererParameter> render_params;
+
+	FourierSeriesRenderer(const std::shared_ptr<FourierSeriesRendererParameter>& render_params);
+
+	FourierSeriesRenderer(
+		std::shared_ptr<GUIParameter> gui_params,
+		std::unique_ptr<EventHandler> eh,
+		const std::shared_ptr<FourierSeriesRendererParameter>& render_params);
+
+	void render() override;
+	void clean() override;
+
+private:
+	unsigned int VAO;
+	unsigned int VBO;
+	unsigned int EBO;
+};
+
 } // namespace ogl_examples

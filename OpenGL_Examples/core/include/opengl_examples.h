@@ -17,25 +17,24 @@ class WindowManager;
 class ShaderCompiler;
 class Renderer;
 class GraphicsContext;
+class GUIParameter;
+class Camera;
+
+class RenderingManager;
+
+class Renderer;
+class TriangleRenderer;
+class CubeRenderer;
+class FourierSeriesRenderer;
 
 class RenderingParameter;
 class TriangleRendererParameter;
 class CubeRendererParameter;
-
-class Renderer;
-class CubeRenderer;
-
-class RenderingManager;
+class FourierSeriesRendererParameter;
 
 class EventHandler;
 class TriangleRendererEventHandler;
 class CubeRendererEventHandler;
-
-class Camera;
-
-class GUIParameter;
-
-extern int current_scene_flag;
-extern int old_scene_flag;
+class FourierSeriesRendererEventHandler;
 
 } // namespace ogl_examples
