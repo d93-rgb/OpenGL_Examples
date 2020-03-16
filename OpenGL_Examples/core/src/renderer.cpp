@@ -302,7 +302,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 
 	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
 
-	create_ring(0.7, 0.1, 3);
+	create_ring(0.7, 0.1, 100);
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -389,12 +389,12 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 	for (int i = 0; i < n; ++i)
 	{
 		r.vertices.push_back(glm::vec2(
-			(radius - thickness) * cos(i * TWO_PI / n),
-			(radius - thickness) * sin(i * TWO_PI / n)
+			(radius - thickness) * static_cast<float>(cos(i * TWO_PI / n)),
+			(radius - thickness) * static_cast<float>(sin(i * TWO_PI / n))
 		));
 	}
 
-	for (int i = 0; i < n; ++i)
+	for (int i = 0; i < n - 1; ++i)
 	{
 		// first triangle
 		r.indices.push_back(i);
@@ -402,10 +402,20 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 		r.indices.push_back(i + n);
 
 		// second triangle
-		//r.indices.push_back(i + 1);
-		//r.indices.push_back(i + n + 1);
-		//r.indices.push_back(i + n);
+		r.indices.push_back(i + 1);
+		r.indices.push_back(i + n + 1);
+		r.indices.push_back(i + n);
 	}
+	// last triangle cases handled separately to avoid modulo operations
+	// first triangle
+	r.indices.push_back(n - 1);
+	r.indices.push_back(0);
+	r.indices.push_back(n - 1 + n);
+
+	// second triangle
+	r.indices.push_back(0);
+	r.indices.push_back(n);
+	r.indices.push_back(n - 1 + n);
 
 	VectorRingPair vr_pair;
 	vr_pair.r = std::move(r);
