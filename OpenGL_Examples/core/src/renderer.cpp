@@ -486,4 +486,9 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 	vr_pairs.push_back(std::move(vr_pair));
 }
 
+void FourierSeriesRenderer::create_line(float length, float width)
+{
+
+}
+
 } // namespace ogl_examples

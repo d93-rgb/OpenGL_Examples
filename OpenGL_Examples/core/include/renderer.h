@@ -228,11 +228,23 @@ private:
 		std::vector<unsigned int> indices;
 	};
 
-	struct Vector
+	struct Line
 	{
 		std::vector<glm::vec2> line;
-		std::vector<glm::vec2> arrow;
+		std::vector<unsigned int> line_indices;
 
+	};
+
+	struct Arrow
+	{
+		std::vector<glm::vec2> arrow;
+		std::vector<unsigned int> arrow_indices;
+	};
+
+	struct Vector
+	{
+		Line line;
+		Arrow arrow;
 	};
 	
 	struct VectorRingPair
