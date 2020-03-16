@@ -54,10 +54,14 @@ public:
 		friend class FourierSeriesRenderer;
 
 		bool update_circle = false;
+		bool update_circle_color = false;
 
 		int vertices = 3;
 		float radius = 1.0f;
 		float thickness = 0.1f;
+
+		glm::vec4 circle_color = glm::vec4(0.5, 0.4, 0.1, 1.0);
+
 	} fourierseries_renderer_params;
 
 	bool switch_renderer = false;

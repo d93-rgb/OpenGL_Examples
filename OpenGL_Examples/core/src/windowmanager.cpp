@@ -137,6 +137,7 @@ void WindowManager::run()
 	float* fourier_series_circle_radius = &gui_params->fourierseries_renderer_params.radius;
 	float* fourier_series_circle_thickness = &gui_params->fourierseries_renderer_params.thickness;
 	int* fourier_series_circle_vertices = &gui_params->fourierseries_renderer_params.vertices;
+	float* fourier_series_circle_color = &gui_params->fourierseries_renderer_params.circle_color.x;
 
 	glfwShowWindow(window);
 	int init = 0;
@@ -172,6 +173,8 @@ void WindowManager::run()
 				ImGui::SliderFloat("thickness", fourier_series_circle_thickness, 0, 1.0f);
 			gui_params->fourierseries_renderer_params.update_circle |=
 				ImGui::SliderInt("vertices", fourier_series_circle_vertices, 3, 100);
+			gui_params->fourierseries_renderer_params.update_circle_color =
+				ImGui::ColorEdit4("color", fourier_series_circle_color);
 		}
 
 		ImGui::End();

@@ -9,6 +9,8 @@ GraphicsContext::GraphicsContext(int screen_width, int screen_height)
     glDebugMessageCallback(message_callback, 0);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glViewport(0, 0, screen_width, screen_height);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 }

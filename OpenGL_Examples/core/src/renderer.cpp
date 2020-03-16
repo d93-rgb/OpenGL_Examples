@@ -344,17 +344,15 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 
 	float ar = static_cast<float>(this->gui_params->screen_width) / this->gui_params->screen_height;
 	cam.reset(new OrthographicCamera(
-		glm::lookAt(glm::vec3(0.0, 0.0, 5.0),
+		glm::lookAt(glm::vec3(0.0, 0.0, 1.0),
 			glm::vec3(0.0),
 			glm::vec3(0.0, 1.0, 0.0)),
-		-1.0,
+		-1.0 * ar,
+		1.0 * ar,
 		1.0,
-		1.0 / ar,
-		-1.0 / ar,
+		-1.0,
 		0.1,
 		100));
-
-	auto color = glm::vec3(0.2, 1.0, 0.6);
 
 	sc->use_program();
 
@@ -367,7 +365,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	uniform_name = "color";
 	create_uniform(uniform_name,
 		glGetUniformLocation(sc->get_program_id(), uniform_name),
-		color,
+		this->gui_params->fourierseries_renderer_params.circle_color,
 		1);
 
 	glUseProgram(0);
@@ -404,6 +402,12 @@ void FourierSeriesRenderer::render()
 			GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	if (gui_params->fourierseries_renderer_params.update_circle_color)
+	{
+		gui_params->fourierseries_renderer_params.update_circle = false;
+		uniforms.find("color")->second.set_uniform(
+			gui_params->fourierseries_renderer_params.circle_color, 1);
 	}
 
 	glDrawElements(GL_TRIANGLES, vr_pairs.back().r.indices.size(), GL_UNSIGNED_INT, 0);
