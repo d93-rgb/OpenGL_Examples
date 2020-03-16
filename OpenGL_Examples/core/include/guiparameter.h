@@ -38,8 +38,28 @@ public:
 		glm::vec2 rotation_xy{ 0 };
 	} cube_renderer_params;
 
+	class FourierSeriesParams
+	{
+	public:
+		FourierSeriesParams()
+		{}
+
+	private:
+		friend class WindowManager;
+		friend class FourierSeriesEventHandler;
+		friend class FourierSeriesRenderer;
+
+		bool update_circle = false;
+
+		float edge_points = 3;
+		float radius = 1.0f;
+		float thickness = 0.1f;
+	} fourierseries_renderer_params;
+
 	bool switch_renderer = false;
 	int scene_choice = 0;
+
+	std::vector<std::string> renderer_names;
 	std::unordered_map<int, std::string> scene_map;
 };
 

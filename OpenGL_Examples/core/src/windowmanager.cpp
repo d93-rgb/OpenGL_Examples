@@ -154,7 +154,7 @@ void WindowManager::run()
 		ImGui::Begin("Scene choice & options");
 		gui_params->switch_renderer = ImGui::Combo("Scene", &gui_params->scene_choice, &scene_choices[0]);
 
-		if (gui_params->scene_choice == 0)
+		if (gui_params->scene_map.find(gui_params->scene_choice)->second == "RGB Cube")
 		{
 			gui_params->cube_renderer_params.rot_x_val_changed =
 				ImGui::SliderFloat("x-rotation", &xy_rot_floats[0], 0, 2 * 3.1415);
@@ -163,6 +163,11 @@ void WindowManager::run()
 			gui_params->cube_renderer_params.trans_val_changed =
 				ImGui::SliderFloat2("translation", t_floats, -1.0, 1.0);
 		}
+		else if (gui_params->scene_map.find(gui_params->scene_choice)->second == "RGB Cube")
+		{
+
+		}
+
 		ImGui::End();
 
 		ImGui::Render();

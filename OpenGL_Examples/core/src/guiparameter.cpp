@@ -7,11 +7,15 @@ namespace ogl_examples
 
 GUIParameter::GUIParameter()
 {
-	int i = 0;
-	scene_map.emplace(i++, "RGB Cube");
-	scene_map.emplace(i++, "RGB Triangle");
-	scene_map.emplace(i++, "Circle SDF");
-	scene_map.emplace(i++, "Fourier Series");
+	renderer_names.push_back("RGB Cube");
+	renderer_names.push_back("RGB Triangle");
+	renderer_names.push_back("Circle SDF");
+	renderer_names.push_back("Fourier Series");
+
+	for (int i = 0; i < renderer_names.size(); ++i)
+	{
+		scene_map.emplace(i, renderer_names[i]);
+	}
 }
 
 GUIParameter::~GUIParameter() = default;

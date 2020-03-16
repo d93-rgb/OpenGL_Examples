@@ -353,6 +353,32 @@ void FourierSeriesRenderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
 
+
+	if(gui_params->fourierseries_renderer_params.update_circle)
+	{
+		create_ring(gui_params->fourierseries_renderer_params.radius,
+			gui_params->fourierseries_renderer_params.thickness,
+			gui_params->fourierseries_renderer_params.edge_points);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(
+			GL_ARRAY_BUFFER,
+			vr_pairs.front().r.vertices.size() * sizeof(vr_pairs.front().r.vertices.front()),
+			&vr_pairs.front().r.vertices[0],
+			GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(
+			GL_ELEMENT_ARRAY_BUFFER,
+			vr_pairs.front().r.indices.size() * sizeof(vr_pairs.front().r.indices.front()),
+			&vr_pairs.front().r.indices[0],
+			GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
 	glDrawElements(GL_TRIANGLES, vr_pairs.front().r.indices.size(), GL_UNSIGNED_INT, 0);
 }
 
