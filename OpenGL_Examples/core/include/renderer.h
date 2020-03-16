@@ -225,7 +225,7 @@ private:
 	{
 		std::vector<glm::vec2> vertices;
 
-		std::vector<int> indices;
+		std::vector<unsigned int> indices;
 	};
 
 	struct Vector

@@ -317,6 +317,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		&vr_pairs.front().r.vertices[0], 
 		GL_STATIC_DRAW);
 
+	auto x = sizeof(glm::vec2);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(
 		GL_ELEMENT_ARRAY_BUFFER, 
