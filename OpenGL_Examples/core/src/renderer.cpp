@@ -302,7 +302,10 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 
 	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
 
-	create_ring(0.7, 0.1, 100);
+	create_ring(
+		this->gui_params->fourierseries_renderer_params.radius,
+		this->gui_params->fourierseries_renderer_params.thickness,
+		this->gui_params->fourierseries_renderer_params.vertices);
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -356,30 +359,32 @@ void FourierSeriesRenderer::render()
 
 	if(gui_params->fourierseries_renderer_params.update_circle)
 	{
+		gui_params->fourierseries_renderer_params.update_circle = false;
+
 		create_ring(gui_params->fourierseries_renderer_params.radius,
 			gui_params->fourierseries_renderer_params.thickness,
-			gui_params->fourierseries_renderer_params.edge_points);
+			gui_params->fourierseries_renderer_params.vertices);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(
 			GL_ARRAY_BUFFER,
-			vr_pairs.front().r.vertices.size() * sizeof(vr_pairs.front().r.vertices.front()),
-			&vr_pairs.front().r.vertices[0],
+			vr_pairs.back().r.vertices.size() * sizeof(vr_pairs.back().r.vertices.front()),
+			&vr_pairs.back().r.vertices[0],
 			GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(
 			GL_ELEMENT_ARRAY_BUFFER,
-			vr_pairs.front().r.indices.size() * sizeof(vr_pairs.front().r.indices.front()),
-			&vr_pairs.front().r.indices[0],
+			vr_pairs.back().r.indices.size() * sizeof(vr_pairs.back().r.indices.front()),
+			&vr_pairs.back().r.indices[0],
 			GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	glDrawElements(GL_TRIANGLES, vr_pairs.front().r.indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, vr_pairs.back().r.indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void FourierSeriesRenderer::clean()
@@ -393,13 +398,14 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 {
 	if (!n)
 	{
-		LOG(ERROR) << "n must be greater than 0";
+		LOG(INFO) << "n must be greater than 0";
 		std::exit(1);
 	}
 	if (radius < thickness)
 	{
 		LOG(ERROR) << "thickness cannot be greater than radius";
-		std::exit(1);
+		//std::exit(1);
+		return;
 	}
 
 	Ring r;
@@ -445,6 +451,11 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 
 	VectorRingPair vr_pair;
 	vr_pair.r = std::move(r);
+
+	// TODO: quick fix for having only one element inside container, either add new 
+	//		 method or change to something more elegant
+	if(!vr_pairs.empty())
+		vr_pairs.pop_back();
 
 	vr_pairs.push_back(std::move(vr_pair));
 }

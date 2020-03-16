@@ -12,10 +12,11 @@ GUIParameter::GUIParameter()
 	renderer_names.push_back("Circle SDF");
 	renderer_names.push_back("Fourier Series");
 
-	for (int i = 0; i < renderer_names.size(); ++i)
-	{
-		scene_map.emplace(i, renderer_names[i]);
-	}
+	int i = 0;
+	scene_map.emplace(i++, RENDERER_ENUM_LIST::RGB_CUBE);
+	scene_map.emplace(i++, RENDERER_ENUM_LIST::RGB_TRIANGLE);
+	scene_map.emplace(i++, RENDERER_ENUM_LIST::CIRCLE_SDF);
+	scene_map.emplace(i++, RENDERER_ENUM_LIST::FOURIER_SERIES);
 }
 
 GUIParameter::~GUIParameter() = default;

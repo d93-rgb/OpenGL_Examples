@@ -6,6 +6,10 @@
 
 namespace ogl_examples
 {
+enum class RENDERER_ENUM_LIST
+{
+	RGB_CUBE, RGB_TRIANGLE, CIRCLE_SDF, FOURIER_SERIES
+};
 
 class GUIParameter
 {
@@ -51,7 +55,7 @@ public:
 
 		bool update_circle = false;
 
-		float edge_points = 3;
+		int vertices = 3;
 		float radius = 1.0f;
 		float thickness = 0.1f;
 	} fourierseries_renderer_params;
@@ -60,7 +64,7 @@ public:
 	int scene_choice = 0;
 
 	std::vector<std::string> renderer_names;
-	std::unordered_map<int, std::string> scene_map;
+	std::unordered_map<int, RENDERER_ENUM_LIST> scene_map;
 };
 
 } // namespace ogl_examples#pragma once
