@@ -486,9 +486,45 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 	vr_pairs.push_back(std::move(vr_pair));
 }
 
-void FourierSeriesRenderer::create_line(float length, float width)
+FourierSeriesRenderer::Line FourierSeriesRenderer::create_line(float width, float height)
 {
+	Line line;
 
+	float width_half = width * 0.5f;
+
+	line.vertices.push_back(glm::vec2(-width_half, 0));
+	line.vertices.push_back(glm::vec2(width_half, 0));
+	line.vertices.push_back(glm::vec2(-width_half, height));
+	line.vertices.push_back(glm::vec2(width_half, height));
+	
+	// first triangle
+	line.indices.push_back(0);
+	line.indices.push_back(1);
+	line.indices.push_back(2);
+	
+	// second triangle
+	line.indices.push_back(2);
+	line.indices.push_back(1);
+	line.indices.push_back(3);
+
+	return line;
 }
 
+FourierSeriesRenderer::Arrow FourierSeriesRenderer::create_arrow(float base_width, float height)
+{
+	Arrow arrow;
+
+	float base_width_half = base_width * 0.5f;
+
+	arrow.vertices.push_back(glm::vec2(-base_width_half, 0));
+	arrow.vertices.push_back(glm::vec2(base_width_half, 0));
+	arrow.vertices.push_back(glm::vec2(0, height));
+
+	// first triangle
+	arrow.indices.push_back(0);
+	arrow.indices.push_back(1);
+	arrow.indices.push_back(2);
+	
+	return arrow;
+}
 } // namespace ogl_examples

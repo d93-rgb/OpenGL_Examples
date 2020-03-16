@@ -216,11 +216,15 @@ public:
 
 	void create_ring(float radius, float thickness, int n);
 	
-	void create_line(float length, float width);
-	void create_arrow(float base_length, float height);
-	void create_vector();
-
 private:
+	struct Line;
+	struct Arrow;
+	struct Vector;
+
+	Line create_line(float width, float height);
+	Arrow create_arrow(float base_width, float height);
+	Vector create_vector();
+
 	struct Ring
 	{
 		std::vector<glm::vec2> vertices;
@@ -230,15 +234,15 @@ private:
 
 	struct Line
 	{
-		std::vector<glm::vec2> line;
-		std::vector<unsigned int> line_indices;
+		std::vector<glm::vec2> vertices;
+		std::vector<unsigned int> indices;
 
 	};
 
 	struct Arrow
 	{
-		std::vector<glm::vec2> arrow;
-		std::vector<unsigned int> arrow_indices;
+		std::vector<glm::vec2> vertices;
+		std::vector<unsigned int> indices;
 	};
 
 	struct Vector
