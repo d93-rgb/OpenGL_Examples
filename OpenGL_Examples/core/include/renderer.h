@@ -154,6 +154,11 @@ private:
 		std::vector<unsigned int> indices;
 
 		void draw() override;
+	
+	private:
+		GLint vao;
+		GLint vbo;
+		GLint ebo;
 	};
 
 	struct Line
@@ -180,6 +185,11 @@ private:
 		std::vector<unsigned int> indices;
 
 		void draw() override;
+
+	private:
+		GLint vao;
+		GLint vbo;
+		GLint ebo;
 	};
 	
 	struct VectorRingPair
@@ -187,10 +197,6 @@ private:
 		Vector v;
 		Ring r;
 	};
-
-	unsigned int VAO;
-	unsigned int VBO;
-	unsigned int EBO;
 
 	std::string ring_shader_name = "ring";
 	std::string vector_shader_name = "vector";
