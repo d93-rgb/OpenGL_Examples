@@ -18,6 +18,7 @@ namespace ogl_examples
 
 class WindowManager;
 class ShaderCompiler;
+class Shader;
 class Renderer;
 class GraphicsContext;
 class GUIParameter;

@@ -9,4 +9,6 @@ Shader::Shader()
 
 }
 
+Shader::~Shader() = default;
+
 } // namespace ogl_examples

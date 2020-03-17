@@ -91,10 +91,10 @@ if(MSVC)
     #SET(OPTIONS WIN32)
 	MESSAGE(STATUS "Detected Visual Studio as IDE")
 	# source files
-	SOURCE_GROUP ("Source Files\\core" REGULAR_EXPRESSION core/src/.*)
+	SOURCE_GROUP ("core\\src" REGULAR_EXPRESSION core/src/.*)
 
 	# header files
-	SOURCE_GROUP ("Header Files\\core" REGULAR_EXPRESSION core/include/.*)
+	SOURCE_GROUP ("core\\include" REGULAR_EXPRESSION core/include/.*)
 
 else(MSVC)
 	SOURCE_GROUP (core REGULAR_EXPRESSION core/src/.*)
