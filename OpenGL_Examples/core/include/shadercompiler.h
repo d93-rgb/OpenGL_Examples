@@ -11,8 +11,6 @@ class ShaderCompiler
 public:
 	ShaderCompiler(const std::string& vertex_src, const std::string& fragment_src);
 
-	GLuint get_program_id();
-	void use_program();
 	void create_program();
 
 private:
@@ -27,5 +25,4 @@ private:
 	GLint program_id;
 };
 
-
-}
+} // namespace ogl_examples

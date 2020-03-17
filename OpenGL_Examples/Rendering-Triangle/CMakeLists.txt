@@ -10,6 +10,19 @@ set(ALL_PROJECT_LIBRARIES
 	glfw
 	glog)
 	
+if(MSVC)
+    #SET(OPTIONS WIN32)
+	MESSAGE(STATUS "Detected Visual Studio as IDE")
+	# source files
+	SOURCE_GROUP ("a" FILES ${OPENGL_EXAMPLES_PROJECT_HEADERS})
+
+	# header files
+	SOURCE_GROUP ("b" FILES ${OPENGL_EXAMPLES_PROJECT_SOURCES})
+
+else(MSVC)
+	SOURCE_GROUP (core REGULAR_EXPRESSION core/src/.*)
+endif()
+
 add_executable(Rendering-Triangle ${OPTIONS} 
 	${OPENGL_EXAMPLES_PROJECT_HEADERS} 
 	${OPENGL_EXAMPLES_PROJECT_SOURCES} 

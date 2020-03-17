@@ -1,4 +1,4 @@
-#include "shadercompiler.h"
+#include "shader.h"
 #include "camera.h"
 #include "windowmanager.h"
 #include "renderer.h"
@@ -25,20 +25,17 @@ Renderer::Renderer(
 
 Renderer::~Renderer() = default;
 
-void Renderer::use_program()
+Shader& Renderer::use_shader(const std::string& shader_name)
 {
-	sc->use_program();
+	return shaders.find(shader_name)->second.use_program();
 }
 
 void Renderer::recompile()
 {
-	sc->create_program();
-}
-
-template<typename T>
-inline void Renderer::create_uniform(const std::string& uniform_name, int location, const T& val, GLsizei n)
-{
-	uniforms.emplace(uniform_name, Uniform(uniform_name, location, val, n));
+	for (auto& s : shaders)
+	{
+		s->create_program();
+	}
 }
 
 TriangleRenderer::TriangleRenderer(
@@ -84,11 +81,10 @@ SDFRenderer::SDFRenderer(
 
 	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
 
-	sc->use_program();
-
 	auto uniform_name = "resolution";
-	create_uniform(uniform_name,
-		glGetUniformLocation(sc->get_program_id(), uniform_name),
+
+	use_shader("cube").create_uniform(
+		uniform_name,
 		glm::vec2(this->gui_params->screen_width, this->gui_params->screen_height),
 		1);
 
@@ -142,7 +138,7 @@ CubeRenderer::CubeRenderer(
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_indices), cube_indices, GL_STATIC_DRAW);
-	
+
 	// vertices
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -168,31 +164,19 @@ CubeRenderer::CubeRenderer(
 	auto m = glm::mat4(1);
 	auto t_vec = glm::vec4(0);
 
-	sc->use_program();
-
-	auto uniform_name = "worldToRaster";
-	create_uniform(uniform_name,
-		glGetUniformLocation(sc->get_program_id(), uniform_name),
-		cam->worldToRaster,
-		1);
-
-	uniform_name = "objToWorld_rot_x";
-	create_uniform(uniform_name,
-		glGetUniformLocation(sc->get_program_id(), uniform_name),
-		m,
-		1);
-
-	uniform_name = "objToWorld_rot_y";
-	create_uniform(uniform_name,
-		glGetUniformLocation(sc->get_program_id(), uniform_name),
-		m,
-		1);
-
-	uniform_name = "trans_vec";
-	create_uniform(uniform_name,
-		glGetUniformLocation(sc->get_program_id(), uniform_name),
-		t_vec,
-		1);
+	use_shader("cube").
+		create_uniform("worldToRaster",
+			cam->worldToRaster,
+			1).
+		create_uniform("objToWorld_rot_x",
+			m,
+			1).
+		create_uniform("objToWorld_rot_y",
+			m,
+			1).
+		create_uniform("trans_vec",
+			t_vec,
+			1);
 
 	glUseProgram(0);
 }
@@ -299,7 +283,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 {
 	std::string ring_vertexPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/ring_vs.glsl";
 	std::string ring_fragPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/ring_fs.glsl";
-	
+
 	std::string vector_vertexPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/vector_vs.glsl";
 	std::string vector_fragPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/vector_fs.glsl";
 
@@ -318,16 +302,16 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(
-		GL_ARRAY_BUFFER, 
-		vr_pairs.front().r.vertices.size() * sizeof(vr_pairs.front().r.vertices.front()), 
-		&vr_pairs.front().r.vertices[0], 
+		GL_ARRAY_BUFFER,
+		vr_pairs.front().r.vertices.size() * sizeof(vr_pairs.front().r.vertices.front()),
+		&vr_pairs.front().r.vertices[0],
 		GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(
-		GL_ELEMENT_ARRAY_BUFFER, 
+		GL_ELEMENT_ARRAY_BUFFER,
 		vr_pairs.front().r.indices.size() * sizeof(vr_pairs.front().r.indices.front()),
-		&vr_pairs.front().r.indices[0], 
+		&vr_pairs.front().r.indices[0],
 		GL_STATIC_DRAW);
 
 	// vertices
@@ -380,7 +364,7 @@ void FourierSeriesRenderer::render()
 	glBindVertexArray(VAO);
 
 
-	if(gui_params->fourierseries_renderer_params.update_circle)
+	if (gui_params->fourierseries_renderer_params.update_circle)
 	{
 		gui_params->fourierseries_renderer_params.update_circle = false;
 
@@ -451,7 +435,7 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 	{
 		r.vertices.push_back(glm::vec2(
 			(radius - thickness) * static_cast<float>(cos(i * TWO_PI / n)),
-			(radius - thickness) * static_cast<float>(sin(i * TWO_PI / n))
+			(radius - thickness)* static_cast<float>(sin(i * TWO_PI / n))
 		));
 	}
 
@@ -483,7 +467,7 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 
 	// TODO: quick fix for having only one element inside container, either add new 
 	//		 method or change to something more elegant
-	if(!vr_pairs.empty())
+	if (!vr_pairs.empty())
 		vr_pairs.pop_back();
 
 	vr_pairs.push_back(std::move(vr_pair));
@@ -500,12 +484,12 @@ FourierSeriesRenderer::Line FourierSeriesRenderer::create_line(float width, floa
 	line.vertices.push_back(glm::vec2(-width_half, -height_half));
 	line.vertices.push_back(glm::vec2(width_half, height_half));
 	line.vertices.push_back(glm::vec2(width_half, -height_half));
-	
+
 	// first triangle
 	line.indices.push_back(0);
 	line.indices.push_back(1);
 	line.indices.push_back(2);
-	
+
 	// second triangle
 	line.indices.push_back(2);
 	line.indices.push_back(1);
@@ -527,7 +511,7 @@ FourierSeriesRenderer::Arrow FourierSeriesRenderer::create_arrow(float base_widt
 	arrow.indices.push_back(0);
 	arrow.indices.push_back(1);
 	arrow.indices.push_back(2);
-	
+
 	return arrow;
 }
 
@@ -547,8 +531,8 @@ FourierSeriesRenderer::Vector FourierSeriesRenderer::create_vector()
 	{
 		v = glm::vec2(width * 0.5, 0) + v;
 	}
-	
-	vector.vertices.insert(vector.vertices.end(), 
+
+	vector.vertices.insert(vector.vertices.end(),
 		arrow.vertices.begin(),
 		arrow.vertices.end());
 

@@ -14,4 +14,6 @@ else()
 	message(STATUS "*** ${CMAKE_BUILD_TYPE} build ***")
 endif()
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 add_subdirectory(OpenGL_Examples)

@@ -8,11 +8,17 @@ namespace ogl_examples
 class Shader
 {
 public:
-    Shader();
+    Shader(const std::string& vertex_src, const std::string& fragment_src);
 
     ~Shader();
 
+    template<typename T>
+    Shader& create_uniform(const std::string& uniform_name, const T& val, GLsizei n);
+
+    Shader& use_program();
+
 protected:
+
     struct Uniform
     {
         int location;
@@ -84,6 +90,8 @@ protected:
         }
     };
 
+    GLuint program_id;
+    ShaderCompiler sc;
     std::unordered_map<std::string, Uniform> uniforms;
 };
 

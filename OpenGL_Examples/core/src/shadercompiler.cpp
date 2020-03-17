@@ -100,17 +100,6 @@ void ShaderCompiler::create_program()
 	link(); 
 }
 
-GLuint ShaderCompiler::get_program_id()
-{
-	return program_id;
-}
-
-void ShaderCompiler::use_program()
-{
-	assert(glIsProgram(program_id)); // should never happen normally
-	glUseProgram(program_id);
-}
-
 void ShaderCompiler::check_errors(GLuint shader, const std::string& type) const
 {
 	GLint success;

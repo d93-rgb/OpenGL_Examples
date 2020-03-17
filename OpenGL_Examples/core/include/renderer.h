@@ -4,7 +4,6 @@
 #include "GL/gl3w.h"
 
 #include "opengl_examples.h"
-#include "shader.h"
 
 namespace ogl_examples
 {
@@ -22,18 +21,14 @@ public:
 
 	virtual void recompile();
 
-	virtual void use_program();
+	virtual Shader& use_shader(const std::string& shader_name);
 
     virtual void clean() = 0;
 
-    template<typename T>
-    void create_uniform(const std::string& uniform_name, int location, const T& val, GLsizei n);
-
 protected:
 
-    std::unique_ptr<ShaderCompiler> sc;
     std::unique_ptr<Camera> cam;
-	std::vector<Shader> shaders;
+	std::unordered_map<std::string, Shader> shaders;
 };
 
 class TriangleRenderer : public Renderer

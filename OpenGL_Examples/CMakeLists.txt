@@ -86,20 +86,6 @@ include_directories (
   core/include
 )
 
-	# Visual Studio filters inside the solution explorer
-if(MSVC)
-    #SET(OPTIONS WIN32)
-	MESSAGE(STATUS "Detected Visual Studio as IDE")
-	# source files
-	SOURCE_GROUP ("core\\src" REGULAR_EXPRESSION core/src/.*)
-
-	# header files
-	SOURCE_GROUP ("core\\include" REGULAR_EXPRESSION core/include/.*)
-
-else(MSVC)
-	SOURCE_GROUP (core REGULAR_EXPRESSION core/src/.*)
-endif()
-
 SET(OPENGL_EXAMPLES_PROJECT_HEADERS 
 	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/shadercompiler.h"
 	"${CMAKE_CURRENT_SOURCE_DIR}/core/include/renderer.h"
