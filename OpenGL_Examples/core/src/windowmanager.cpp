@@ -137,7 +137,7 @@ void WindowManager::run()
 	float* fourier_series_circle_radius = &gui_params->fourierseries_renderer_params.radius;
 	float* fourier_series_circle_thickness = &gui_params->fourierseries_renderer_params.thickness;
 	int* fourier_series_circle_vertices = &gui_params->fourierseries_renderer_params.vertices;
-	float* fourier_series_circle_color = &gui_params->fourierseries_renderer_params.circle_color.x;
+	float* fourier_series_circle_color = &gui_params->fourierseries_renderer_params.ring_color.x;
 
 	glfwShowWindow(window);
 	int init = 0;
@@ -167,13 +167,13 @@ void WindowManager::run()
 		}
 		else if (gui_params->scene_map.find(gui_params->scene_choice)->second == RENDERER_ENUM_LIST::FOURIER_SERIES)
 		{
-			gui_params->fourierseries_renderer_params.update_circle |= 
+			gui_params->fourierseries_renderer_params.update_rings |= 
 				ImGui::SliderFloat("radius", fourier_series_circle_radius, 0, 1.0f);
-			gui_params->fourierseries_renderer_params.update_circle |=
+			gui_params->fourierseries_renderer_params.update_rings |=
 				ImGui::SliderFloat("thickness", fourier_series_circle_thickness, 0, 1.0f);
-			gui_params->fourierseries_renderer_params.update_circle |=
+			gui_params->fourierseries_renderer_params.update_rings |=
 				ImGui::SliderInt("vertices", fourier_series_circle_vertices, 3, 100);
-			gui_params->fourierseries_renderer_params.update_circle_color =
+			gui_params->fourierseries_renderer_params.update_ring_colors =
 				ImGui::ColorEdit4("color", fourier_series_circle_color);
 		}
 

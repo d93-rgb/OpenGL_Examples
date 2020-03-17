@@ -15,6 +15,9 @@ public:
     template<typename T>
     Shader& create_uniform(const std::string& uniform_name, const T& val, GLsizei n);
 
+    template<typename T>
+    Shader& set_uniform(const std::string& uniform_name, const T& val, GLsizei n);
+
     Shader& use_program();
 
 protected:

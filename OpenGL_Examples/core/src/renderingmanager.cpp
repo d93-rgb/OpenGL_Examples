@@ -27,7 +27,6 @@ void RenderingManager::run()
 		current_renderer = renderers.find(gui_params->scene_choice)->second;
 	}
 
-	current_renderer->use_program();
 	current_renderer->render();
 }
 

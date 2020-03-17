@@ -44,17 +44,15 @@ TriangleRenderer::TriangleRenderer(
 	const std::shared_ptr<TriangleRendererParameter>& render_params) :
 	Renderer(std::move(gui_params), std::move(eh))
 {
-	//std::string file_path = std::string(__FILE__);
-	//file_path = file_path.substr(0, file_path.find_last_of("\\/"));
-
 	std::string vertexPath = "../../../../OpenGL_Examples/Rendering-Triangle/src/shaders/vertex_shader.glsl";
 	std::string fragPath = "../../../../OpenGL_Examples/Rendering-Triangle/src/shaders/fragment_shader.glsl";
 
-	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
+	shaders.emplace(triangle_shader_name, Shader(vertexPath, fragPath));
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	glBindVertexArray(0);
+	use_shader(triangle_shader_name);
 }
 
 void TriangleRenderer::render()
@@ -79,12 +77,10 @@ SDFRenderer::SDFRenderer(
 	std::string vertexPath = "../../../../OpenGL_Examples/Rendering-SDF/src/shaders/vertex_shader.glsl";
 	std::string fragPath = "../../../../OpenGL_Examples/Rendering-SDF/src/shaders/fragment_shader.glsl";
 
-	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
+	shaders.emplace(circle_sdf_shader_name, Shader(vertexPath, fragPath));
 
-	auto uniform_name = "resolution";
-
-	use_shader("cube").create_uniform(
-		uniform_name,
+	use_shader(circle_sdf_shader_name).create_uniform(
+		"resolution",
 		glm::vec2(this->gui_params->screen_width, this->gui_params->screen_height),
 		1);
 
@@ -116,7 +112,7 @@ CubeRenderer::CubeRenderer(
 	std::string vertexPath = "../../../../OpenGL_Examples/Rendering-Cube/src/shaders/vertex_shader.glsl";
 	std::string fragPath = "../../../../OpenGL_Examples/Rendering-Cube/src/shaders/fragment_shader.glsl";
 
-	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
+	shaders.emplace(cube_shader_name, Shader(vertexPath, fragPath));
 
 	// TODO: no shape base class done yet, this is a replacement for objToWorld matrix,
 	//		 moving the cube once at initialization and not during the rendering loop
@@ -164,7 +160,7 @@ CubeRenderer::CubeRenderer(
 	auto m = glm::mat4(1);
 	auto t_vec = glm::vec4(0);
 
-	use_shader("cube").
+	use_shader(cube_shader_name).
 		create_uniform("worldToRaster",
 			cam->worldToRaster,
 			1).
@@ -188,8 +184,11 @@ void CubeRenderer::render()
 
 	if (gui_params->cube_renderer_params.trans_val_changed)
 	{
-		uniforms.find("trans_vec")->second.set_uniform(
-			(glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0)), (size_t)1);
+		use_shader(cube_shader_name).
+			set_uniform(
+				"trans_vec",
+				glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0),
+				1);
 	}
 
 	if (update_vertices())
@@ -287,7 +286,8 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	std::string vector_vertexPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/vector_vs.glsl";
 	std::string vector_fragPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/vector_fs.glsl";
 
-	this->sc.reset(new ShaderCompiler(ring_vertexPath, ring_fragPath));
+	shaders.emplace(ring_shader_name, Shader(ring_vertexPath, ring_fragPath));
+	shaders.emplace(vector_shader_name, Shader(vector_vertexPath, vector_fragPath));
 
 	create_ring(
 		this->gui_params->fourierseries_renderer_params.radius,
@@ -327,8 +327,6 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	sc->use_program();
-
 	float ar = static_cast<float>(this->gui_params->screen_width) / this->gui_params->screen_height;
 	cam.reset(new OrthographicCamera(
 		glm::lookAt(glm::vec3(0.0, 0.0, 1.0),
@@ -341,18 +339,12 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		0.1,
 		100));
 
-	sc->use_program();
-
-	auto uniform_name = "worldToRaster";
-	create_uniform(uniform_name,
-		glGetUniformLocation(sc->get_program_id(), uniform_name),
+	use_shader(ring_shader_name).
+	create_uniform("worldToRaster",
 		cam->worldToRaster,
-		1);
-
-	uniform_name = "color";
-	create_uniform(uniform_name,
-		glGetUniformLocation(sc->get_program_id(), uniform_name),
-		this->gui_params->fourierseries_renderer_params.circle_color,
+		1).
+	create_uniform("color",
+		this->gui_params->fourierseries_renderer_params.ring_color,
 		1);
 
 	glUseProgram(0);
@@ -364,9 +356,9 @@ void FourierSeriesRenderer::render()
 	glBindVertexArray(VAO);
 
 
-	if (gui_params->fourierseries_renderer_params.update_circle)
+	if (gui_params->fourierseries_renderer_params.update_rings)
 	{
-		gui_params->fourierseries_renderer_params.update_circle = false;
+		gui_params->fourierseries_renderer_params.update_rings = false;
 
 		create_ring(gui_params->fourierseries_renderer_params.radius,
 			gui_params->fourierseries_renderer_params.thickness,
@@ -390,11 +382,11 @@ void FourierSeriesRenderer::render()
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
-	if (gui_params->fourierseries_renderer_params.update_circle_color)
+	if (gui_params->fourierseries_renderer_params.update_ring_colors)
 	{
-		gui_params->fourierseries_renderer_params.update_circle = false;
-		uniforms.find("color")->second.set_uniform(
-			gui_params->fourierseries_renderer_params.circle_color, 1);
+		gui_params->fourierseries_renderer_params.update_rings = false;
+		use_shader(ring_shader_name).set_uniform("color",
+			gui_params->fourierseries_renderer_params.ring_color, 1);
 	}
 
 	glDrawElements(GL_TRIANGLES, vr_pairs.back().r.indices.size(), GL_UNSIGNED_INT, 0);

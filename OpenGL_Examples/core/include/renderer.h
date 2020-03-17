@@ -45,6 +45,8 @@ public:
 
 private:
 	unsigned int VAO;
+
+	std::string triangle_shader_name = "triangle";
 };
 
 class SDFRenderer : public Renderer
@@ -60,6 +62,8 @@ public:
 
 private:
 	unsigned int VAO;
+
+	std::string circle_sdf_shader_name = "circle_sdf";
 };
 
 class CubeRenderer : public Renderer
@@ -83,6 +87,8 @@ private:
     unsigned int VAO;
     unsigned int VBO;
     unsigned int EBO;
+
+	std::string cube_shader_name = "cube";
 
 	struct cube {
 		glm::vec3 vertices[8] = {
@@ -186,6 +192,9 @@ private:
 	unsigned int VAO;
 	unsigned int VBO;
 	unsigned int EBO;
+
+	std::string ring_shader_name = "ring";
+	std::string vector_shader_name = "vector";
 
 	std::vector<VectorRingPair> vr_pairs;
 };

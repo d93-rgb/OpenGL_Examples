@@ -26,6 +26,14 @@ inline Shader& Shader::create_uniform(const std::string& uniform_name, const T& 
 	return *this;
 }
 
+template<typename T>
+inline Shader& Shader::set_uniform(const std::string& uniform_name, const T& val, GLsizei n)
+{
+	uniforms.find(uniform_name)->second.set_uniform(val,n);
+
+	return *this;
+}
+
 Shader& Shader::use_program()
 {
 	assert(glIsProgram(program_id)); // should never happen normally
