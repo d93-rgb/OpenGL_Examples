@@ -11,9 +11,6 @@
 namespace ogl_examples
 {
 
-int current_scene_flag = 0;
-int old_scene_flag = 0;
-
 void WindowManager::key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);

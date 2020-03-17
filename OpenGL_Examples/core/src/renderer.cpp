@@ -52,13 +52,12 @@ TriangleRenderer::TriangleRenderer(
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	glBindVertexArray(0);
-	use_shader(triangle_shader_name);
 }
 
 void TriangleRenderer::render()
 {
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	use_shader(triangle_shader_name);
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
 }
@@ -91,8 +90,8 @@ SDFRenderer::SDFRenderer(
 
 void SDFRenderer::render()
 {
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	use_shader(circle_sdf_shader_name);
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 }
@@ -144,8 +143,9 @@ CubeRenderer::CubeRenderer(
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(cube.vertices)));
 
 	// unbind everything
-	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	// TODO: move into shape class, cube not seen if ebo is set to 0
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
 	cam.reset(new PerspectiveCamera(
@@ -180,12 +180,12 @@ CubeRenderer::CubeRenderer(
 void CubeRenderer::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	use_shader(cube_shader_name);
 	glBindVertexArray(VAO);
 
 	if (gui_params->cube_renderer_params.trans_val_changed)
 	{
-		use_shader(cube_shader_name).
-			set_uniform(
+		use_shader(cube_shader_name).set_uniform(
 				"trans_vec",
 				glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0),
 				1);
@@ -199,6 +199,8 @@ void CubeRenderer::render()
 	}
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glUseProgram(0);
 }
 
 bool CubeRenderer::update_vertices()
@@ -289,43 +291,50 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	shaders.emplace(ring_shader_name, Shader(ring_vertexPath, ring_fragPath));
 	shaders.emplace(vector_shader_name, Shader(vector_vertexPath, vector_fragPath));
 
-	create_ring(
+	Ring r(
 		this->gui_params->fourierseries_renderer_params.radius,
 		this->gui_params->fourierseries_renderer_params.thickness,
 		this->gui_params->fourierseries_renderer_params.vertices);
 
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	Vector v;
+	vr_pairs.push_back(VectorRingPair(std::move(v), std::move(r)));
+	//create_ring(
+	//	this->gui_params->fourierseries_renderer_params.radius,
+	//	this->gui_params->fourierseries_renderer_params.thickness,
+	//	this->gui_params->fourierseries_renderer_params.vertices);
 
-	glBindVertexArray(VAO);
+	//glGenVertexArrays(1, &VAO);
+	//glGenBuffers(1, &VBO);
+	//glGenBuffers(1, &EBO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(
-		GL_ARRAY_BUFFER,
-		vr_pairs.front().r.vertices.size() * sizeof(vr_pairs.front().r.vertices.front()),
-		&vr_pairs.front().r.vertices[0],
-		GL_STATIC_DRAW);
+	//glBindVertexArray(VAO);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(
-		GL_ELEMENT_ARRAY_BUFFER,
-		vr_pairs.front().r.indices.size() * sizeof(vr_pairs.front().r.indices.front()),
-		&vr_pairs.front().r.indices[0],
-		GL_STATIC_DRAW);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//glBufferData(
+	//	GL_ARRAY_BUFFER,
+	//	vr_pairs.front().r.vertices.size() * sizeof(vr_pairs.front().r.vertices.front()),
+	//	&vr_pairs.front().r.vertices[0],
+	//	GL_STATIC_DRAW);
 
-	// vertices
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	//glBufferData(
+	//	GL_ELEMENT_ARRAY_BUFFER,
+	//	vr_pairs.front().r.indices.size() * sizeof(vr_pairs.front().r.indices.front()),
+	//	&vr_pairs.front().r.indices[0],
+	//	GL_STATIC_DRAW);
 
-	// colors
-	//glEnableVertexAttribArray(1);
-	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(cube.vertices)));
+	//// vertices
+	//glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 
-	// unbind everything
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	//// colors
+	////glEnableVertexAttribArray(1);
+	////glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(cube.vertices)));
+
+	//// unbind everything
+	//glEnableVertexAttribArray(0);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindVertexArray(0);
 
 	float ar = static_cast<float>(this->gui_params->screen_width) / this->gui_params->screen_height;
 	cam.reset(new OrthographicCamera(
@@ -353,18 +362,17 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 void FourierSeriesRenderer::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glBindVertexArray(VAO);
-
 	use_shader(ring_shader_name);
+
 	if (gui_params->fourierseries_renderer_params.update_rings)
 	{
 		gui_params->fourierseries_renderer_params.update_rings = false;
 
-		create_ring(gui_params->fourierseries_renderer_params.radius,
+		vr_pairs.back().r = Ring(gui_params->fourierseries_renderer_params.radius,
 			gui_params->fourierseries_renderer_params.thickness,
 			gui_params->fourierseries_renderer_params.vertices);
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		/*glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(
@@ -380,7 +388,7 @@ void FourierSeriesRenderer::render()
 			&vr_pairs.back().r.indices[0],
 			GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);*/
 	}
 	if (gui_params->fourierseries_renderer_params.update_ring_colors)
 	{
@@ -389,19 +397,21 @@ void FourierSeriesRenderer::render()
 			gui_params->fourierseries_renderer_params.ring_color, 1);
 	}
 
-	glDrawElements(GL_TRIANGLES, vr_pairs.back().r.indices.size(), GL_UNSIGNED_INT, 0);
+	vr_pairs.back().r.draw();
 
 	use_shader(vector_shader_name);
 }
 
 void FourierSeriesRenderer::clean()
 {
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	for (auto& tmp : vr_pairs)
+	{
+		tmp.r.clean();
+		tmp.v.clean();
+	}
 }
 
-FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n)
+FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n) 
 {
 	if (!n)
 	{
@@ -473,29 +483,40 @@ FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(
 		GL_ARRAY_BUFFER,
-		vr_pairs.front().r.vertices.size() * sizeof(vr_pairs.front().r.vertices.front()),
-		&vr_pairs.front().r.vertices[0],
+		vertices.size() * sizeof(vertices.front()),
+		&vertices[0],
 		GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(
 		GL_ELEMENT_ARRAY_BUFFER,
-		vr_pairs.front().r.indices.size() * sizeof(vr_pairs.front().r.indices.front()),
-		&vr_pairs.front().r.indices[0],
+		indices.size() * sizeof(indices.front()),
+		&indices[0],
 		GL_STATIC_DRAW);
 
 	// vertices
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 
-	// colors
-	//glEnableVertexAttribArray(1);
-	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(cube.vertices)));
-
 	// unbind everything
-	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	// TODO: same as for cube renderer
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+}
+
+void FourierSeriesRenderer::Ring::draw()
+{
+	glBindVertexArray(vao);
+
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+}
+
+void FourierSeriesRenderer::Ring::clean()
+{
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &ebo);
 }
 
 FourierSeriesRenderer::Line::Line(float width, float height)
@@ -565,6 +586,13 @@ FourierSeriesRenderer::Vector::Vector()
 void FourierSeriesRenderer::Vector::draw()
 {
 
+}
+
+void FourierSeriesRenderer::Vector::clean()
+{
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &ebo);
 }
 
 } // namespace ogl_examples

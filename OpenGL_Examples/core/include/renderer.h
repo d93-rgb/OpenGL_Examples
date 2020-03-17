@@ -154,11 +154,11 @@ private:
 		std::vector<unsigned int> indices;
 
 		void draw() override;
-	
+		void clean() override;
 	private:
-		GLuint vao;
-		GLuint vbo;
-		GLuint ebo;
+		GLuint vao = 0;
+		GLuint vbo = 0;
+		GLuint ebo = 0;
 	};
 
 	struct Line
@@ -185,15 +185,19 @@ private:
 		std::vector<unsigned int> indices;
 
 		void draw() override;
-
+		void clean() override;
 	private:
-		GLuint vao;
-		GLuint vbo;
-		GLuint ebo;
+		GLuint vao = 0;
+		GLuint vbo = 0;
+		GLuint ebo = 0;
 	};
 	
 	struct VectorRingPair
 	{
+		VectorRingPair(Vector v, Ring r) :
+			v(std::move(v)), r(std::move(r))
+		{}
+		
 		Vector v;
 		Ring r;
 	};
