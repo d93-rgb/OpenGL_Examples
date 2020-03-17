@@ -156,9 +156,9 @@ private:
 		void draw() override;
 	
 	private:
-		GLint vao;
-		GLint vbo;
-		GLint ebo;
+		GLuint vao;
+		GLuint vbo;
+		GLuint ebo;
 	};
 
 	struct Line
@@ -187,9 +187,9 @@ private:
 		void draw() override;
 
 	private:
-		GLint vao;
-		GLint vbo;
-		GLint ebo;
+		GLuint vao;
+		GLuint vbo;
+		GLuint ebo;
 	};
 	
 	struct VectorRingPair

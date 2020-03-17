@@ -463,6 +463,39 @@ FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n)
 	//	vr_pairs.pop_back();
 
 	//vr_pairs.push_back(std::move(vr_pair));
+
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &ebo);
+
+	glBindVertexArray(vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		vr_pairs.front().r.vertices.size() * sizeof(vr_pairs.front().r.vertices.front()),
+		&vr_pairs.front().r.vertices[0],
+		GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		vr_pairs.front().r.indices.size() * sizeof(vr_pairs.front().r.indices.front()),
+		&vr_pairs.front().r.indices[0],
+		GL_STATIC_DRAW);
+
+	// vertices
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+
+	// colors
+	//glEnableVertexAttribArray(1);
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(cube.vertices)));
+
+	// unbind everything
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 }
 
 FourierSeriesRenderer::Line::Line(float width, float height)
