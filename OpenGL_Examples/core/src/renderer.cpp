@@ -297,10 +297,13 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	Renderer(std::move(gui_params), std::move(eh)),
 	render_params(render_params)
 {
-	std::string vertexPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/vertex_shader.glsl";
-	std::string fragPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/fragment_shader.glsl";
+	std::string ring_vertexPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/ring_vs.glsl";
+	std::string ring_fragPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/ring_fs.glsl";
+	
+	std::string vector_vertexPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/vector_vs.glsl";
+	std::string vector_fragPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/vector_fs.glsl";
 
-	this->sc.reset(new ShaderCompiler(vertexPath, fragPath));
+	this->sc.reset(new ShaderCompiler(ring_vertexPath, ring_fragPath));
 
 	create_ring(
 		this->gui_params->fourierseries_renderer_params.radius,
@@ -491,11 +494,12 @@ FourierSeriesRenderer::Line FourierSeriesRenderer::create_line(float width, floa
 	Line line;
 
 	float width_half = width * 0.5f;
+	float height_half = height * 0.5f;
 
-	line.vertices.push_back(glm::vec2(-width_half, 0));
-	line.vertices.push_back(glm::vec2(width_half, 0));
-	line.vertices.push_back(glm::vec2(-width_half, height));
-	line.vertices.push_back(glm::vec2(width_half, height));
+	line.vertices.push_back(glm::vec2(-width_half, height_half));
+	line.vertices.push_back(glm::vec2(-width_half, -height_half));
+	line.vertices.push_back(glm::vec2(width_half, height_half));
+	line.vertices.push_back(glm::vec2(width_half, -height_half));
 	
 	// first triangle
 	line.indices.push_back(0);
@@ -516,15 +520,53 @@ FourierSeriesRenderer::Arrow FourierSeriesRenderer::create_arrow(float base_widt
 
 	float base_width_half = base_width * 0.5f;
 
-	arrow.vertices.push_back(glm::vec2(-base_width_half, 0));
-	arrow.vertices.push_back(glm::vec2(base_width_half, 0));
-	arrow.vertices.push_back(glm::vec2(0, height));
+	arrow.vertices.push_back(glm::vec2(0, base_width_half));
+	arrow.vertices.push_back(glm::vec2(0, -base_width_half));
+	arrow.vertices.push_back(glm::vec2(height, 0));
 
-	// first triangle
 	arrow.indices.push_back(0);
 	arrow.indices.push_back(1);
 	arrow.indices.push_back(2);
 	
 	return arrow;
 }
+
+FourierSeriesRenderer::Vector FourierSeriesRenderer::create_vector()
+{
+	Vector vector;
+
+	float width = 1;
+	float height = 1;
+	auto& line = create_line(width, height);
+	auto& arrow = create_arrow(2 * width, height);
+
+	vector.vertices = line.vertices;
+	vector.indices = line.indices;
+
+	for (auto& v : arrow.vertices)
+	{
+		v = glm::vec2(width * 0.5, 0) + v;
+	}
+	
+	vector.vertices.insert(vector.vertices.end(), 
+		arrow.vertices.begin(),
+		arrow.vertices.end());
+
+	for (auto& i : arrow.indices)
+	{
+		i += vector.vertices.size();
+	}
+
+	vector.indices.insert(vector.indices.end(),
+		arrow.indices.begin(),
+		arrow.indices.end());
+
+	return vector;
+}
+
+void FourierSeriesRenderer::Vector::draw()
+{
+
+}
+
 } // namespace ogl_examples

@@ -247,8 +247,10 @@ private:
 
 	struct Vector
 	{
-		Line line;
-		Arrow arrow;
+		std::vector<glm::vec2> vertices;
+		std::vector<unsigned int> indices;
+
+		void draw();
 	};
 	
 	struct VectorRingPair
