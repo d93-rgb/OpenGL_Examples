@@ -4,6 +4,7 @@
 #include "GL/gl3w.h"
 
 #include "opengl_examples.h"
+#include "shape.h"
 
 namespace ogl_examples
 {
@@ -144,43 +145,41 @@ public:
 	void render() override;
 	void clean() override;
 
-	void create_ring(float radius, float thickness, int n);
-	
 private:
-	struct Line;
-	struct Arrow;
-	struct Vector;
-
-	Line create_line(float width, float height);
-	Arrow create_arrow(float base_width, float height);
-	Vector create_vector();
-
-	struct Ring
+	struct Ring : public Shape
 	{
-		std::vector<glm::vec2> vertices;
+		Ring(float radius, float thickness, int n);
 
+		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
+
+		void draw() override;
 	};
 
 	struct Line
 	{
+		Line(float width, float height);
+
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
-
 	};
 
 	struct Arrow
 	{
+		Arrow(float base_width, float height);
+
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
 	};
 
-	struct Vector
+	struct Vector : public Shape
 	{
+		Vector();
+
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
 
-		void draw();
+		void draw() override;
 	};
 	
 	struct VectorRingPair

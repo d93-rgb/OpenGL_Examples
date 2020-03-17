@@ -13,6 +13,8 @@ public:
 
 	void create_program();
 
+	GLint get_program_id();
+
 private:
 	void compile(const std::string& type);
 	void check_errors(GLuint shader, const std::string& type) const;

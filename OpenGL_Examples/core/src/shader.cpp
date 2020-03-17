@@ -1,6 +1,4 @@
-#include "opengl_examples.h"
 #include "shader.h"
-#include "shadercompiler.h"
 
 namespace ogl_examples
 {
@@ -8,7 +6,7 @@ namespace ogl_examples
 Shader::Shader(const std::string& vertex_src, const std::string& fragment_src) :
 	sc(vertex_src, fragment_src)
 {
-
+	program_id = sc.get_program_id();
 }
 
 Shader::~Shader() = default;
@@ -38,6 +36,14 @@ Shader& Shader::use_program()
 {
 	assert(glIsProgram(program_id)); // should never happen normally
 	glUseProgram(program_id);
+
+	return *this;
+}
+
+Shader& Shader::recompile()
+{
+	sc.create_program();
+	program_id = sc.get_program_id();
 
 	return *this;
 }

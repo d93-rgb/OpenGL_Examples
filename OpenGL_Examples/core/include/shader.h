@@ -1,6 +1,8 @@
 #pragma once
-#include "opengl_examples.h"
 #include "GL/gl3w.h"
+
+#include "opengl_examples.h"
+#include "shadercompiler.h"
 
 namespace ogl_examples
 {
@@ -19,6 +21,8 @@ public:
     Shader& set_uniform(const std::string& uniform_name, const T& val, GLsizei n);
 
     Shader& use_program();
+
+    Shader& recompile();
 
 protected:
 

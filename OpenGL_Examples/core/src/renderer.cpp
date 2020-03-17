@@ -34,7 +34,7 @@ void Renderer::recompile()
 {
 	for (auto& s : shaders)
 	{
-		s->create_program();
+		s.second.recompile();
 	}
 }
 
@@ -355,7 +355,7 @@ void FourierSeriesRenderer::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
 
-
+	use_shader(ring_shader_name);
 	if (gui_params->fourierseries_renderer_params.update_rings)
 	{
 		gui_params->fourierseries_renderer_params.update_rings = false;
@@ -390,6 +390,8 @@ void FourierSeriesRenderer::render()
 	}
 
 	glDrawElements(GL_TRIANGLES, vr_pairs.back().r.indices.size(), GL_UNSIGNED_INT, 0);
+
+	use_shader(vector_shader_name);
 }
 
 void FourierSeriesRenderer::clean()
@@ -399,7 +401,7 @@ void FourierSeriesRenderer::clean()
 	glDeleteBuffers(1, &EBO);
 }
 
-void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
+FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n)
 {
 	if (!n)
 	{
@@ -413,11 +415,9 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 		return;
 	}
 
-	Ring r;
-
 	for (int i = 0; i < n; ++i)
 	{
-		r.vertices.push_back(glm::vec2(
+		vertices.push_back(glm::vec2(
 			radius * cos(i * TWO_PI / n),
 			radius * sin(i * TWO_PI / n)
 		));
@@ -425,7 +425,7 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 
 	for (int i = 0; i < n; ++i)
 	{
-		r.vertices.push_back(glm::vec2(
+		vertices.push_back(glm::vec2(
 			(radius - thickness) * static_cast<float>(cos(i * TWO_PI / n)),
 			(radius - thickness)* static_cast<float>(sin(i * TWO_PI / n))
 		));
@@ -434,110 +434,99 @@ void FourierSeriesRenderer::create_ring(float radius, float thickness, int n)
 	for (int i = 0; i < n - 1; ++i)
 	{
 		// first triangle
-		r.indices.push_back(i);
-		r.indices.push_back(i + 1);
-		r.indices.push_back(i + n);
+		indices.push_back(i);
+		indices.push_back(i + 1);
+		indices.push_back(i + n);
 
 		// second triangle
-		r.indices.push_back(i + 1);
-		r.indices.push_back(i + n + 1);
-		r.indices.push_back(i + n);
+		indices.push_back(i + 1);
+		indices.push_back(i + n + 1);
+		indices.push_back(i + n);
 	}
 	// last triangle cases handled separately to avoid modulo operations
 	// first triangle
-	r.indices.push_back(n - 1);
-	r.indices.push_back(0);
-	r.indices.push_back(n - 1 + n);
+	indices.push_back(n - 1);
+	indices.push_back(0);
+	indices.push_back(n - 1 + n);
 
 	// second triangle
-	r.indices.push_back(0);
-	r.indices.push_back(n);
-	r.indices.push_back(n - 1 + n);
+	indices.push_back(0);
+	indices.push_back(n);
+	indices.push_back(n - 1 + n);
 
-	VectorRingPair vr_pair;
-	vr_pair.r = std::move(r);
+	//VectorRingPair vr_pair;
+	//vr_pair.r = std::move(r);
 
-	// TODO: quick fix for having only one element inside container, either add new 
-	//		 method or change to something more elegant
-	if (!vr_pairs.empty())
-		vr_pairs.pop_back();
+	//// TODO: quick fix for having only one element inside container, either add new 
+	////		 method or change to something more elegant
+	//if (!vr_pairs.empty())
+	//	vr_pairs.pop_back();
 
-	vr_pairs.push_back(std::move(vr_pair));
+	//vr_pairs.push_back(std::move(vr_pair));
 }
 
-FourierSeriesRenderer::Line FourierSeriesRenderer::create_line(float width, float height)
+FourierSeriesRenderer::Line::Line(float width, float height)
 {
-	Line line;
-
 	float width_half = width * 0.5f;
 	float height_half = height * 0.5f;
 
-	line.vertices.push_back(glm::vec2(-width_half, height_half));
-	line.vertices.push_back(glm::vec2(-width_half, -height_half));
-	line.vertices.push_back(glm::vec2(width_half, height_half));
-	line.vertices.push_back(glm::vec2(width_half, -height_half));
+	vertices.push_back(glm::vec2(-width_half, height_half));
+	vertices.push_back(glm::vec2(-width_half, -height_half));
+	vertices.push_back(glm::vec2(width_half, height_half));
+	vertices.push_back(glm::vec2(width_half, -height_half));
 
 	// first triangle
-	line.indices.push_back(0);
-	line.indices.push_back(1);
-	line.indices.push_back(2);
+	indices.push_back(0);
+	indices.push_back(1);
+	indices.push_back(2);
 
 	// second triangle
-	line.indices.push_back(2);
-	line.indices.push_back(1);
-	line.indices.push_back(3);
-
-	return line;
+	indices.push_back(2);
+	indices.push_back(1);
+	indices.push_back(3);
 }
 
-FourierSeriesRenderer::Arrow FourierSeriesRenderer::create_arrow(float base_width, float height)
+FourierSeriesRenderer::Arrow::Arrow(float base_width, float height)
 {
-	Arrow arrow;
-
 	float base_width_half = base_width * 0.5f;
 
-	arrow.vertices.push_back(glm::vec2(0, base_width_half));
-	arrow.vertices.push_back(glm::vec2(0, -base_width_half));
-	arrow.vertices.push_back(glm::vec2(height, 0));
+	vertices.push_back(glm::vec2(0, base_width_half));
+	vertices.push_back(glm::vec2(0, -base_width_half));
+	vertices.push_back(glm::vec2(height, 0));
 
-	arrow.indices.push_back(0);
-	arrow.indices.push_back(1);
-	arrow.indices.push_back(2);
-
-	return arrow;
+	indices.push_back(0);
+	indices.push_back(1);
+	indices.push_back(2);
 }
 
-FourierSeriesRenderer::Vector FourierSeriesRenderer::create_vector()
+FourierSeriesRenderer::Vector::Vector()
 {
-	Vector vector;
-
 	float width = 1;
 	float height = 1;
-	auto& line = create_line(width, height);
-	auto& arrow = create_arrow(2 * width, height);
+	
+	Line line(width, height);
+	Arrow arrow(2 * width, height);
 
-	vector.vertices = line.vertices;
-	vector.indices = line.indices;
+	vertices = line.vertices;
+	indices = line.indices;
 
 	for (auto& v : arrow.vertices)
 	{
 		v = glm::vec2(width * 0.5, 0) + v;
 	}
 
-	vector.vertices.insert(vector.vertices.end(),
+	vertices.insert(vertices.end(),
 		arrow.vertices.begin(),
 		arrow.vertices.end());
 
 	for (auto& i : arrow.indices)
 	{
-		i += vector.vertices.size();
+		i += vertices.size();
 	}
 
-	vector.indices.insert(vector.indices.end(),
+	indices.insert(indices.end(),
 		arrow.indices.begin(),
 		arrow.indices.end());
-
-	return vector;
 }
 
 void FourierSeriesRenderer::Vector::draw()

@@ -100,6 +100,11 @@ void ShaderCompiler::create_program()
 	link(); 
 }
 
+GLint ShaderCompiler::get_program_id()
+{
+	return program_id;
+}
+
 void ShaderCompiler::check_errors(GLuint shader, const std::string& type) const
 {
 	GLint success;
