@@ -66,8 +66,8 @@ public:
 		float vector_line_height = 0.012;
 		float vector_arrow_base_width = 0.120;
 
-		glm::vec4 ring_color = glm::vec4(0.5, 0.4, 0.1, 1.0);
-		glm::vec4 vector_color = glm::vec4(0.5, 0.4, 0.1, 1.0);
+		glm::vec4 ring_color = glm::vec4(0.4, 0.4, 0.4, 1.0);
+		glm::vec4 vector_color = glm::vec4(0.2, 0.3, 0.8, 1.0);
 
 	} fourierseries_renderer_params;
 

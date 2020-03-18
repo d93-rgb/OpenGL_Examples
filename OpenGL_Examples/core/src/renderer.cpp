@@ -366,7 +366,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 			cam->worldToRaster,
 			1).
 		create_uniform("color",
-			this->gui_params->fourierseries_renderer_params.ring_color,
+			this->gui_params->fourierseries_renderer_params.vector_color,
 			1);
 
 	glUseProgram(0);
