@@ -175,6 +175,8 @@ private:
 
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
+
+		glm::vec2* arrow_tip;
 	};
 
 	struct Vector : public Shape
@@ -186,6 +188,8 @@ private:
 
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
+		
+		glm::vec2 arrow_tip;
 
 		void draw() override;
 		void clean() override;
