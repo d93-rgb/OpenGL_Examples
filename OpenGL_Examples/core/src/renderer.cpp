@@ -129,7 +129,7 @@ CubeRenderer::CubeRenderer(
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cube), &cube, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube), &cube, GL_DYNAMIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_indices), cube_indices, GL_STATIC_DRAW);
@@ -179,7 +179,6 @@ CubeRenderer::CubeRenderer(
 
 void CubeRenderer::render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	use_shader(cube_shader_name);
 	glBindVertexArray(VAO);
 
@@ -194,10 +193,11 @@ void CubeRenderer::render()
 	if (update_vertices())
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(cube), &cube, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(cube), &cube, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
 	glUseProgram(0);
@@ -367,8 +367,10 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 			1).
 		create_uniform("color",
 			this->gui_params->fourierseries_renderer_params.vector_color,
+			1).
+		create_uniform("objToWorld",
+			glm::mat4(1),
 			1);
-
 	glUseProgram(0);
 }
 
@@ -418,6 +420,9 @@ void FourierSeriesRenderer::render()
 		current_shader->set_uniform("color",
 			gui_params->fourierseries_renderer_params.vector_color, 1);
 	}
+
+	current_shader->set_uniform("objToWorld",
+		glm::rotate(glm::mat4(1), float(glfwGetTime()), glm::vec3(0, 0, 1)), 1);
 
 	vr_pairs.back().v.draw();
 }

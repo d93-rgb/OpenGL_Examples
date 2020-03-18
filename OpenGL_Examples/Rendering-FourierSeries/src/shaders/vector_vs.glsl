@@ -7,5 +7,5 @@ uniform mat4 worldToRaster;
 
 void main()
 {
-    gl_Position = worldToRaster * vec4(pos, 0, 1);
+    gl_Position = worldToRaster * objToWorld * vec4(pos, 0, 1);
 }
