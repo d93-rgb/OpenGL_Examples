@@ -299,9 +299,8 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	Vector v{
 		this->gui_params->fourierseries_renderer_params.ring_radius -
 		this->gui_params->fourierseries_renderer_params.ring_thickness,
-		0.8,
-		0.05,
-		0.15 };
+		this->gui_params->fourierseries_renderer_params.vector_line_height,
+		this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
 
 	vr_pairs.push_back(VectorRingPair(std::move(v), std::move(r)));
 	//create_ring(
@@ -375,45 +374,51 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 
 void FourierSeriesRenderer::render()
 {
+	static Shader* current_shader;
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	use_shader(ring_shader_name);
+	current_shader = &use_shader(ring_shader_name);
 
 	if (gui_params->fourierseries_renderer_params.update_rings)
 	{
-		gui_params->fourierseries_renderer_params.update_rings = false;
-
 		vr_pairs.back().r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
 			gui_params->fourierseries_renderer_params.ring_thickness,
 			gui_params->fourierseries_renderer_params.ring_vertices);
 
-		/*glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(
-			GL_ARRAY_BUFFER,
-			vr_pairs.back().r.vertices.size() * sizeof(vr_pairs.back().r.vertices.front()),
-			&vr_pairs.back().r.vertices[0],
-			GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(
-			GL_ELEMENT_ARRAY_BUFFER,
-			vr_pairs.back().r.indices.size() * sizeof(vr_pairs.back().r.indices.front()),
-			&vr_pairs.back().r.indices[0],
-			GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);*/
 	}
 	if (gui_params->fourierseries_renderer_params.update_ring_colors)
 	{
-		gui_params->fourierseries_renderer_params.update_rings = false;
-		use_shader(ring_shader_name).set_uniform("color",
+		gui_params->fourierseries_renderer_params.update_ring_colors = false;
+		current_shader->set_uniform("color",
 			gui_params->fourierseries_renderer_params.ring_color, 1);
 	}
 
 	vr_pairs.back().r.draw();
 
-	use_shader(vector_shader_name);
+
+	current_shader = &use_shader(vector_shader_name);
+
+	if (gui_params->fourierseries_renderer_params.update_vectors || 
+		gui_params->fourierseries_renderer_params.update_rings)
+	{
+		gui_params->fourierseries_renderer_params.update_rings = false;
+		gui_params->fourierseries_renderer_params.update_vectors = false;
+
+		vr_pairs.back().v = Vector(
+			gui_params->fourierseries_renderer_params.ring_radius -
+			gui_params->fourierseries_renderer_params.ring_thickness,
+			gui_params->fourierseries_renderer_params.vector_line_height,
+			gui_params->fourierseries_renderer_params.vector_arrow_base_width);
+
+	}
+
+	if (gui_params->fourierseries_renderer_params.update_vector_colors)
+	{
+		gui_params->fourierseries_renderer_params.update_vector_colors = false;
+		current_shader->set_uniform("color",
+			gui_params->fourierseries_renderer_params.vector_color, 1);
+	}
+
 	vr_pairs.back().v.draw();
 }
 
@@ -571,16 +576,16 @@ FourierSeriesRenderer::Arrow::Arrow(float base_width, float height)
 
 FourierSeriesRenderer::Vector::Vector(
 	float vector_length,
-	float line__length_percentage,
 	float line_height,
 	float arrow_base_width)
 {
-	assert(line__length_percentage <= 1 && line__length_percentage >= 0);
+	assert(vector_length <= 1 && vector_length >= 0);
 
-	float line_length = vector_length * line__length_percentage;
+	static float arrow_length = 0.155; // hardcoded value that makes arrow look nice
+	float line_length = vector_length - 0.155;
 
 	Line line(line_length, line_height);
-	Arrow arrow(arrow_base_width, vector_length * (1 - line__length_percentage));
+	Arrow arrow(arrow_base_width, arrow_length);
 
 	vertices = line.vertices;
 	indices = line.indices;

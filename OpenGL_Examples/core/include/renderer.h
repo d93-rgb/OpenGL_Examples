@@ -180,8 +180,7 @@ private:
 	struct Vector : public Shape
 	{
 		Vector(
-			float vector_length,
-			float line__length_percentage,
+			float line_length,
 			float line_height,
 			float arrow_base_width); // vertical base side of triangle
 

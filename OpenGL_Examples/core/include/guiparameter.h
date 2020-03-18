@@ -18,8 +18,8 @@ public:
 
 	~GUIParameter();
 
-	GLuint screen_width = 800;
-	GLuint screen_height = 600;
+	GLuint screen_width = 1080;
+	GLuint screen_height = 800;
 
 	class CubeRendererParams
 	{
@@ -62,10 +62,9 @@ public:
 		float ring_radius = 1.0f;
 		float ring_thickness = 0.1f;
 
-		float vector_length = ring_vertices - ring_thickness;
-		float vector_line__length_percentage = 0.8;;
-		float vector_line_height = 0.05;
-		float vector_arrow_base_width = 4 * vector_line_height;
+		float vector_length = 1.0;
+		float vector_line_height = 0.012;
+		float vector_arrow_base_width = 0.120;
 
 		glm::vec4 ring_color = glm::vec4(0.5, 0.4, 0.1, 1.0);
 		glm::vec4 vector_color = glm::vec4(0.5, 0.4, 0.1, 1.0);
