@@ -180,10 +180,10 @@ private:
 	struct Vector : public Shape
 	{
 		Vector(
-			float line_length,
+			float vector_length,
+			float line__length_percentage,
 			float line_height,
-			float arrow_length,
-			float arrow_base_width);
+			float arrow_base_width); // vertical base side of triangle
 
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;

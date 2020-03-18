@@ -186,9 +186,9 @@ void CubeRenderer::render()
 	if (gui_params->cube_renderer_params.trans_val_changed)
 	{
 		use_shader(cube_shader_name).set_uniform(
-				"trans_vec",
-				glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0),
-				1);
+			"trans_vec",
+			glm::vec4(gui_params->cube_renderer_params.translation_vec, 0, 0),
+			1);
 	}
 
 	if (update_vertices())
@@ -292,11 +292,17 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	shaders.emplace(vector_shader_name, Shader(vector_vertexPath, vector_fragPath));
 
 	Ring r(
-		this->gui_params->fourierseries_renderer_params.radius,
-		this->gui_params->fourierseries_renderer_params.thickness,
-		this->gui_params->fourierseries_renderer_params.vertices);
+		this->gui_params->fourierseries_renderer_params.ring_radius,
+		this->gui_params->fourierseries_renderer_params.ring_thickness,
+		this->gui_params->fourierseries_renderer_params.ring_vertices);
 
-	Vector v{0.5, 0.3, 0.5, 0.75};
+	Vector v{
+		this->gui_params->fourierseries_renderer_params.ring_radius -
+		this->gui_params->fourierseries_renderer_params.ring_thickness,
+		0.8,
+		0.05,
+		0.15 };
+
 	vr_pairs.push_back(VectorRingPair(std::move(v), std::move(r)));
 	//create_ring(
 	//	this->gui_params->fourierseries_renderer_params.radius,
@@ -349,12 +355,12 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		100));
 
 	use_shader(ring_shader_name).
-	create_uniform("worldToRaster",
-		cam->worldToRaster,
-		1).
-	create_uniform("color",
-		this->gui_params->fourierseries_renderer_params.ring_color,
-		1);
+		create_uniform("worldToRaster",
+			cam->worldToRaster,
+			1).
+		create_uniform("color",
+			this->gui_params->fourierseries_renderer_params.ring_color,
+			1);
 
 	use_shader(vector_shader_name).
 		create_uniform("worldToRaster",
@@ -376,9 +382,9 @@ void FourierSeriesRenderer::render()
 	{
 		gui_params->fourierseries_renderer_params.update_rings = false;
 
-		vr_pairs.back().r = Ring(gui_params->fourierseries_renderer_params.radius,
-			gui_params->fourierseries_renderer_params.thickness,
-			gui_params->fourierseries_renderer_params.vertices);
+		vr_pairs.back().r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
+			gui_params->fourierseries_renderer_params.ring_thickness,
+			gui_params->fourierseries_renderer_params.ring_vertices);
 
 		/*glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -420,7 +426,7 @@ void FourierSeriesRenderer::clean()
 	}
 }
 
-FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n) 
+FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n)
 {
 	if (!n)
 	{
@@ -439,15 +445,15 @@ FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n)
 		vertices.push_back(glm::vec2(
 			radius * cos(i * TWO_PI / n),
 			radius * sin(i * TWO_PI / n)
-		));
+			));
 	}
 
 	for (int i = 0; i < n; ++i)
 	{
 		vertices.push_back(glm::vec2(
-			(radius - thickness) * static_cast<float>(cos(i * TWO_PI / n)),
-			(radius - thickness)* static_cast<float>(sin(i * TWO_PI / n))
-		));
+		(radius - thickness) * static_cast<float>(cos(i * TWO_PI / n)),
+			(radius - thickness) * static_cast<float>(sin(i * TWO_PI / n))
+			));
 	}
 
 	for (int i = 0; i < n - 1; ++i)
@@ -532,13 +538,12 @@ void FourierSeriesRenderer::Ring::clean()
 
 FourierSeriesRenderer::Line::Line(float width, float height)
 {
-	float width_half = width * 0.5f;
 	float height_half = height * 0.5f;
 
-	vertices.push_back(glm::vec2(-width_half, height_half));
-	vertices.push_back(glm::vec2(-width_half, -height_half));
-	vertices.push_back(glm::vec2(width_half, height_half));
-	vertices.push_back(glm::vec2(width_half, -height_half));
+	vertices.push_back(glm::vec2(0, height_half));
+	vertices.push_back(glm::vec2(0, -height_half));
+	vertices.push_back(glm::vec2(width, height_half));
+	vertices.push_back(glm::vec2(width, -height_half));
 
 	// first triangle
 	indices.push_back(0);
@@ -565,20 +570,24 @@ FourierSeriesRenderer::Arrow::Arrow(float base_width, float height)
 }
 
 FourierSeriesRenderer::Vector::Vector(
-	float line_length,
+	float vector_length,
+	float line__length_percentage,
 	float line_height,
-	float arrow_length, 
 	float arrow_base_width)
 {
+	assert(line__length_percentage <= 1 && line__length_percentage >= 0);
+
+	float line_length = vector_length * line__length_percentage;
+
 	Line line(line_length, line_height);
-	Arrow arrow(arrow_length, arrow_base_width);
+	Arrow arrow(arrow_base_width, vector_length * (1 - line__length_percentage));
 
 	vertices = line.vertices;
 	indices = line.indices;
 
 	for (auto& v : arrow.vertices)
 	{
-		v = glm::vec2(line_length * 0.5, 0) + v;
+		v = glm::vec2(line_length, 0) + v;
 	}
 
 	for (auto& i : arrow.indices)

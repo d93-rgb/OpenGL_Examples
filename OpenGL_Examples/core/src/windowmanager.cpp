@@ -131,9 +131,9 @@ void WindowManager::run()
 		scene_choices += name + "\0"s;
 	}
 
-	float* fourier_series_circle_radius = &gui_params->fourierseries_renderer_params.radius;
-	float* fourier_series_circle_thickness = &gui_params->fourierseries_renderer_params.thickness;
-	int* fourier_series_circle_vertices = &gui_params->fourierseries_renderer_params.vertices;
+	float* fourier_series_circle_radius = &gui_params->fourierseries_renderer_params.ring_radius;
+	float* fourier_series_circle_thickness = &gui_params->fourierseries_renderer_params.ring_thickness;
+	int* fourier_series_circle_vertices = &gui_params->fourierseries_renderer_params.ring_vertices;
 	float* fourier_series_circle_color = &gui_params->fourierseries_renderer_params.ring_color.x;
 
 	glfwShowWindow(window);
