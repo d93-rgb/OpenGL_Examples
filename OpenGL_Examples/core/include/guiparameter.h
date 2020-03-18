@@ -54,7 +54,9 @@ public:
 		friend class FourierSeriesRenderer;
 
 		bool update_rings = false;
+		bool update_vectors = false;
 		bool update_ring_colors = false;
+		bool update_vector_colors = false;
 
 		int ring_vertices = 3;
 		float ring_radius = 1.0f;
