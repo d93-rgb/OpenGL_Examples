@@ -143,10 +143,10 @@ CubeRenderer::CubeRenderer(
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(sizeof(cube.vertices)));
 
 	// unbind everything
+	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	// TODO: move into shape class, cube not seen if ebo is set to 0
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	cam.reset(new PerspectiveCamera(
 		glm::lookAt(glm::vec3(0.0, 0.0, 4.0),
@@ -296,7 +296,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		this->gui_params->fourierseries_renderer_params.thickness,
 		this->gui_params->fourierseries_renderer_params.vertices);
 
-	Vector v;
+	Vector v{0.5, 0.3, 0.5, 0.75};
 	vr_pairs.push_back(VectorRingPair(std::move(v), std::move(r)));
 	//create_ring(
 	//	this->gui_params->fourierseries_renderer_params.radius,
@@ -356,6 +356,14 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		this->gui_params->fourierseries_renderer_params.ring_color,
 		1);
 
+	use_shader(vector_shader_name).
+		create_uniform("worldToRaster",
+			cam->worldToRaster,
+			1).
+		create_uniform("color",
+			this->gui_params->fourierseries_renderer_params.ring_color,
+			1);
+
 	glUseProgram(0);
 }
 
@@ -400,6 +408,7 @@ void FourierSeriesRenderer::render()
 	vr_pairs.back().r.draw();
 
 	use_shader(vector_shader_name);
+	vr_pairs.back().v.draw();
 }
 
 void FourierSeriesRenderer::clean()
@@ -499,15 +508,17 @@ FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n)
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 
 	// unbind everything
+	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	// TODO: same as for cube renderer
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void FourierSeriesRenderer::Ring::draw()
 {
 	glBindVertexArray(vao);
+	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
@@ -553,39 +564,72 @@ FourierSeriesRenderer::Arrow::Arrow(float base_width, float height)
 	indices.push_back(2);
 }
 
-FourierSeriesRenderer::Vector::Vector()
+FourierSeriesRenderer::Vector::Vector(
+	float line_length,
+	float line_height,
+	float arrow_length, 
+	float arrow_base_width)
 {
-	float width = 1;
-	float height = 1;
-	
-	Line line(width, height);
-	Arrow arrow(2 * width, height);
+	Line line(line_length, line_height);
+	Arrow arrow(arrow_length, arrow_base_width);
 
 	vertices = line.vertices;
 	indices = line.indices;
 
 	for (auto& v : arrow.vertices)
 	{
-		v = glm::vec2(width * 0.5, 0) + v;
+		v = glm::vec2(line_length * 0.5, 0) + v;
 	}
-
-	vertices.insert(vertices.end(),
-		arrow.vertices.begin(),
-		arrow.vertices.end());
 
 	for (auto& i : arrow.indices)
 	{
 		i += vertices.size();
 	}
 
+	vertices.insert(vertices.end(),
+		arrow.vertices.begin(),
+		arrow.vertices.end());
+
 	indices.insert(indices.end(),
 		arrow.indices.begin(),
 		arrow.indices.end());
+
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &ebo);
+
+	glBindVertexArray(vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		vertices.size() * sizeof(vertices.front()),
+		&vertices[0],
+		GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		indices.size() * sizeof(indices.front()),
+		&indices[0],
+		GL_STATIC_DRAW);
+
+	// vertices
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+
+	// unbind everything
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	// TODO: same as for cube renderer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void FourierSeriesRenderer::Vector::draw()
 {
+	glBindVertexArray(vao);
 
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void FourierSeriesRenderer::Vector::clean()

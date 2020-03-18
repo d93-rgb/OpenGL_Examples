@@ -179,7 +179,11 @@ private:
 
 	struct Vector : public Shape
 	{
-		Vector();
+		Vector(
+			float line_length,
+			float line_height,
+			float arrow_length,
+			float arrow_base_width);
 
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;

@@ -65,10 +65,11 @@ public:
 	} fourierseries_renderer_params;
 
 	bool switch_renderer = false;
-	int scene_choice = 0;
+	int scene_choice;
 
 	std::vector<std::string> renderer_names;
-	std::unordered_map<int, RENDERER_ENUM_LIST> scene_map;
+	std::unordered_map<int, RENDERER_ENUM_LIST> choice_to_scene_map;
+	std::unordered_map<RENDERER_ENUM_LIST, int> scene_to_choice_map;
 };
 
 } // namespace ogl_examples#pragma once

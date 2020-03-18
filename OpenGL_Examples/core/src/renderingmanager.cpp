@@ -24,7 +24,8 @@ void RenderingManager::run()
 
 	if (gui_params->switch_renderer)
 	{
-		current_renderer = renderers.find(gui_params->scene_choice)->second;
+		current_renderer = renderers.find(
+			gui_params->choice_to_scene_map.find(gui_params->scene_choice)->second)->second;
 	}
 
 	current_renderer->render();

@@ -42,5 +42,7 @@ class TriangleRendererEventHandler;
 class CubeRendererEventHandler;
 class FourierSeriesRendererEventHandler;
 
+enum class RENDERER_ENUM_LIST;
+
 constexpr double TWO_PI = 2 * M_PI;
 } // namespace ogl_examples
