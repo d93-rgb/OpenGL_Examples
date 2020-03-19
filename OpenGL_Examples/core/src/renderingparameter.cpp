@@ -1,4 +1,3 @@
-#pragma once
 #include "renderingparameter.h"
 
 namespace ogl_examples
