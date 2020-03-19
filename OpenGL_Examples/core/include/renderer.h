@@ -150,11 +150,27 @@ private:
 	{
 		Ring(float radius, float thickness, int n);
 
+		float radius;
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
 
 		void draw() override;
 		void clean() override;
+
+		Ring operator+(const glm::vec2& vec)
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			for (auto& v : vertices)
+				v += vec;
+			glBufferData(
+				GL_ARRAY_BUFFER,
+				vertices.size() * sizeof(vertices.front()),
+				&vertices[0],
+				GL_DYNAMIC_DRAW);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			return *this;
+		}
+
 	private:
 		GLuint vao = 0;
 		GLuint vbo = 0;
@@ -193,6 +209,22 @@ private:
 
 		void draw() override;
 		void clean() override;
+
+		Vector operator+(const glm::vec2& vec)
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			for (auto& v : vertices)
+				v += vec;
+			arrow_tip += vec;
+			glBufferData(
+				GL_ARRAY_BUFFER,
+				vertices.size() * sizeof(vertices.front()),
+				&vertices[0],
+				GL_DYNAMIC_DRAW);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			return *this;
+		}
+
 	private:
 		GLuint vao = 0;
 		GLuint vbo = 0;

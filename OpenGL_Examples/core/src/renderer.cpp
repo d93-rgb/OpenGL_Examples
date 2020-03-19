@@ -291,18 +291,39 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	shaders.emplace(ring_shader_name, Shader(ring_vertexPath, ring_fragPath));
 	shaders.emplace(vector_shader_name, Shader(vector_vertexPath, vector_fragPath));
 
-	Ring r(
-		this->gui_params->fourierseries_renderer_params.ring_radius,
-		this->gui_params->fourierseries_renderer_params.ring_thickness,
-		this->gui_params->fourierseries_renderer_params.ring_vertices);
+	{
+		Ring r(
+			this->gui_params->fourierseries_renderer_params.ring_radius,
+			this->gui_params->fourierseries_renderer_params.ring_thickness,
+			this->gui_params->fourierseries_renderer_params.ring_vertices);
 
-	Vector v{
-		this->gui_params->fourierseries_renderer_params.ring_radius -
-		this->gui_params->fourierseries_renderer_params.ring_thickness,
-		this->gui_params->fourierseries_renderer_params.vector_line_height,
-		this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
+		Vector v{
+			this->gui_params->fourierseries_renderer_params.ring_radius -
+			this->gui_params->fourierseries_renderer_params.ring_thickness,
+			this->gui_params->fourierseries_renderer_params.vector_line_height,
+			this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
 
-	vr_pairs.push_back(VectorRingPair(std::move(v), std::move(r)));
+		vr_pairs.push_back(VectorRingPair(std::move(v), std::move(r)));
+	}
+
+	{
+		Ring r(
+			this->gui_params->fourierseries_renderer_params.ring_radius,
+			this->gui_params->fourierseries_renderer_params.ring_thickness,
+			this->gui_params->fourierseries_renderer_params.ring_vertices);
+
+		Vector v{
+			this->gui_params->fourierseries_renderer_params.ring_radius -
+			this->gui_params->fourierseries_renderer_params.ring_thickness,
+			this->gui_params->fourierseries_renderer_params.vector_line_height,
+			this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
+
+		vr_pairs.push_back(VectorRingPair(
+			std::move(v + vr_pairs.back().v.arrow_tip),
+			std::move(r + vr_pairs.back().v.arrow_tip)));
+	}
+
+
 
 	float ar = static_cast<float>(this->gui_params->screen_width) / this->gui_params->screen_height;
 	cam.reset(new OrthographicCamera(
@@ -353,14 +374,22 @@ void FourierSeriesRenderer::render()
 
 	if (gui_params->fourierseries_renderer_params.update_rings)
 	{
-		for (auto& pair : vr_pairs)
+		if (gui_params->fourierseries_renderer_params.ring_thickness <
+			gui_params->fourierseries_renderer_params.ring_radius)
 		{
-			pair.r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
+			vr_pairs[0].r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
 				gui_params->fourierseries_renderer_params.ring_thickness,
 				gui_params->fourierseries_renderer_params.ring_vertices);
+
+			for (size_t i = 1; i < vr_pairs.size(); ++i)
+			{
+				vr_pairs[i].r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
+					gui_params->fourierseries_renderer_params.ring_thickness,
+					gui_params->fourierseries_renderer_params.ring_vertices) + glm::vec2(0.5, 0);
+			}
 		}
 	}
-	
+
 	for (auto& pair : vr_pairs)
 	{
 		pair.r.draw();
@@ -376,25 +405,35 @@ void FourierSeriesRenderer::render()
 			gui_params->fourierseries_renderer_params.vector_color, 1);
 	}
 
-	if (gui_params->fourierseries_renderer_params.update_vectors || 
+	if (gui_params->fourierseries_renderer_params.update_vectors ||
 		gui_params->fourierseries_renderer_params.update_rings)
 	{
 		gui_params->fourierseries_renderer_params.update_rings = false;
 		gui_params->fourierseries_renderer_params.update_vectors = false;
 
-		for (auto& pair : vr_pairs)
+		if (gui_params->fourierseries_renderer_params.ring_thickness <
+			gui_params->fourierseries_renderer_params.ring_radius)
 		{
-			pair.v = Vector(
+			vr_pairs[0].v = Vector(
 				gui_params->fourierseries_renderer_params.ring_radius -
 				gui_params->fourierseries_renderer_params.ring_thickness,
 				gui_params->fourierseries_renderer_params.vector_line_height,
 				gui_params->fourierseries_renderer_params.vector_arrow_base_width);
+
+			for (size_t i = 1; i < vr_pairs.size(); ++i)
+			{
+				vr_pairs[i].v = Vector(
+					gui_params->fourierseries_renderer_params.ring_radius -
+					gui_params->fourierseries_renderer_params.ring_thickness,
+					gui_params->fourierseries_renderer_params.vector_line_height,
+					gui_params->fourierseries_renderer_params.vector_arrow_base_width) +
+					vr_pairs[i - 1].v.arrow_tip;
+			}
 		}
 	}
 
 	current_shader->set_uniform("objToWorld",
 		glm::rotate(glm::mat4(1), float(glfwGetTime()), glm::vec3(0, 0, 1)), 1);
-
 
 	for (auto& pair : vr_pairs)
 	{
@@ -411,7 +450,8 @@ void FourierSeriesRenderer::clean()
 	}
 }
 
-FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n)
+FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n) :
+	radius(radius)
 {
 	if (!n)
 	{
@@ -421,8 +461,7 @@ FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n)
 	if (radius < thickness)
 	{
 		LOG(ERROR) << "thickness cannot be greater than radius";
-		//std::exit(1);
-		return;
+		std::exit(1);
 	}
 
 	for (int i = 0; i < n; ++i)
@@ -568,7 +607,7 @@ FourierSeriesRenderer::Vector::Vector(
 
 	Line line(line_length, line_height);
 	Arrow arrow(arrow_base_width, arrow_length);
-	
+
 	vertices = line.vertices;
 	indices = line.indices;
 
@@ -604,14 +643,14 @@ FourierSeriesRenderer::Vector::Vector(
 		GL_ARRAY_BUFFER,
 		vertices.size() * sizeof(vertices.front()),
 		&vertices[0],
-		GL_STATIC_DRAW);
+		GL_DYNAMIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(
 		GL_ELEMENT_ARRAY_BUFFER,
 		indices.size() * sizeof(indices.front()),
 		&indices[0],
-		GL_STATIC_DRAW);
+		GL_DYNAMIC_DRAW);
 
 	// vertices
 	glEnableVertexAttribArray(0);
