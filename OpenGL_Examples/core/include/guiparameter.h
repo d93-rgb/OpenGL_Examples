@@ -58,11 +58,11 @@ public:
 		bool update_ring_colors = false;
 		bool update_vector_colors = false;
 
-		int ring_vertices = 3;
-		float ring_radius = 1.0f;
-		float ring_thickness = 0.1f;
+		int ring_vertices = 15;
+		float ring_radius = 0.7f;
+		float ring_thickness = 0.012f;
 
-		float vector_length = 1.0;
+		float vector_length = 0.5;
 		float vector_line_height = 0.012;
 		float vector_arrow_base_width = 0.120;
 

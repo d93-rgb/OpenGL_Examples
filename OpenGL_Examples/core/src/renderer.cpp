@@ -323,8 +323,22 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 			std::move(r /*+ vr_pairs.back().v.arrow_tip*/)));
 	}
 
+	{
+		Ring r(
+			this->gui_params->fourierseries_renderer_params.ring_radius,
+			this->gui_params->fourierseries_renderer_params.ring_thickness,
+			this->gui_params->fourierseries_renderer_params.ring_vertices);
 
+		Vector v{
+			this->gui_params->fourierseries_renderer_params.ring_radius -
+			this->gui_params->fourierseries_renderer_params.ring_thickness,
+			this->gui_params->fourierseries_renderer_params.vector_line_height,
+			this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
 
+		vr_pairs.push_back(VectorRingPair(
+			std::move(v /*+ vr_pairs.back().v.arrow_tip*/),
+			std::move(r /*+ vr_pairs.back().v.arrow_tip*/)));
+	}
 	float ar = static_cast<float>(this->gui_params->screen_width) / this->gui_params->screen_height;
 	cam.reset(new OrthographicCamera(
 		glm::lookAt(glm::vec3(0.0, 0.0, 1.0),
@@ -341,6 +355,9 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		create_uniform("worldToRaster",
 			cam->worldToRaster,
 			1).
+		create_uniform("objToWorld",
+			glm::mat4(1),
+			1).
 		create_uniform("color",
 			this->gui_params->fourierseries_renderer_params.ring_color,
 			1);
@@ -349,15 +366,13 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		create_uniform("worldToRaster",
 			cam->worldToRaster,
 			1).
-		create_uniform("color",
-			this->gui_params->fourierseries_renderer_params.vector_color,
-			1).
 		create_uniform("objToWorld",
 			glm::mat4(1),
 			1).
-		create_uniform("translation_vec",
-			glm::vec2(0),
-			1);;
+		create_uniform("color",
+			this->gui_params->fourierseries_renderer_params.vector_color,
+			1);
+
 	glUseProgram(0);
 }
 
@@ -368,42 +383,9 @@ void FourierSeriesRenderer::render()
 	static Shader* current_shader;
 	static bool thickness_greater_than_radius = true;
 
+	std::vector<glm::mat4> translations;
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	current_shader = &use_shader(ring_shader_name);
-
-	if (gui_params->fourierseries_renderer_params.update_ring_colors)
-	{
-		gui_params->fourierseries_renderer_params.update_ring_colors = false;
-		current_shader->set_uniform("color",
-			gui_params->fourierseries_renderer_params.ring_color, 1);
-	}
-
-	if (gui_params->fourierseries_renderer_params.update_rings)
-	{
-		thickness_greater_than_radius =
-			gui_params->fourierseries_renderer_params.ring_thickness <
-			gui_params->fourierseries_renderer_params.ring_radius;
-		if (thickness_greater_than_radius)
-		{
-			vr_pairs[0].r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
-				gui_params->fourierseries_renderer_params.ring_thickness,
-				gui_params->fourierseries_renderer_params.ring_vertices);
-
-			for (size_t i = 1; i < vr_pairs.size(); ++i)
-			{
-				// TODO: add dynamic update of ring center
-				vr_pairs[i].r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
-					gui_params->fourierseries_renderer_params.ring_thickness,
-					gui_params->fourierseries_renderer_params.ring_vertices) + *vr_pairs[i].v.arrow_tip;
-			}
-		}
-	}
-
-	for (auto& pair : vr_pairs)
-	{
-		pair.r.draw();
-	}
-
 
 	current_shader = &use_shader(vector_shader_name);
 
@@ -417,8 +399,9 @@ void FourierSeriesRenderer::render()
 	if (gui_params->fourierseries_renderer_params.update_vectors ||
 		gui_params->fourierseries_renderer_params.update_rings)
 	{
-		gui_params->fourierseries_renderer_params.update_rings = false;
-		gui_params->fourierseries_renderer_params.update_vectors = false;
+		thickness_greater_than_radius =
+			gui_params->fourierseries_renderer_params.ring_thickness <
+			gui_params->fourierseries_renderer_params.ring_radius;
 
 		if (thickness_greater_than_radius)
 		{
@@ -440,31 +423,73 @@ void FourierSeriesRenderer::render()
 	}
 
 	float time = glfwGetTime();
-	auto objToWorld = glm::rotate(-time, glm::vec3(0, 0, 1));
+	auto rot_mat = glm::rotate(-time, glm::vec3(0, 0, 1));
 	current_shader->set_uniform("objToWorld",
-		objToWorld,
+		rot_mat,
 		1);
-		/*set_uniform("translation_vec",
-			glm::vec2(0),
-			1);*/
 	vr_pairs[0].v.draw();
+	translations.push_back(
+		glm::translate(
+			glm::vec3(rot_mat * glm::vec4(*vr_pairs[0].v.arrow_tip, 0, 1))));
 
 	for (size_t i = 1; i < vr_pairs.size(); ++i)
 	{
-		auto translate_mat =
-			glm::translate(
-				glm::vec3(objToWorld * glm::vec4(*vr_pairs[i - 1].v.arrow_tip, 0, 1)));
-		auto rot =  glm::rotate(
-			time,
-			glm::vec3(0, 0, 1));
-		
+		rot_mat = glm::rotate(i * time, glm::vec3(0, 0, 1));
+
 		current_shader->set_uniform("objToWorld",
-			translate_mat * rot,
+			translations.back() * rot_mat,
 			1);
-			/*set_uniform("translation_vec",
-				glm::vec2(objToWorld * glm::vec4(*vr_pairs[i - 1].v.arrow_tip, 0, 0)),
-				1);	*/
+
+		translations.push_back(
+			translations.back() *
+			glm::translate(
+				glm::vec3(rot_mat * glm::vec4(*vr_pairs[i].v.arrow_tip, 0, 1))));
+
 		vr_pairs[i].v.draw();
+	}
+
+	current_shader = &use_shader(ring_shader_name);
+
+	if (gui_params->fourierseries_renderer_params.update_ring_colors)
+	{
+		gui_params->fourierseries_renderer_params.update_ring_colors = false;
+		current_shader->set_uniform("color",
+			gui_params->fourierseries_renderer_params.ring_color, 1);
+	}
+
+	if (gui_params->fourierseries_renderer_params.update_vectors ||
+		gui_params->fourierseries_renderer_params.update_rings)
+	{
+		gui_params->fourierseries_renderer_params.update_vectors = false;
+		gui_params->fourierseries_renderer_params.update_rings = false;
+
+		if (thickness_greater_than_radius)
+		{
+			vr_pairs[0].r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
+				gui_params->fourierseries_renderer_params.ring_thickness,
+				gui_params->fourierseries_renderer_params.ring_vertices);
+
+			for (size_t i = 1; i < vr_pairs.size(); ++i)
+			{
+				vr_pairs[i].r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
+					gui_params->fourierseries_renderer_params.ring_thickness,
+					gui_params->fourierseries_renderer_params.ring_vertices);
+			}
+		}
+	}
+
+	current_shader->set_uniform("objToWorld",
+		glm::mat4(1),
+		1);
+	vr_pairs[0].r.draw();
+
+	for (size_t i = 1; i < vr_pairs.size(); ++i)
+	{
+		current_shader->set_uniform("objToWorld",
+			translations[i - 1],
+			1);
+
+		vr_pairs[i].r.draw();
 	}
 }
 
