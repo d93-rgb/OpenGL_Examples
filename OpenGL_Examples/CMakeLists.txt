@@ -4,7 +4,7 @@ cmake_policy(SET CMP0048 NEW)
 option(BUILD_SHARED_LIBS "Build shared libs for all libraries" OFF) 
 
 if(NOT MSVC)
-	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=gnu++11")
+	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=gnu++14")
 	SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -ldl")
 else(NOT MSVC)
 	# important flag, for __FILE__ macro to have absolute path 
