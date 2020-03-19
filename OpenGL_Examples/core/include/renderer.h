@@ -6,6 +6,7 @@
 
 #include "opengl_examples.h"
 #include "shape.h"
+#include "shader.h"
 
 namespace ogl_examples
 {
