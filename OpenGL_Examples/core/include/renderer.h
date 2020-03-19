@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <complex>
 
 #include "GL/gl3w.h"
 
@@ -146,6 +147,8 @@ public:
 	void clean() override;
 
 private:
+	void update_vectors();
+
 	struct Ring : public Shape
 	{
 		Ring(float radius, float thickness, int n);
@@ -245,6 +248,7 @@ private:
 	std::string vector_shader_name = "vector";
 
 	std::vector<VectorRingPair> vr_pairs;
+	std::vector<std::complex<float>> fourier_coefficients;
 };
 
 } // namespace ogl_examples

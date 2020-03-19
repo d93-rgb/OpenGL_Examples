@@ -358,9 +358,12 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	glUseProgram(0);
 }
 
+
+// TODO: instanced drawing
 void FourierSeriesRenderer::render()
 {
 	static Shader* current_shader;
+	static bool thickness_greater_than_radius = true;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	current_shader = &use_shader(ring_shader_name);
@@ -374,8 +377,10 @@ void FourierSeriesRenderer::render()
 
 	if (gui_params->fourierseries_renderer_params.update_rings)
 	{
-		if (gui_params->fourierseries_renderer_params.ring_thickness <
-			gui_params->fourierseries_renderer_params.ring_radius)
+		thickness_greater_than_radius =
+			gui_params->fourierseries_renderer_params.ring_thickness <
+			gui_params->fourierseries_renderer_params.ring_radius;
+		if (thickness_greater_than_radius)
 		{
 			vr_pairs[0].r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
 				gui_params->fourierseries_renderer_params.ring_thickness,
@@ -411,8 +416,7 @@ void FourierSeriesRenderer::render()
 		gui_params->fourierseries_renderer_params.update_rings = false;
 		gui_params->fourierseries_renderer_params.update_vectors = false;
 
-		if (gui_params->fourierseries_renderer_params.ring_thickness <
-			gui_params->fourierseries_renderer_params.ring_radius)
+		if (thickness_greater_than_radius)
 		{
 			vr_pairs[0].v = Vector(
 				gui_params->fourierseries_renderer_params.ring_radius -
@@ -432,8 +436,8 @@ void FourierSeriesRenderer::render()
 		}
 	}
 
-	current_shader->set_uniform("objToWorld",
-		glm::rotate(glm::mat4(1), float(glfwGetTime()), glm::vec3(0, 0, 1)), 1);
+	/*current_shader->set_uniform("objToWorld",
+		glm::rotate(glm::mat4(1), float(glfwGetTime()), glm::vec3(0, 0, 1)), 1);*/
 
 	for (auto& pair : vr_pairs)
 	{
@@ -621,7 +625,7 @@ FourierSeriesRenderer::Vector::Vector(
 		i += vertices.size();
 	}
 
-	// TODO: maybe make arrow_tip of Vector pointer, too?
+	// TODO: maybe make arrow_tip of Vector a pointer, too?
 	arrow_tip = *arrow.arrow_tip;
 
 	vertices.insert(vertices.end(),
