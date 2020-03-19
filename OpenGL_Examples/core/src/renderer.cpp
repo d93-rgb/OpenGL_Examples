@@ -117,8 +117,8 @@ CubeRenderer::CubeRenderer(
 	//		 moving the cube once at initialization and not during the rendering loop
 	for (int i = 0; i < 8; ++i) {
 		cube.vertices[i] =
-			glm::rotate(glm::mat4(1), glm::radians(45.0f), glm::vec3(0, -1, 0)) *
-			glm::rotate(glm::mat4(1), glm::radians(30.0f), glm::vec3(1, 0, 0)) *
+			glm::rotate(glm::radians(45.0f), glm::vec3(0, -1, 0)) *
+			glm::rotate(glm::radians(30.0f), glm::vec3(1, 0, 0)) *
 			glm::vec4(cube.vertices[i], 1);
 	}
 
@@ -319,8 +319,8 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 			this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
 
 		vr_pairs.push_back(VectorRingPair(
-			std::move(v + vr_pairs.back().v.arrow_tip),
-			std::move(r + vr_pairs.back().v.arrow_tip)));
+			std::move(v /*+ vr_pairs.back().v.arrow_tip*/),
+			std::move(r /*+ vr_pairs.back().v.arrow_tip*/)));
 	}
 
 
@@ -354,7 +354,10 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 			1).
 		create_uniform("objToWorld",
 			glm::mat4(1),
-			1);
+			1).
+		create_uniform("translation_vec",
+			glm::vec2(0),
+			1);;
 	glUseProgram(0);
 }
 
@@ -388,9 +391,10 @@ void FourierSeriesRenderer::render()
 
 			for (size_t i = 1; i < vr_pairs.size(); ++i)
 			{
+				// TODO: add dynamic update of ring center
 				vr_pairs[i].r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
 					gui_params->fourierseries_renderer_params.ring_thickness,
-					gui_params->fourierseries_renderer_params.ring_vertices) + glm::vec2(0.5, 0);
+					gui_params->fourierseries_renderer_params.ring_vertices) + *vr_pairs[i].v.arrow_tip;
 			}
 		}
 	}
@@ -430,18 +434,37 @@ void FourierSeriesRenderer::render()
 					gui_params->fourierseries_renderer_params.ring_radius -
 					gui_params->fourierseries_renderer_params.ring_thickness,
 					gui_params->fourierseries_renderer_params.vector_line_height,
-					gui_params->fourierseries_renderer_params.vector_arrow_base_width) +
-					vr_pairs[i - 1].v.arrow_tip;
+					gui_params->fourierseries_renderer_params.vector_arrow_base_width);
 			}
 		}
 	}
 
-	/*current_shader->set_uniform("objToWorld",
-		glm::rotate(glm::mat4(1), float(glfwGetTime()), glm::vec3(0, 0, 1)), 1);*/
+	float time = glfwGetTime();
+	auto objToWorld = glm::rotate(-time, glm::vec3(0, 0, 1));
+	current_shader->set_uniform("objToWorld",
+		objToWorld,
+		1);
+		/*set_uniform("translation_vec",
+			glm::vec2(0),
+			1);*/
+	vr_pairs[0].v.draw();
 
-	for (auto& pair : vr_pairs)
+	for (size_t i = 1; i < vr_pairs.size(); ++i)
 	{
-		pair.v.draw();
+		auto translate_mat =
+			glm::translate(
+				glm::vec3(objToWorld * glm::vec4(*vr_pairs[i - 1].v.arrow_tip, 0, 1)));
+		auto rot =  glm::rotate(
+			time,
+			glm::vec3(0, 0, 1));
+		
+		current_shader->set_uniform("objToWorld",
+			translate_mat * rot,
+			1);
+			/*set_uniform("translation_vec",
+				glm::vec2(objToWorld * glm::vec4(*vr_pairs[i - 1].v.arrow_tip, 0, 0)),
+				1);	*/
+		vr_pairs[i].v.draw();
 	}
 }
 
@@ -590,9 +613,8 @@ FourierSeriesRenderer::Arrow::Arrow(float base_width, float height)
 
 	vertices.push_back(glm::vec2(0, base_width_half));
 	vertices.push_back(glm::vec2(0, -base_width_half));
-	vertices.push_back(glm::vec2(height, 0));
 
-	arrow_tip = &vertices.back();
+	arrow_tip = glm::vec2(height, 0);
 
 	indices.push_back(0);
 	indices.push_back(1);
@@ -619,18 +641,19 @@ FourierSeriesRenderer::Vector::Vector(
 	{
 		v = glm::vec2(line_length, 0) + v;
 	}
+	arrow.arrow_tip += glm::vec2(line_length, 0);
+
 
 	for (auto& i : arrow.indices)
 	{
 		i += vertices.size();
 	}
 
-	// TODO: maybe make arrow_tip of Vector a pointer, too?
-	arrow_tip = *arrow.arrow_tip;
-
 	vertices.insert(vertices.end(),
 		arrow.vertices.begin(),
 		arrow.vertices.end());
+	vertices.push_back(arrow.arrow_tip);
+	arrow_tip = &vertices.back();
 
 	indices.insert(indices.end(),
 		arrow.indices.begin(),

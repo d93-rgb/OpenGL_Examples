@@ -157,6 +157,8 @@ private:
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
 
+		glm::mat4 objToWorld;
+
 		void draw() override;
 		void clean() override;
 
@@ -195,7 +197,7 @@ private:
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
 
-		glm::vec2* arrow_tip;
+		glm::vec2 arrow_tip;
 	};
 
 	struct Vector : public Shape
@@ -208,7 +210,9 @@ private:
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
 		
-		glm::vec2 arrow_tip;
+		glm::vec2* arrow_tip;
+
+		glm::mat4 objToWorld;
 
 		void draw() override;
 		void clean() override;
@@ -218,7 +222,6 @@ private:
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 			for (auto& v : vertices)
 				v += vec;
-			arrow_tip += vec;
 			glBufferData(
 				GL_ARRAY_BUFFER,
 				vertices.size() * sizeof(vertices.front()),
