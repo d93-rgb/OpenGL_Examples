@@ -149,6 +149,7 @@ CubeRenderer::CubeRenderer(
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	cam.reset(new PerspectiveCamera(
+		gui_params,
 		glm::lookAt(glm::vec3(0.0, 0.0, 4.0),
 			glm::vec3(0.0),
 			glm::vec3(0.0, 1.0, 0.0)),
@@ -316,14 +317,13 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 
 	float ar = static_cast<float>(this->gui_params->screen_width) / this->gui_params->screen_height;
 	cam.reset(new OrthographicCamera(
+		gui_params,
 		glm::lookAt(glm::vec3(0.0, 0.0, 1.0),
 			glm::vec3(0.0),
 			glm::vec3(0.0, 1.0, 0.0)),
 		// TODO: change view window, add options for runtime changing
-		-1.0 * ar,
-		1.0 * ar,
-		1.0,
-		-1.0,
+		4.0f,
+		ar,
 		0.1,
 		100));
 
@@ -374,6 +374,12 @@ void FourierSeriesRenderer::render()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	if (gui_params->fourierseries_renderer_params.update_camera)
+	{
+		gui_params->fourierseries_renderer_params.update_camera = false;
+		cam->update(gui_params->fourierseries_renderer_params.camera_zoom);
+	}
+
 	current_shader = &use_shader(vector_shader_name);
 
 	if (gui_params->fourierseries_renderer_params.update_vector_colors)
@@ -411,10 +417,15 @@ void FourierSeriesRenderer::render()
 
 	float time = glfwGetTime();
 	auto rot_mat = glm::rotate(-time, glm::vec3(0, 0, 1));
-	current_shader->set_uniform("objToWorld",
-		rot_mat,
-		1);
+	current_shader->
+		set_uniform("objToWorld",
+			rot_mat,
+			1).
+		set_uniform("worldToRaster",
+			cam->worldToRaster, 1);
+
 	vr_pairs[0].v.draw();
+
 	translations.push_back(
 		glm::translate(
 			glm::vec3(rot_mat * glm::vec4(*vr_pairs[0].v.arrow_tip, 0, 1))));
@@ -465,9 +476,13 @@ void FourierSeriesRenderer::render()
 		}
 	}
 
-	current_shader->set_uniform("objToWorld",
-		glm::mat4(1),
-		1);
+	current_shader->
+		set_uniform("objToWorld",
+			glm::mat4(1),
+			1).
+		set_uniform("worldToRaster",
+			cam->worldToRaster, 1);
+
 	vr_pairs[0].r.draw();
 
 	for (size_t i = 1; i < vr_pairs.size(); ++i)
@@ -485,10 +500,10 @@ void FourierSeriesRenderer::render()
 	*
 	*/
 	current_shader = &use_shader(tracer_shader_name);
-	
+
 	// draw on top
 	glClear(GL_DEPTH_BUFFER_BIT);
-	
+
 	// TODO: make this more object oriented and substitute glBindBuffer calls
 	// with glBindSubBuffer etc..
 	static const float dist_eps = 1e-7f;
@@ -510,7 +525,7 @@ void FourierSeriesRenderer::render()
 		init = false;
 
 		trace_points.reserve(max_points);
-		
+
 		glGenVertexArrays(1, &trace_vao);
 		glGenBuffers(1, &trace_vbo);
 		glGenBuffers(1, &trace_ebo);
@@ -544,7 +559,7 @@ void FourierSeriesRenderer::render()
 				trace_idx = 0;
 			}
 		}
-		else 
+		else
 		{
 			trace_points.push_back(old_tip_pos);
 		}
@@ -567,6 +582,9 @@ void FourierSeriesRenderer::render()
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	}
+
+	current_shader->set_uniform("worldToRaster",
+		cam->worldToRaster, 1);
 
 	glDrawElements(GL_LINE_STRIP, trace_points.size(), GL_UNSIGNED_INT, 0);
 

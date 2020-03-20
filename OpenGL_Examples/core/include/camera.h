@@ -13,6 +13,7 @@ public:
 	glm::mat4 worldToCamera;
 	glm::mat4 worldToRaster;
 
+	virtual void update(float zoom_factor) = 0;
 protected:
 	std::shared_ptr<GUIParameter> gui_params;
 };
@@ -23,10 +24,20 @@ class OrthographicCamera : public Camera
 public:
 	OrthographicCamera(std::shared_ptr<GUIParameter> gui_params, 
 		glm::mat4 lookAt,
-		float left, float right, float top, float bottom, float near, float far);
+		float left, float right, float top, float bottom, float near_val, float far_val);
 
-	void update();
+	OrthographicCamera(std::shared_ptr<GUIParameter> gui_params,
+		glm::mat4 lookAt,
+		float width, float aspect_ratio, float near_val, float far_val);
+
+	void update(float zoom_factor);
 protected:
+	float half_width;
+	float half_height;
+	float aspect_ratio;
+	float inv_aspect_ratio;
+	float near_val;
+	float far_val;
 };
 
 
@@ -35,9 +46,9 @@ class PerspectiveCamera : public Camera
 public:
 	PerspectiveCamera(std::shared_ptr<GUIParameter> gui_params,
 		glm::mat4 lookAt,
-		float fovy, float aspect_ratio, float near, float far);
+		float fovy, float aspect_ratio, float near_val, float far_val);
 
-	void update();
+	void update(float zoom_factor) override;
 protected:
 };
 
