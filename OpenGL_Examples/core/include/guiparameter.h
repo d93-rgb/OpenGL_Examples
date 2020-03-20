@@ -55,8 +55,11 @@ public:
 
 		bool update_rings = false;
 		bool update_vectors = false;
+
 		bool update_ring_colors = false;
 		bool update_vector_colors = false;
+		
+		bool update_camera = false;
 
 		int ring_vertices = 15;
 		float ring_radius = 0.7f;
@@ -65,6 +68,8 @@ public:
 		float vector_length = 0.5;
 		float vector_line_height = 0.012;
 		float vector_arrow_base_width = 0.120;
+
+		float camera_zoom = 1.0f;
 
 		glm::vec4 ring_color = glm::vec4(0.4, 0.4, 0.4, 1.0);
 		glm::vec4 vector_color = glm::vec4(0.2, 0.3, 0.8, 1.0);

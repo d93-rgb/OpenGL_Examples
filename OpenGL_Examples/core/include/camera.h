@@ -21,6 +21,7 @@ public:
 	OrthographicCamera(glm::mat4 lookAt,
 		float left, float right, float top, float bottom, float near, float far);
 
+	void update();
 protected:
 };
 
@@ -32,6 +33,7 @@ public:
 		float fovy, float aspect_ratio, float near, float far);
 
 
+	void update();
 protected:
 };
 

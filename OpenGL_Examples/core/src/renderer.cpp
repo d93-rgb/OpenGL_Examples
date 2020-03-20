@@ -297,7 +297,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	shaders.emplace(tracer_shader_name, Shader(tracer_vertexPath, tracer_fragPath));
 
 	{
-		for (int i = 0; i < 2; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			Ring r(
 				this->gui_params->fourierseries_renderer_params.ring_radius,
@@ -319,6 +319,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		glm::lookAt(glm::vec3(0.0, 0.0, 1.0),
 			glm::vec3(0.0),
 			glm::vec3(0.0, 1.0, 0.0)),
+		// TODO: change view window, add options for runtime changing
 		-1.0 * ar,
 		1.0 * ar,
 		1.0,
@@ -485,23 +486,37 @@ void FourierSeriesRenderer::render()
 	*/
 	current_shader = &use_shader(tracer_shader_name);
 
-	// TODO: draw tracing line
-	// current_shader = &use_shader(painter_shader_name);
-	static const float dist_eps = 1e-5f;
+	// TODO: make this more object oriented and remove substitute glBindBuffer calls
+	// with glBindSubBuffer etc..
+	static const float dist_eps = 1e-4f;
 	static const size_t max_points = 1000;
 
 	static std::vector<glm::vec2> trace_points;
+	static std::vector<GLuint> trace_indices(2 * max_points);
 	static glm::vec2 old_tip_pos = glm::vec2(translations.back()[3]);
 	static float distance;
+	static int trace_idx = 0;
+	static size_t trace_start_index = 0;
 	static GLuint trace_vao;
 	static GLuint trace_vbo;
+	static GLuint trace_ebo;
 	static bool init = true;
 
 	if (init)
 	{
 		init = false;
+
+		trace_points.reserve(max_points);
+		
 		glGenVertexArrays(1, &trace_vao);
 		glGenBuffers(1, &trace_vbo);
+		glGenBuffers(1, &trace_ebo);
+
+		for (int i = 0; i < max_points; ++i)
+		{
+			trace_indices[i] = i;
+			trace_indices[max_points + i] = i;
+		}
 	}
 
 	// update current "drawing" tip position
@@ -510,10 +525,26 @@ void FourierSeriesRenderer::render()
 	old_tip_pos = new_tip_pos;
 
 	glBindVertexArray(trace_vao);
-	if (distance > dist_eps && trace_points.size() < max_points)
+	if (distance > dist_eps)
 	{
-		trace_points.push_back(old_tip_pos);
+		if (trace_points.size() >= max_points)
+		{
+			++trace_start_index;
+			if (trace_start_index >= max_points)
+			{
+				trace_start_index = 0;
+			}
 
+			trace_points[trace_idx++] = old_tip_pos;
+			if (trace_idx >= max_points)
+			{
+				trace_idx = 0;
+			}
+		}
+		else 
+		{
+			trace_points.push_back(old_tip_pos);
+		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, trace_vbo);
 		glBufferData(
@@ -521,6 +552,13 @@ void FourierSeriesRenderer::render()
 			trace_points.size() * sizeof(trace_points.front()),
 			&trace_points[0],
 			GL_DYNAMIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, trace_ebo);
+		glBufferData(
+			GL_ELEMENT_ARRAY_BUFFER,
+			trace_points.size() * sizeof(trace_indices.front()),
+			&trace_indices[0],
+			GL_STATIC_DRAW);
 
 		// vertices
 		glEnableVertexAttribArray(0);
@@ -530,7 +568,8 @@ void FourierSeriesRenderer::render()
 	// if(max_point_count_reached)
 	// overwrite trace_points from the beginning (ringbuffer)
 	// certain deletion after max_points_drawn
-	glDrawArrays(GL_LINE_STRIP, 0, trace_points.size());
+	glDrawElements(GL_LINE_STRIP, trace_points.size(), GL_UNSIGNED_INT, 0);
+
 	glBindVertexArray(0);
 }
 

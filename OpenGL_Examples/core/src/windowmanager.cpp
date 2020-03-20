@@ -136,13 +136,14 @@ void WindowManager::run()
 	int* fourier_series_circle_vertices = &gui_params->fourierseries_renderer_params.ring_vertices;
 	float* fourier_series_circle_color = &gui_params->fourierseries_renderer_params.ring_color.x;
 
-	float* fourier_series_vector_length =
-		&gui_params->fourierseries_renderer_params.vector_length;
 	float* fourier_series_vector_line_height = 
 		&gui_params->fourierseries_renderer_params.vector_line_height;
 	float* fourier_series_vector_arrow_base_width = 
 		&gui_params->fourierseries_renderer_params.vector_arrow_base_width;
 	float* fourier_series_vector_color = &gui_params->fourierseries_renderer_params.vector_color.x;
+
+	float* fourier_series_camera_zoom =
+		&gui_params->fourierseries_renderer_params.camera_zoom;
 
 	glfwShowWindow(window);
 	while (!glfwWindowShouldClose(window)) {
@@ -181,11 +182,12 @@ void WindowManager::run()
 				ImGui::ColorEdit4("ring color", fourier_series_circle_color);
 
 			gui_params->fourierseries_renderer_params.update_vectors |=
-				ImGui::SliderFloat("vector line height", fourier_series_vector_line_height, 0, 1.0f);
-			gui_params->fourierseries_renderer_params.update_vectors |=
 				ImGui::SliderFloat("vector arrow height", fourier_series_vector_arrow_base_width, 0, 1.0f);
 			gui_params->fourierseries_renderer_params.update_vector_colors =
 				ImGui::ColorEdit4("vector color", fourier_series_vector_color);
+
+			gui_params->fourierseries_renderer_params.update_camera =
+				ImGui::SliderFloat("camera zoom", fourier_series_camera_zoom, 0, 10.0f);
 		}
 
 		ImGui::End();

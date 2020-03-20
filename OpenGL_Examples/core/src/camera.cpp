@@ -19,11 +19,21 @@ OrthographicCamera::OrthographicCamera(glm::mat4 lookAt,
 	worldToRaster = glm::ortho(left, right, bottom, top, near, far) * worldToCamera;
 }
 
+void OrthographicCamera::update()
+{
+
+}
+
 PerspectiveCamera::PerspectiveCamera(glm::mat4 lookAt,
 	float fovy, float aspect_ratio, float near, float far) :
 	Camera(lookAt)
 {
 	worldToRaster = glm::perspective(fovy, aspect_ratio, near, far) * worldToCamera;
+
+}
+
+void PerspectiveCamera::update()
+{
 
 }
 
