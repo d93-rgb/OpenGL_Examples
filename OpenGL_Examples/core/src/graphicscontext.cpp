@@ -13,6 +13,8 @@ GraphicsContext::GraphicsContext(int screen_width, int screen_height)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glViewport(0, 0, screen_width, screen_height);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+    glLineWidth(0.4f);
 }
 
 GraphicsContext::~GraphicsContext() = default;

@@ -288,57 +288,32 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	std::string vector_vertexPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/vector_vs.glsl";
 	std::string vector_fragPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/vector_fs.glsl";
 
+	std::string tracer_vertexPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/tracer_vs.glsl";
+	std::string tracer_fragPath = "../../../../OpenGL_Examples/Rendering-FourierSeries/src/shaders/tracer_fs.glsl";
+
+
 	shaders.emplace(ring_shader_name, Shader(ring_vertexPath, ring_fragPath));
 	shaders.emplace(vector_shader_name, Shader(vector_vertexPath, vector_fragPath));
+	shaders.emplace(tracer_shader_name, Shader(tracer_vertexPath, tracer_fragPath));
 
 	{
-		Ring r(
-			this->gui_params->fourierseries_renderer_params.ring_radius,
-			this->gui_params->fourierseries_renderer_params.ring_thickness,
-			this->gui_params->fourierseries_renderer_params.ring_vertices);
+		for (int i = 0; i < 2; ++i)
+		{
+			Ring r(
+				this->gui_params->fourierseries_renderer_params.ring_radius,
+				this->gui_params->fourierseries_renderer_params.ring_thickness,
+				this->gui_params->fourierseries_renderer_params.ring_vertices);
 
-		Vector v{
-			this->gui_params->fourierseries_renderer_params.ring_radius -
-			this->gui_params->fourierseries_renderer_params.ring_thickness,
-			this->gui_params->fourierseries_renderer_params.vector_line_height,
-			this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
+			Vector v{
+				this->gui_params->fourierseries_renderer_params.ring_radius -
+				this->gui_params->fourierseries_renderer_params.ring_thickness,
+				this->gui_params->fourierseries_renderer_params.vector_line_height,
+				this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
 
-		vr_pairs.push_back(VectorRingPair(std::move(v), std::move(r)));
+			vr_pairs.push_back(VectorRingPair(std::move(v), std::move(r)));
+		}
 	}
 
-	{
-		Ring r(
-			this->gui_params->fourierseries_renderer_params.ring_radius,
-			this->gui_params->fourierseries_renderer_params.ring_thickness,
-			this->gui_params->fourierseries_renderer_params.ring_vertices);
-
-		Vector v{
-			this->gui_params->fourierseries_renderer_params.ring_radius -
-			this->gui_params->fourierseries_renderer_params.ring_thickness,
-			this->gui_params->fourierseries_renderer_params.vector_line_height,
-			this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
-
-		vr_pairs.push_back(VectorRingPair(
-			std::move(v /*+ vr_pairs.back().v.arrow_tip*/),
-			std::move(r /*+ vr_pairs.back().v.arrow_tip*/)));
-	}
-
-	{
-		Ring r(
-			this->gui_params->fourierseries_renderer_params.ring_radius,
-			this->gui_params->fourierseries_renderer_params.ring_thickness,
-			this->gui_params->fourierseries_renderer_params.ring_vertices);
-
-		Vector v{
-			this->gui_params->fourierseries_renderer_params.ring_radius -
-			this->gui_params->fourierseries_renderer_params.ring_thickness,
-			this->gui_params->fourierseries_renderer_params.vector_line_height,
-			this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
-
-		vr_pairs.push_back(VectorRingPair(
-			std::move(v /*+ vr_pairs.back().v.arrow_tip*/),
-			std::move(r /*+ vr_pairs.back().v.arrow_tip*/)));
-	}
 	float ar = static_cast<float>(this->gui_params->screen_width) / this->gui_params->screen_height;
 	cam.reset(new OrthographicCamera(
 		glm::lookAt(glm::vec3(0.0, 0.0, 1.0),
@@ -371,6 +346,17 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 			1).
 		create_uniform("color",
 			this->gui_params->fourierseries_renderer_params.vector_color,
+			1);
+
+	use_shader(tracer_shader_name).
+		create_uniform("worldToRaster",
+			cam->worldToRaster,
+			1).
+		create_uniform("objToWorld",
+			glm::mat4(1),
+			1).
+		create_uniform("color",
+			glm::vec4(1),
 			1);
 
 	glUseProgram(0);
@@ -491,6 +477,61 @@ void FourierSeriesRenderer::render()
 
 		vr_pairs[i].r.draw();
 	}
+
+	/*
+	*
+	* Vector tip tracer
+	*
+	*/
+	current_shader = &use_shader(tracer_shader_name);
+
+	// TODO: draw tracing line
+	// current_shader = &use_shader(painter_shader_name);
+	static const float dist_eps = 1e-5f;
+	static const size_t max_points = 1000;
+
+	static std::vector<glm::vec2> trace_points;
+	static glm::vec2 old_tip_pos = glm::vec2(translations.back()[3]);
+	static float distance;
+	static GLuint trace_vao;
+	static GLuint trace_vbo;
+	static bool init = true;
+
+	if (init)
+	{
+		init = false;
+		glGenVertexArrays(1, &trace_vao);
+		glGenBuffers(1, &trace_vbo);
+	}
+
+	// update current "drawing" tip position
+	auto new_tip_pos = glm::vec2(translations.back()[3]);
+	distance = glm::length(new_tip_pos - old_tip_pos);
+	old_tip_pos = new_tip_pos;
+
+	glBindVertexArray(trace_vao);
+	if (distance > dist_eps && trace_points.size() < max_points)
+	{
+		trace_points.push_back(old_tip_pos);
+
+
+		glBindBuffer(GL_ARRAY_BUFFER, trace_vbo);
+		glBufferData(
+			GL_ARRAY_BUFFER,
+			trace_points.size() * sizeof(trace_points.front()),
+			&trace_points[0],
+			GL_DYNAMIC_DRAW);
+
+		// vertices
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	}
+
+	// if(max_point_count_reached)
+	// overwrite trace_points from the beginning (ringbuffer)
+	// certain deletion after max_points_drawn
+	glDrawArrays(GL_LINE_STRIP, 0, trace_points.size());
+	glBindVertexArray(0);
 }
 
 void FourierSeriesRenderer::clean()

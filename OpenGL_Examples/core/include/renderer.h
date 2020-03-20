@@ -250,6 +250,7 @@ private:
 
 	std::string ring_shader_name = "ring";
 	std::string vector_shader_name = "vector";
+	std::string tracer_shader_name = "tracer";
 
 	std::vector<VectorRingPair> vr_pairs;
 	std::vector<std::complex<float>> fourier_coefficients;
