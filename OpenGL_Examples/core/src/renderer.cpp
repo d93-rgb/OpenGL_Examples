@@ -297,7 +297,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	shaders.emplace(tracer_shader_name, Shader(tracer_vertexPath, tracer_fragPath));
 
 	{
-		for (int i = 0; i < 3; ++i)
+		for (int i = 0; i < 4; ++i)
 		{
 			Ring r(
 				this->gui_params->fourierseries_renderer_params.ring_radius,
@@ -485,10 +485,13 @@ void FourierSeriesRenderer::render()
 	*
 	*/
 	current_shader = &use_shader(tracer_shader_name);
-
-	// TODO: make this more object oriented and remove substitute glBindBuffer calls
+	
+	// draw on top
+	glClear(GL_DEPTH_BUFFER_BIT);
+	
+	// TODO: make this more object oriented and substitute glBindBuffer calls
 	// with glBindSubBuffer etc..
-	static const float dist_eps = 1e-4f;
+	static const float dist_eps = 1e-7f;
 	static const size_t max_points = 1000;
 
 	static std::vector<glm::vec2> trace_points;
@@ -557,7 +560,7 @@ void FourierSeriesRenderer::render()
 		glBufferData(
 			GL_ELEMENT_ARRAY_BUFFER,
 			trace_points.size() * sizeof(trace_indices.front()),
-			&trace_indices[0],
+			&trace_indices[trace_start_index],
 			GL_STATIC_DRAW);
 
 		// vertices
@@ -565,9 +568,6 @@ void FourierSeriesRenderer::render()
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	}
 
-	// if(max_point_count_reached)
-	// overwrite trace_points from the beginning (ringbuffer)
-	// certain deletion after max_points_drawn
 	glDrawElements(GL_LINE_STRIP, trace_points.size(), GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);

@@ -4,7 +4,7 @@
 
 namespace ogl_examples
 {
-Camera::Camera(glm::mat4 lookAt) :
+Camera::Camera(std::shared_ptr<GUIParameter> gui_params, glm::mat4 lookAt) :
 	cameraToWorld(std::move(glm::inverse(lookAt))),
 	worldToCamera(std::move(lookAt)),
 	worldToRaster(1)
@@ -12,9 +12,10 @@ Camera::Camera(glm::mat4 lookAt) :
 
 }
 
-OrthographicCamera::OrthographicCamera(glm::mat4 lookAt, 
+OrthographicCamera::OrthographicCamera(std::shared_ptr<GUIParameter> gui_params, 
+	glm::mat4 lookAt,
 	float left, float right, float top, float bottom, float near, float far) :
-	Camera(lookAt)
+	Camera(std::move(gui_params), lookAt)
 {
 	worldToRaster = glm::ortho(left, right, bottom, top, near, far) * worldToCamera;
 }
@@ -24,9 +25,10 @@ void OrthographicCamera::update()
 
 }
 
-PerspectiveCamera::PerspectiveCamera(glm::mat4 lookAt,
+PerspectiveCamera::PerspectiveCamera(std::shared_ptr<GUIParameter> gui_params,
+	glm::mat4 lookAt,
 	float fovy, float aspect_ratio, float near, float far) :
-	Camera(lookAt)
+	Camera(std::move(gui_params), lookAt)
 {
 	worldToRaster = glm::perspective(fovy, aspect_ratio, near, far) * worldToCamera;
 

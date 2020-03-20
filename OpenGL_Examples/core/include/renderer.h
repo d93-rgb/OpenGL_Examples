@@ -148,6 +148,7 @@ public:
 	void clean() override;
 
 private:
+	void fourier_coeff(int n);
 	void update_vectors();
 
 	struct Ring : public Shape
@@ -253,6 +254,8 @@ private:
 	std::string tracer_shader_name = "tracer";
 
 	std::vector<VectorRingPair> vr_pairs;
+
+	std::vector<std::pair<float, std::complex<float>>> function_data;
 	std::vector<std::complex<float>> fourier_coefficients;
 };
 

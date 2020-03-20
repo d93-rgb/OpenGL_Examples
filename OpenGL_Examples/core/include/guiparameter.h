@@ -52,6 +52,7 @@ public:
 		friend class WindowManager;
 		friend class FourierSeriesEventHandler;
 		friend class FourierSeriesRenderer;
+		friend class OrthographicCamera;
 
 		bool update_rings = false;
 		bool update_vectors = false;
@@ -71,7 +72,7 @@ public:
 
 		float camera_zoom = 1.0f;
 
-		glm::vec4 ring_color = glm::vec4(0.4, 0.4, 0.4, 1.0);
+		glm::vec4 ring_color = glm::vec4(0.4, 0.4, 0.4, 0.3);
 		glm::vec4 vector_color = glm::vec4(0.2, 0.3, 0.8, 1.0);
 
 	} fourierseries_renderer_params;

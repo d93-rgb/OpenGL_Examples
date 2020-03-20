@@ -14,7 +14,7 @@ GraphicsContext::GraphicsContext(int screen_width, int screen_height)
 	glViewport(0, 0, screen_width, screen_height);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-    glLineWidth(0.4f);
+    glLineWidth(1.0f);
 }
 
 GraphicsContext::~GraphicsContext() = default;

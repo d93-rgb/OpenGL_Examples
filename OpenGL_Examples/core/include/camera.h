@@ -7,18 +7,22 @@ namespace ogl_examples
 class Camera
 {
 public:
-	Camera(glm::mat4 lookAt);
+	Camera(std::shared_ptr<GUIParameter> gui_params, glm::mat4 lookAt);
 
 	glm::mat4 cameraToWorld;
 	glm::mat4 worldToCamera;
 	glm::mat4 worldToRaster;
+
+protected:
+	std::shared_ptr<GUIParameter> gui_params;
 };
 
 
 class OrthographicCamera : public Camera
 {
 public:
-	OrthographicCamera(glm::mat4 lookAt,
+	OrthographicCamera(std::shared_ptr<GUIParameter> gui_params, 
+		glm::mat4 lookAt,
 		float left, float right, float top, float bottom, float near, float far);
 
 	void update();
@@ -29,9 +33,9 @@ protected:
 class PerspectiveCamera : public Camera
 {
 public:
-	PerspectiveCamera(glm::mat4 lookAt,
+	PerspectiveCamera(std::shared_ptr<GUIParameter> gui_params,
+		glm::mat4 lookAt,
 		float fovy, float aspect_ratio, float near, float far);
-
 
 	void update();
 protected:
