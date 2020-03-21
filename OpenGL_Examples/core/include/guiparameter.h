@@ -54,6 +54,8 @@ public:
 		friend class FourierSeriesRenderer;
 		friend class OrthographicCamera;
 
+		bool animate = true;
+
 		bool update_rings = false;
 		bool update_vectors = false;
 
@@ -61,6 +63,9 @@ public:
 		bool update_vector_colors = false;
 		
 		bool update_camera = false;
+
+		float stop_time = 0.0f;
+		float resume_delta = 0.0f;
 
 		int ring_vertices = 15;
 		float ring_radius = 0.7f;

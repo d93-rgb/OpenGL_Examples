@@ -369,6 +369,12 @@ void FourierSeriesRenderer::render()
 {
 	static Shader* current_shader;
 	static bool thickness_greater_than_radius = true;
+	static float time_delta = 0.0f;
+
+	if (!gui_params->fourierseries_renderer_params.animate)
+	{
+		return;
+	}
 
 	std::vector<glm::mat4> translations;
 
@@ -415,7 +421,7 @@ void FourierSeriesRenderer::render()
 		}
 	}
 
-	float time = glfwGetTime();
+	float time = glfwGetTime() - gui_params->fourierseries_renderer_params.resume_delta;
 	auto rot_mat = glm::rotate(-time, glm::vec3(0, 0, 1));
 	current_shader->
 		set_uniform("objToWorld",
@@ -745,14 +751,13 @@ FourierSeriesRenderer::Arrow::Arrow(float base_width, float height)
 }
 
 FourierSeriesRenderer::Vector::Vector(
-	float vector_length,
+	std::complex<float> cplx, 
 	float line_height,
 	float arrow_base_width)
 {
-	assert(vector_length <= 1 && vector_length >= 0);
+	//assert(vector_length <= 1 && vector_length >= 0);
 
-	static float arrow_length = 0.155; // hardcoded value that makes arrow look nice
-	float line_length = vector_length - 0.155;
+	float line_length = std::abs(cplx) - arrow_length;
 
 	Line line(line_length, line_height);
 	Arrow arrow(arrow_base_width, arrow_length);
@@ -777,6 +782,12 @@ FourierSeriesRenderer::Vector::Vector(
 		arrow.vertices.end());
 	vertices.push_back(arrow.arrow_tip);
 	arrow_tip = &vertices.back();
+
+	// rotate to starting position
+	for (auto& v : vertices)
+	{
+		v = glm::rotateZ(glm::vec3(v, 0), std::arg(cplx));
+	}
 
 	indices.insert(indices.end(),
 		arrow.indices.begin(),

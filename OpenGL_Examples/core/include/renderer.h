@@ -205,7 +205,7 @@ private:
 	struct Vector : public Shape
 	{
 		Vector(
-			float line_length,
+			std::complex<float> cplx,
 			float line_height,
 			float arrow_base_width); // vertical base side of triangle
 
@@ -234,6 +234,7 @@ private:
 		}
 
 	private:
+		float arrow_length = 0.145; // hardcoded value that makes arrow look nice
 		GLuint vao = 0;
 		GLuint vbo = 0;
 		GLuint ebo = 0;

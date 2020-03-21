@@ -131,14 +131,18 @@ void WindowManager::run()
 		scene_choices += name + "\0"s;
 	}
 
+	// fourier series renderer
+	bool* fourier_series_animate = &gui_params->fourierseries_renderer_params.animate;
+	bool fourier_series_stopped = false;
+
 	float* fourier_series_circle_radius = &gui_params->fourierseries_renderer_params.ring_radius;
 	float* fourier_series_circle_thickness = &gui_params->fourierseries_renderer_params.ring_thickness;
 	int* fourier_series_circle_vertices = &gui_params->fourierseries_renderer_params.ring_vertices;
 	float* fourier_series_circle_color = &gui_params->fourierseries_renderer_params.ring_color.x;
 
-	float* fourier_series_vector_line_height = 
+	float* fourier_series_vector_line_height =
 		&gui_params->fourierseries_renderer_params.vector_line_height;
-	float* fourier_series_vector_arrow_base_width = 
+	float* fourier_series_vector_arrow_base_width =
 		&gui_params->fourierseries_renderer_params.vector_arrow_base_width;
 	float* fourier_series_vector_color = &gui_params->fourierseries_renderer_params.vector_color.x;
 
@@ -172,7 +176,20 @@ void WindowManager::run()
 		}
 		else if (gui_params->choice_to_scene_map.find(gui_params->scene_choice)->second == RENDERER_ENUM_LIST::FOURIER_SERIES)
 		{
-			gui_params->fourierseries_renderer_params.update_rings |= 
+			ImGui::Checkbox("animate", fourier_series_animate);
+			if(!fourier_series_stopped && !*fourier_series_animate)
+			{
+				fourier_series_stopped = true;
+				gui_params->fourierseries_renderer_params.stop_time = glfwGetTime();
+			}
+			else if (*fourier_series_animate && fourier_series_stopped)
+			{
+				fourier_series_stopped = false;
+				gui_params->fourierseries_renderer_params.resume_delta += 
+					glfwGetTime() - gui_params->fourierseries_renderer_params.stop_time;
+			}
+
+			gui_params->fourierseries_renderer_params.update_rings |=
 				ImGui::SliderFloat("radius", fourier_series_circle_radius, 0, 1.0f);
 			gui_params->fourierseries_renderer_params.update_rings |=
 				ImGui::SliderFloat("thickness", fourier_series_circle_thickness, 0, 1.0f);
