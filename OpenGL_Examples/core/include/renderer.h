@@ -150,7 +150,8 @@ public:
 	void clean() override;
 
 private:
-	void fourier_coeff(int n);
+	std::complex<float> integrate(int k);
+	void fill_fourier_coeff(int n);
 	void fill_func_values(
 		const std::function<std::complex<float>(float)>& func, 
 		float period, 
@@ -261,6 +262,9 @@ private:
 
 	std::vector<VectorRingPair> vr_pairs;
 
+	float function_period = 0.0f;
+	float inv_function_period = 0.0f;
+	float dx = 0.0f;
 	std::vector<std::pair<float, std::complex<float>>> function_data;
 	std::vector<std::complex<float>> fourier_coefficients;
 };

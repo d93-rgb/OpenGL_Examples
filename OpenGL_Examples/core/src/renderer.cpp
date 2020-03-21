@@ -849,28 +849,68 @@ void FourierSeriesRenderer::Vector::clean()
 	glDeleteBuffers(1, &ebo);
 }
 
-void FourierSeriesRenderer::fourier_coeff(int n) // number of coefficients
+std::complex<float> FourierSeriesRenderer::integrate(int k)
 {
-	for (int i = 0; i < n; ++i)
+	std::complex<float> exp_term;
+	std::complex<float> c_k = 0;
+	
+	// average value, skip cos and sin calls
+	if (k == 0)
 	{
+		for (int i = 0; i < function_data.size(); ++i)
+		{
+			c_k += function_data[i].second * dx;
+		}
 
+		return c_k * inv_function_period;
 	}
+
+	for (int i = 0; i < function_data.size(); ++i)
+	{
+		exp_term = std::complex<float>(
+			cosf(TWO_PI * inv_function_period * k * function_data[i].first), 
+			-sinf(TWO_PI * inv_function_period * k * function_data[i].first));
+
+		c_k += function_data[i].second * exp_term * dx;
+	}
+
+	return c_k * inv_function_period;
 }
 
+void FourierSeriesRenderer::fill_fourier_coeff(
+	int n) // highest coefficient index
+{
+	// return if period is less than or equal to 0
+	if (function_period < FLT_EPSILON)
+	{
+		return;
+	}
+
+	// average value
+	fourier_coefficients.push_back(integrate(0));
+
+	for (int i = 1; i <= n; ++i)
+	{
+		fourier_coefficients.push_back(integrate(i));
+		fourier_coefficients.push_back(integrate(-i));
+	}
+}
 
 void FourierSeriesRenderer::fill_func_values(
 	const std::function<std::complex<float>(float)>& func,
 	float period,
-	int n)
+	int n) // sample point count
 {
 	function_data.resize(n);
+	function_period = period;
+	inv_function_period = 1.0f / period;
 
-	float step_size = period / n;
+	dx = period / n;
 	float x = 0;
 	for (int i = 0; i < n; ++i)
 	{
 		function_data[i] = { x, func(x) };
-		x += step_size;
+		x += dx;
 	}
 }
 
