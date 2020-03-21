@@ -314,8 +314,8 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		std::vector<float> a_k;
 		std::vector<float> b_k;
 
-		int highest_coeff_k = 15;
-		int sample_count = 100000;
+		int highest_coeff_k = 5;
+		int sample_count = 500;
 		fill_func_values(rectangle_func, period, sample_count);
 		fill_fourier_coeff(highest_coeff_k);
 
@@ -334,15 +334,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 			b_k.push_back(-(fourier_coefficients[j] - fourier_coefficients[j + 1]).imag());
 
 			float abs_val = sqrtf(a_k.back() * a_k.back() + b_k.back() * b_k.back());
-			if (abs_val > (100 * FLT_EPSILON))
-			{
-				real_coefficients.push_back(abs_val);
-			}
-			else
-			{
-				a_k.pop_back();
-				b_k.pop_back();
-			}
+			real_coefficients.push_back(abs_val);
 		}
 
 		for (int i = 0; i < real_coefficients.size(); ++i)
@@ -947,14 +939,10 @@ void FourierSeriesRenderer::fill_fourier_coeff(
 	std::complex<float> coeff_tmp;
 	for (int i = 1; i <= n; ++i)
 	{
-		if (abs(coeff_tmp = integrate(i)) > (100 * FLT_EPSILON))
-		{
-			fourier_coefficients.push_back(coeff_tmp);
-		}
-		if (abs(coeff_tmp = integrate(-i)) > (100 * FLT_EPSILON))
-		{
-			fourier_coefficients.push_back(coeff_tmp);
-		}
+		coeff_tmp = integrate(i);
+		fourier_coefficients.push_back(coeff_tmp);
+		coeff_tmp = integrate(-i);
+		fourier_coefficients.push_back(coeff_tmp);
 	}
 }
 
@@ -966,14 +954,17 @@ void FourierSeriesRenderer::fill_func_values(
 	function_data.resize(n);
 	function_period = period;
 	inv_function_period = 1.0f / period;
+	auto function_data_2 = function_data;
 
 	dx = period / n;
 	float x = 0;
+	float x2 = 0;
 	for (int i = 0; i < n; ++i)
 	{
-		// "weird bug" here if zero is omitted as first value -> check integration
+		x = static_cast<float>(i) * dx;
 		function_data[i] = { x, func(x) };
-		x = i * dx;
+		//function_data_2[i] = { x2, func(x2) };
+		//x += dx;
 	}
 }
 
