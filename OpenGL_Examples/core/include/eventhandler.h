@@ -7,7 +7,8 @@ namespace ogl_examples
 class EventHandler
 {
 public:
-	EventHandler(std::shared_ptr<GUIParameter> gui_params);
+	explicit EventHandler(std::shared_ptr<GUIParameter> gui_params);
+
 	virtual void handle_mouse(GLFWwindow* window, double x_pos, double y_pos) = 0;
 
 	virtual void handle_mouse_button(GLFWwindow* window, int button, int action, int mods) = 0;
@@ -24,7 +25,7 @@ protected:
 class TriangleRendererEventHandler : public EventHandler
 {
 public:
-	TriangleRendererEventHandler(std::shared_ptr<GUIParameter> gui_params);
+	explicit TriangleRendererEventHandler(std::shared_ptr<GUIParameter> gui_params);
 
 	void handle_mouse(GLFWwindow* window, double x_pos, double y_pos);
 
@@ -40,7 +41,7 @@ protected:
 class CubeRendererEventHandler : public EventHandler
 {
 public:
-	CubeRendererEventHandler(std::shared_ptr<GUIParameter> gui_params);
+	explicit CubeRendererEventHandler(std::shared_ptr<GUIParameter> gui_params);
 
 	void handle_mouse(GLFWwindow* window, double x_pos, double y_pos);
 
@@ -64,7 +65,7 @@ private:
 class FourierSeriesRendererEventHandler : public EventHandler
 {
 public:
-	FourierSeriesRendererEventHandler(std::shared_ptr<GUIParameter> gui_params);
+	explicit FourierSeriesRendererEventHandler(std::shared_ptr<GUIParameter> gui_params);
 
 	void handle_mouse(GLFWwindow* window, double x_pos, double y_pos);
 

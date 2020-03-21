@@ -12,9 +12,9 @@ public:
 
 	RenderingManager();
 
-	RenderingManager(std::shared_ptr<Renderer> renderer);
+	explicit RenderingManager(std::shared_ptr<Renderer> renderer);
 
-	RenderingManager(std::shared_ptr<GUIParameter> gui_params);
+	explicit RenderingManager(std::shared_ptr<GUIParameter> gui_params);
 
 	void run();
 

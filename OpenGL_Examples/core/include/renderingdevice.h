@@ -7,7 +7,7 @@ namespace ogl_examples
 class RenderingDevice
 {
 public:
-	RenderingDevice(const std::shared_ptr<GUIParameter>& gui_params);
+	explicit RenderingDevice(const std::shared_ptr<GUIParameter>& gui_params);
 	~RenderingDevice();
 
 	void change_renderer(const std::shared_ptr<Renderer> new_renderer);
