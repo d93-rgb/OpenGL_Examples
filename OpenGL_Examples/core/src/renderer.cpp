@@ -297,18 +297,45 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	shaders.emplace(vector_shader_name, Shader(vector_vertexPath, vector_fragPath));
 	shaders.emplace(tracer_shader_name, Shader(tracer_vertexPath, tracer_fragPath));
 
-	{
-		for (int i = 0; i < 4; ++i)
+	float period = 1.0f;
+	auto rectangle_func = [&](float t) -> std::complex<float> {
+		if (t < period * 0.5)
 		{
-			std::complex cplx =
-				std::complex(0.5f * cosf(i * M_PI / 3), 0.5f * sinf(i * M_PI / 3));
+			return 1.0f;
+		}
+		else
+		{
+			return 0.0f;
+		}
+	};
+
+	{
+		int highest_coeff_k = 3;
+		int sample_count = 100;
+		fill_func_values(rectangle_func, period, sample_count);
+		fill_fourier_coeff(highest_coeff_k);
+
+		std::vector<int> coeff_indices;
+		coeff_indices.push_back(0);
+		for (int i = 1; i <= (fourier_coefficients.size() - 1) / 2; ++i)
+		{
+			coeff_indices.push_back(i);
+			coeff_indices.push_back(-i);
+		}
+
+		for (int i = 0; i < fourier_coefficients.size(); ++i)
+		{
+			//std::complex cplx =
+			//	std::complex(0.5f * cosf(i * M_PI / 3), 0.5f * sinf(i * M_PI / 3));
 			Ring r(
-				std::abs(cplx),
+				abs(fourier_coefficients[i]),
 				this->gui_params->fourierseries_renderer_params.ring_thickness,
 				this->gui_params->fourierseries_renderer_params.ring_vertices);
 
 			Vector v{
-				cplx,
+				fourier_coefficients[i],
+				coeff_indices[i],
+				coeff_indices[i] * static_cast<float>(TWO_PI) / period,
 				this->gui_params->fourierseries_renderer_params.vector_line_height,
 				this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
 
@@ -396,7 +423,7 @@ void FourierSeriesRenderer::render()
 			gui_params->fourierseries_renderer_params.vector_color, 1);
 	}
 
-	if (gui_params->fourierseries_renderer_params.update_vectors ||
+	/*if (gui_params->fourierseries_renderer_params.update_vectors ||
 		gui_params->fourierseries_renderer_params.update_rings)
 	{
 		thickness_greater_than_radius =
@@ -420,10 +447,10 @@ void FourierSeriesRenderer::render()
 					gui_params->fourierseries_renderer_params.vector_arrow_base_width);
 			}
 		}
-	}
+	}*/
 
 	float time = glfwGetTime() - gui_params->fourierseries_renderer_params.resume_delta;
-	auto rot_mat = glm::rotate(-time, glm::vec3(0, 0, 1));
+	auto rot_mat = glm::mat4(1);
 	current_shader->
 		set_uniform("objToWorld",
 			rot_mat,
@@ -439,7 +466,7 @@ void FourierSeriesRenderer::render()
 
 	for (size_t i = 1; i < vr_pairs.size(); ++i)
 	{
-		rot_mat = glm::rotate(i * time, glm::vec3(0, 0, 1));
+		rot_mat = glm::rotate(time * vr_pairs[i].v.angular_velocity * 0.1f, glm::vec3(0, 0, 1));
 
 		current_shader->set_uniform("objToWorld",
 			translations.back() * rot_mat,
@@ -753,8 +780,11 @@ FourierSeriesRenderer::Arrow::Arrow(float base_width, float height)
 
 FourierSeriesRenderer::Vector::Vector(
 	std::complex<float> cplx,
+	int k,					 // coefficient index
+	float angular_velocity,
 	float line_height,
-	float arrow_base_width)
+	float arrow_base_width) : 
+	angular_velocity(angular_velocity)
 {
 	//assert(vector_length <= 1 && vector_length >= 0);
 
@@ -853,7 +883,7 @@ std::complex<float> FourierSeriesRenderer::integrate(int k)
 {
 	std::complex<float> exp_term;
 	std::complex<float> c_k = 0;
-	
+
 	// average value, skip cos and sin calls
 	if (k == 0)
 	{
@@ -868,7 +898,7 @@ std::complex<float> FourierSeriesRenderer::integrate(int k)
 	for (int i = 0; i < function_data.size(); ++i)
 	{
 		exp_term = std::complex<float>(
-			cosf(TWO_PI * inv_function_period * k * function_data[i].first), 
+			cosf(TWO_PI * inv_function_period * k * function_data[i].first),
 			-sinf(TWO_PI * inv_function_period * k * function_data[i].first));
 
 		c_k += function_data[i].second * exp_term * dx;
@@ -889,10 +919,17 @@ void FourierSeriesRenderer::fill_fourier_coeff(
 	// average value
 	fourier_coefficients.push_back(integrate(0));
 
+	std::complex<float> coeff_tmp;
 	for (int i = 1; i <= n; ++i)
 	{
-		fourier_coefficients.push_back(integrate(i));
-		fourier_coefficients.push_back(integrate(-i));
+		if (abs(coeff_tmp = integrate(i)) > (10 * FLT_EPSILON))
+		{
+			fourier_coefficients.push_back(coeff_tmp);
+		}
+		if (abs(coeff_tmp = integrate(-i)) > (10 * FLT_EPSILON))
+		{
+			fourier_coefficients.push_back(coeff_tmp);
+		}
 	}
 }
 

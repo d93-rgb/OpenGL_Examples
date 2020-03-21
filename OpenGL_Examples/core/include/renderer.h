@@ -212,12 +212,15 @@ private:
 	{
 		Vector(
 			std::complex<float> cplx,
+			int k,					 // coefficient index
+			float angular_velocity,
 			float line_height,
 			float arrow_base_width); // vertical base side of triangle
 
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
 		
+		float angular_velocity = 0.0f;
 		glm::vec2* arrow_tip;
 
 		glm::mat4 objToWorld;

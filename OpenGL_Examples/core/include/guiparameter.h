@@ -69,7 +69,7 @@ public:
 
 		int ring_vertices = 15;
 		float ring_radius = 0.7f;
-		float ring_thickness = 0.012f;
+		float ring_thickness = 0.0012f;
 
 		float vector_length = 0.5;
 		float vector_line_height = 0.012;
