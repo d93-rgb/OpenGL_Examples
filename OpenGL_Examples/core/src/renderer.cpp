@@ -758,16 +758,26 @@ FourierSeriesRenderer::Vector::Vector(
 {
 	//assert(vector_length <= 1 && vector_length >= 0);
 
-	float line_length = std::abs(cplx) - arrow_length;
+	float abs_cplx = std::abs(cplx);
+	float scale_factor = 2 * abs_cplx;
+	//float new_arrow_length = arrow_length * (abs_cplx < 0.5f ? sqrt(2) * sqrt(abs_cplx) : 1.0f);
+	float new_arrow_length = arrow_length * (abs_cplx < 0.5f ? scale_factor : 1.0f);
+	float line_length = abs_cplx - new_arrow_length;
 
-	Line line(line_length, line_height);
-	Arrow arrow(arrow_base_width, arrow_length);
+	Line line(line_length, scale_factor * line_height);
+	Arrow arrow(arrow_base_width, new_arrow_length);
 
 	vertices = line.vertices;
 	indices = line.indices;
 
 	for (auto& v : arrow.vertices)
 	{
+		if (abs_cplx < 0.5f)
+		{
+			//v = glm::scale(glm::vec3(sqrt(2) * sqrt(abs_cplx), sqrt(2) * sqrt(abs_cplx), 0)) * glm::vec4(v, 0, 0);
+			v = glm::scale(glm::vec3(scale_factor, scale_factor, 0)) * glm::vec4(v, 0, 0);
+		}
+
 		v = glm::vec2(line_length, 0) + v;
 	}
 	arrow.arrow_tip += glm::vec2(line_length, 0);
