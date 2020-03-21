@@ -212,7 +212,6 @@ private:
 	{
 		Vector(
 			std::complex<float> cplx,
-			int k,					 // coefficient index
 			float angular_velocity,
 			float line_height,
 			float arrow_base_width); // vertical base side of triangle

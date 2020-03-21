@@ -305,37 +305,62 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		}
 		else
 		{
-			return 0.0f;
+			return -1.0f;
 		}
 	};
 
 	{
-		int highest_coeff_k = 3;
-		int sample_count = 100;
+		std::vector<float> real_coefficients;
+		std::vector<float> a_k;
+		std::vector<float> b_k;
+
+		int highest_coeff_k = 15;
+		int sample_count = 100000;
 		fill_func_values(rectangle_func, period, sample_count);
 		fill_fourier_coeff(highest_coeff_k);
 
 		std::vector<int> coeff_indices;
 		coeff_indices.push_back(0);
-		for (int i = 1; i <= (fourier_coefficients.size() - 1) / 2; ++i)
+		a_k.push_back(fourier_coefficients[0].real() * 2.0f);
+		b_k.push_back(0);
+		real_coefficients.push_back(a_k.back());
+
+		for (int i = 1, j = 1; i <= (fourier_coefficients.size() - 1) / 2; ++i, j += 2)
 		{
 			coeff_indices.push_back(i);
 			coeff_indices.push_back(-i);
+
+			a_k.push_back((fourier_coefficients[j] + fourier_coefficients[j + 1]).real());
+			b_k.push_back(-(fourier_coefficients[j] - fourier_coefficients[j + 1]).imag());
+
+			float abs_val = sqrtf(a_k.back() * a_k.back() + b_k.back() * b_k.back());
+			if (abs_val > (100 * FLT_EPSILON))
+			{
+				real_coefficients.push_back(abs_val);
+			}
+			else
+			{
+				a_k.pop_back();
+				b_k.pop_back();
+			}
 		}
 
-		for (int i = 0; i < fourier_coefficients.size(); ++i)
+		for (int i = 0; i < real_coefficients.size(); ++i)
 		{
 			//std::complex cplx =
 			//	std::complex(0.5f * cosf(i * M_PI / 3), 0.5f * sinf(i * M_PI / 3));
 			Ring r(
-				abs(fourier_coefficients[i]),
+				//abs(fourier_coefficients[i]),
+				real_coefficients[i],
 				this->gui_params->fourierseries_renderer_params.ring_thickness,
 				this->gui_params->fourierseries_renderer_params.ring_vertices);
 
 			Vector v{
-				fourier_coefficients[i],
-				coeff_indices[i],
-				coeff_indices[i] * static_cast<float>(TWO_PI) / period,
+				//fourier_coefficients[i],
+				//coeff_indices[i] * static_cast<float>(TWO_PI) / period,
+				real_coefficients[i] *
+				std::complex<float>(cosf(atan2f(a_k[i], b_k[i])), sinf(atan2f(a_k[i], b_k[i]))),
+				i * static_cast<float>(TWO_PI) * inv_function_period,
 				this->gui_params->fourierseries_renderer_params.vector_line_height,
 				this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
 
@@ -644,8 +669,9 @@ FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n) :
 	}
 	if (radius < thickness)
 	{
-		LOG(ERROR) << "thickness cannot be greater than radius";
-		std::exit(1);
+		thickness = 0;
+		//LOG(ERROR) << "thickness cannot be greater than radius";
+		//std::exit(1);
 	}
 
 	for (int i = 0; i < n; ++i)
@@ -780,10 +806,9 @@ FourierSeriesRenderer::Arrow::Arrow(float base_width, float height)
 
 FourierSeriesRenderer::Vector::Vector(
 	std::complex<float> cplx,
-	int k,					 // coefficient index
 	float angular_velocity,
 	float line_height,
-	float arrow_base_width) : 
+	float arrow_base_width) :
 	angular_velocity(angular_velocity)
 {
 	//assert(vector_length <= 1 && vector_length >= 0);
@@ -922,11 +947,11 @@ void FourierSeriesRenderer::fill_fourier_coeff(
 	std::complex<float> coeff_tmp;
 	for (int i = 1; i <= n; ++i)
 	{
-		if (abs(coeff_tmp = integrate(i)) > (10 * FLT_EPSILON))
+		if (abs(coeff_tmp = integrate(i)) > (100 * FLT_EPSILON))
 		{
 			fourier_coefficients.push_back(coeff_tmp);
 		}
-		if (abs(coeff_tmp = integrate(-i)) > (10 * FLT_EPSILON))
+		if (abs(coeff_tmp = integrate(-i)) > (100 * FLT_EPSILON))
 		{
 			fourier_coefficients.push_back(coeff_tmp);
 		}
@@ -946,8 +971,9 @@ void FourierSeriesRenderer::fill_func_values(
 	float x = 0;
 	for (int i = 0; i < n; ++i)
 	{
+		// "weird bug" here if zero is omitted as first value -> check integration
 		function_data[i] = { x, func(x) };
-		x += dx;
+		x = i * dx;
 	}
 }
 
