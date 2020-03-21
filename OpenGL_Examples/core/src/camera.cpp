@@ -4,7 +4,7 @@
 
 namespace ogl_examples
 {
-Camera::Camera(std::shared_ptr<GUIParameter> gui_params, glm::mat4 lookAt) :
+Camera::Camera(std::shared_ptr<GUIParameter> gui_params, glm::mat4 lookAt) noexcept :
 	cameraToWorld(std::move(glm::inverse(lookAt))),
 	worldToCamera(std::move(lookAt)),
 	worldToRaster(1)
@@ -14,7 +14,7 @@ Camera::Camera(std::shared_ptr<GUIParameter> gui_params, glm::mat4 lookAt) :
 
 OrthographicCamera::OrthographicCamera(std::shared_ptr<GUIParameter> gui_params, 
 	glm::mat4 lookAt,
-	float left, float right, float top, float bottom, float near_val, float far_val) :
+	float left, float right, float top, float bottom, float near_val, float far_val) noexcept :
 	Camera(std::move(gui_params), std::move(lookAt)),
 	half_width((right - left) * 0.5),
 	half_height((top - bottom) * 0.5),
@@ -26,7 +26,7 @@ OrthographicCamera::OrthographicCamera(std::shared_ptr<GUIParameter> gui_params,
 
 OrthographicCamera::OrthographicCamera(std::shared_ptr<GUIParameter> gui_params,
 	glm::mat4 lookAt,
-	float width, float aspect_ratio, float near_val, float far_val) :
+	float width, float aspect_ratio, float near_val, float far_val) noexcept :
 	Camera(std::move(gui_params), std::move(lookAt)), 
 	half_width(width * 0.5),
 	half_height(half_width / aspect_ratio),
@@ -42,7 +42,7 @@ OrthographicCamera::OrthographicCamera(std::shared_ptr<GUIParameter> gui_params,
 		far_val) * worldToCamera;
 }
 
-void OrthographicCamera::update(float zoom_factor)
+void OrthographicCamera::update(float zoom_factor) noexcept
 {
 	float half_width_tmp = half_width * zoom_factor;
 	float half_height_tmp = half_height * zoom_factor;
@@ -58,14 +58,14 @@ void OrthographicCamera::update(float zoom_factor)
 
 PerspectiveCamera::PerspectiveCamera(std::shared_ptr<GUIParameter> gui_params,
 	glm::mat4 lookAt,
-	float fovy, float aspect_ratio, float near_val, float far_val) :
+	float fovy, float aspect_ratio, float near_val, float far_val) noexcept :
 	Camera(std::move(gui_params), lookAt)
 {
 	worldToRaster = glm::perspective(fovy, aspect_ratio, near_val, far_val) * worldToCamera;
 
 }
 
-void PerspectiveCamera::update(float zoom_factor)
+void PerspectiveCamera::update(float zoom_factor) noexcept
 {
 
 }

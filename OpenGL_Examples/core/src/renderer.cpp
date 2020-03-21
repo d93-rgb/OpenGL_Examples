@@ -300,14 +300,15 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	{
 		for (int i = 0; i < 4; ++i)
 		{
+			std::complex cplx = 
+				std::complex(0.5f * cosf(i * M_PI/3), 0.5f * sinf(i * M_PI / 3));
 			Ring r(
-				this->gui_params->fourierseries_renderer_params.ring_radius,
+				std::abs(cplx),
 				this->gui_params->fourierseries_renderer_params.ring_thickness,
 				this->gui_params->fourierseries_renderer_params.ring_vertices);
 
 			Vector v{
-				this->gui_params->fourierseries_renderer_params.ring_radius -
-				this->gui_params->fourierseries_renderer_params.ring_thickness,
+				cplx,
 				this->gui_params->fourierseries_renderer_params.vector_line_height,
 				this->gui_params->fourierseries_renderer_params.vector_arrow_base_width };
 
