@@ -1,12 +1,14 @@
 #pragma once
-#include <unordered_map>
-#include <complex>
-
-#include "GL/gl3w.h"
-
 #include "opengl_examples.h"
 #include "shape.h"
 #include "shader.h"
+#include "GL/gl3w.h"
+
+#include <unordered_map>
+#include <complex>
+#include <functional>
+
+
 
 namespace ogl_examples
 {
@@ -149,7 +151,10 @@ public:
 
 private:
 	void fourier_coeff(int n);
-	void update_vectors();
+	void fill_func_values(
+		const std::function<std::complex<float>(float)>& func, 
+		float period, 
+		int n);
 
 	struct Ring : public Shape
 	{

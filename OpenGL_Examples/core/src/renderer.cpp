@@ -300,8 +300,8 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 	{
 		for (int i = 0; i < 4; ++i)
 		{
-			std::complex cplx = 
-				std::complex(0.5f * cosf(i * M_PI/3), 0.5f * sinf(i * M_PI / 3));
+			std::complex cplx =
+				std::complex(0.5f * cosf(i * M_PI / 3), 0.5f * sinf(i * M_PI / 3));
 			Ring r(
 				std::abs(cplx),
 				this->gui_params->fourierseries_renderer_params.ring_thickness,
@@ -752,7 +752,7 @@ FourierSeriesRenderer::Arrow::Arrow(float base_width, float height)
 }
 
 FourierSeriesRenderer::Vector::Vector(
-	std::complex<float> cplx, 
+	std::complex<float> cplx,
 	float line_height,
 	float arrow_base_width)
 {
@@ -847,6 +847,31 @@ void FourierSeriesRenderer::Vector::clean()
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
+}
+
+void FourierSeriesRenderer::fourier_coeff(int n) // number of coefficients
+{
+	for (int i = 0; i < n; ++i)
+	{
+
+	}
+}
+
+
+void FourierSeriesRenderer::fill_func_values(
+	const std::function<std::complex<float>(float)>& func,
+	float period,
+	int n)
+{
+	function_data.resize(n);
+
+	float step_size = period / n;
+	float x = 0;
+	for (int i = 0; i < n; ++i)
+	{
+		function_data[i] = { x, func(x) };
+		x += step_size;
+	}
 }
 
 } // namespace ogl_examples
