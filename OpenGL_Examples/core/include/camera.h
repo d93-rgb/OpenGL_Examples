@@ -45,6 +45,8 @@ protected:
 
 	float* zoom_factor;
 	glm::vec2* translation_vec;
+
+	glm::vec2 translation_factors;
 };
 
 
