@@ -219,6 +219,7 @@ private:
 		std::vector<glm::vec2> vertices;
 		std::vector<unsigned int> indices;
 		
+		float vector_magnitude;
 		float angular_velocity = 0.0f;
 		glm::vec2* arrow_tip;
 

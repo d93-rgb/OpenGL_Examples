@@ -516,13 +516,13 @@ void FourierSeriesRenderer::render()
 
 		if (thickness_greater_than_radius)
 		{
-			vr_pairs[0].r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
+			vr_pairs[0].r = Ring(vr_pairs[0].v.vector_magnitude,
 				gui_params->fourierseries_renderer_params.ring_thickness,
 				gui_params->fourierseries_renderer_params.ring_vertices);
 
 			for (size_t i = 1; i < vr_pairs.size(); ++i)
 			{
-				vr_pairs[i].r = Ring(gui_params->fourierseries_renderer_params.ring_radius,
+				vr_pairs[i].r = Ring(vr_pairs[i].v.vector_magnitude,
 					gui_params->fourierseries_renderer_params.ring_thickness,
 					gui_params->fourierseries_renderer_params.ring_vertices);
 			}
@@ -807,11 +807,11 @@ FourierSeriesRenderer::Vector::Vector(
 {
 	//assert(vector_length <= 1 && vector_length >= 0);
 
-	float abs_cplx = std::abs(cplx);
-	float scale_factor = 2 * abs_cplx;
+	vector_magnitude = std::abs(cplx);
+	float scale_factor = 2 * vector_magnitude;
 	//float new_arrow_length = arrow_length * (abs_cplx < 0.5f ? sqrt(2) * sqrt(abs_cplx) : 1.0f);
-	float new_arrow_length = arrow_length * (abs_cplx < 0.5f ? scale_factor : 1.0f);
-	float line_length = abs_cplx - new_arrow_length;
+	float new_arrow_length = arrow_length * (vector_magnitude < 0.5f ? scale_factor : 1.0f);
+	float line_length = vector_magnitude - new_arrow_length;
 
 	Line line(line_length, scale_factor * line_height);
 	Arrow arrow(arrow_base_width, new_arrow_length);
@@ -821,7 +821,7 @@ FourierSeriesRenderer::Vector::Vector(
 
 	for (auto& v : arrow.vertices)
 	{
-		if (abs_cplx < 0.5f)
+		if (vector_magnitude < 0.5f)
 		{
 			//v = glm::scale(glm::vec3(sqrt(2) * sqrt(abs_cplx), sqrt(2) * sqrt(abs_cplx), 0)) * glm::vec4(v, 0, 0);
 			v = glm::scale(glm::vec3(scale_factor, scale_factor, 0)) * glm::vec4(v, 0, 0);
