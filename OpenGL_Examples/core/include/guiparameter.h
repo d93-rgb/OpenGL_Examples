@@ -71,13 +71,13 @@ public:
 
 		int ring_vertices = 15;
 		float ring_radius = 0.7f;
-		float ring_thickness = 0.0012f;
+		float ring_thickness = 0.005f;
 
 		float vector_length = 0.5;
 		float vector_line_height = 0.012;
 		float vector_arrow_base_width = 0.120;
 
-		glm::vec4 ring_color = glm::vec4(0.4, 0.4, 0.4, 0.3);
+		glm::vec4 ring_color = glm::vec4(0.5, 0.5, 0.5, 0.8);
 		glm::vec4 vector_color = glm::vec4(0.2, 0.3, 0.8, 1.0);
 
 	} fourierseries_renderer_params;

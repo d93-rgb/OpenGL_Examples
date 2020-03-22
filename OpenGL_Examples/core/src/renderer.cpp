@@ -654,16 +654,16 @@ void FourierSeriesRenderer::clean()
 }
 
 FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n) :
-	radius(radius)
+	radius(abs(radius))
 {
 	if (!n)
 	{
 		LOG(INFO) << "n must be greater than 0";
 		std::exit(1);
 	}
-	if (radius < thickness)
+	if (this->radius < thickness)
 	{
-		thickness = 0;
+		thickness = 0.9 * radius;
 		//LOG(ERROR) << "thickness cannot be greater than radius";
 		//std::exit(1);
 	}
@@ -671,16 +671,16 @@ FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n) :
 	for (int i = 0; i < n; ++i)
 	{
 		vertices.push_back(glm::vec2(
-			radius * cos(i * TWO_PI / n),
-			radius * sin(i * TWO_PI / n)
+			this->radius * cos(i * TWO_PI / n),
+			this->radius * sin(i * TWO_PI / n)
 			));
 	}
 
 	for (int i = 0; i < n; ++i)
 	{
 		vertices.push_back(glm::vec2(
-		(radius - thickness) * static_cast<float>(cos(i * TWO_PI / n)),
-			(radius - thickness) * static_cast<float>(sin(i * TWO_PI / n))
+		(this->radius - thickness) * static_cast<float>(cos(i * TWO_PI / n)),
+			(this->radius - thickness) * static_cast<float>(sin(i * TWO_PI / n))
 			));
 	}
 

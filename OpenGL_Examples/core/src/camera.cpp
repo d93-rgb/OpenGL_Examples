@@ -44,7 +44,7 @@ OrthographicCamera::OrthographicCamera(std::shared_ptr<GUIParameter> gui_params,
 	near_val(near_val), far_val(far_val),
 	zoom_factor(zoom_factor),
 	translation_vec(translation),
-	translation_factors(2.0f / this->gui_params->screen_width,
+	translation_factors(2.0f / this->gui_params->screen_width, // precomputed factors
 		(2.0f) / this->gui_params->screen_height)
 {
 	worldToRaster = glm::ortho(
