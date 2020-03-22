@@ -118,14 +118,15 @@ FourierSeriesRendererEventHandler::FourierSeriesRendererEventHandler(std::shared
 
 void FourierSeriesRendererEventHandler::handle_mouse(GLFWwindow* window, double x_pos, double y_pos)
 {
+	//LOG(INFO) << "x_pos = " << x_pos << ",\ty_pos = " << y_pos;
 	if (!mouse_button_pressed)
 	{
 		return;
 	}
 	gui_params->fourierseries_renderer_params.camera_translation.x -= 
-		0.01f * (x_pos - old_x_pos);
+		(x_pos - old_x_pos);
 	gui_params->fourierseries_renderer_params.camera_translation.y +=
-		0.01f* (y_pos - old_y_pos);
+		(y_pos - old_y_pos);
 
 	gui_params->fourierseries_renderer_params.update_camera = true;
 	old_x_pos = x_pos;

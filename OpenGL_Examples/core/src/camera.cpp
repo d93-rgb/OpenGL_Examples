@@ -1,10 +1,12 @@
 #include "camera.h"
+#include "guiparameter.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 
 namespace ogl_examples
 {
 Camera::Camera(std::shared_ptr<GUIParameter> gui_params, glm::mat4 lookAt) noexcept :
+	gui_params(gui_params),
 	cameraToWorld(std::move(glm::inverse(lookAt))),
 	worldToCamera(std::move(lookAt)),
 	worldToRaster(1)
@@ -60,12 +62,17 @@ void OrthographicCamera::update() noexcept
 
 	float half_width_tmp = half_width * (*zoom_factor);
 	float half_height_tmp = half_height * (*zoom_factor);
+	glm::vec2 t_vec_transformed = 
+		glm::vec2(
+			2.0f * half_width_tmp / gui_params->screen_width,
+			2.0f * half_height_tmp / gui_params->screen_height) *
+		(*translation_vec);
 
 	worldToRaster = glm::ortho(
-		-half_width_tmp + (*translation_vec).x,
-		half_width_tmp + (*translation_vec).x,
-		-half_height_tmp + (*translation_vec).y,
-		half_height_tmp + (*translation_vec).y,
+		-half_width_tmp + (t_vec_transformed).x,
+		half_width_tmp + (t_vec_transformed).x,
+		-half_height_tmp + (t_vec_transformed).y,
+		half_height_tmp + (t_vec_transformed).y,
 		near_val,
 		far_val) * worldToCamera;
 }
