@@ -514,7 +514,7 @@ void FourierSeriesRenderer::render()
 		gui_params->fourierseries_renderer_params.update_vectors = false;
 		gui_params->fourierseries_renderer_params.update_rings = false;
 
-		if (thickness_greater_than_radius)
+		//if (thickness_greater_than_radius)
 		{
 			vr_pairs[0].r = Ring(vr_pairs[0].v.vector_magnitude,
 				gui_params->fourierseries_renderer_params.ring_thickness,
@@ -706,16 +706,6 @@ FourierSeriesRenderer::Ring::Ring(float radius, float thickness, int n) :
 	indices.push_back(0);
 	indices.push_back(n);
 	indices.push_back(n - 1 + n);
-
-	//VectorRingPair vr_pair;
-	//vr_pair.r = std::move(r);
-
-	//// TODO: quick fix for having only one element inside container, either add new 
-	////		 method or change to something more elegant
-	//if (!vr_pairs.empty())
-	//	vr_pairs.pop_back();
-
-	//vr_pairs.push_back(std::move(vr_pair));
 
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
