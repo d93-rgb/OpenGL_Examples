@@ -13,7 +13,7 @@ public:
 	glm::mat4 worldToCamera;
 	glm::mat4 worldToRaster;
 
-	virtual void update(float zoom_factor) noexcept = 0;
+	virtual void update() noexcept = 0;
 protected:
 	std::shared_ptr<GUIParameter> gui_params;
 };
@@ -24,13 +24,17 @@ class OrthographicCamera : public Camera
 public:
 	OrthographicCamera(std::shared_ptr<GUIParameter> gui_params, 
 		glm::mat4 lookAt,
-		float left, float right, float top, float bottom, float near_val, float far_val) noexcept;
+		float left, float right, float top, float bottom, float near_val, float far_val,
+		float* camera_zoom,
+		glm::vec2* translation) noexcept;
 
 	OrthographicCamera(std::shared_ptr<GUIParameter> gui_params,
 		glm::mat4 lookAt,
-		float width, float aspect_ratio, float near_val, float far_val) noexcept;
+		float width, float aspect_ratio, float near_val, float far_val,
+		float* camera_zoom,
+		glm::vec2* translation) noexcept;
 
-	void update(float zoom_factor) noexcept override;
+	void update() noexcept override;
 protected:
 	float half_width;
 	float half_height;
@@ -38,6 +42,9 @@ protected:
 	float inv_aspect_ratio;
 	float near_val;
 	float far_val;
+
+	float* zoom_factor;
+	glm::vec2* translation_vec;
 };
 
 
@@ -48,7 +55,7 @@ public:
 		glm::mat4 lookAt,
 		float fovy, float aspect_ratio, float near_val, float far_val) noexcept;
 
-	void update(float zoom_factor) noexcept override;
+	void update() noexcept override;
 protected:
 };
 

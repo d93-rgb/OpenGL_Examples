@@ -118,12 +118,36 @@ FourierSeriesRendererEventHandler::FourierSeriesRendererEventHandler(std::shared
 
 void FourierSeriesRendererEventHandler::handle_mouse(GLFWwindow* window, double x_pos, double y_pos)
 {
+	if (!mouse_button_pressed)
+	{
+		return;
+	}
+	gui_params->fourierseries_renderer_params.camera_translation.x -= 
+		0.01f * (x_pos - old_x_pos);
+	gui_params->fourierseries_renderer_params.camera_translation.y +=
+		0.01f* (y_pos - old_y_pos);
 
+	gui_params->fourierseries_renderer_params.update_camera = true;
+	old_x_pos = x_pos;
+	old_y_pos = y_pos;
 }
+
 
 void FourierSeriesRendererEventHandler::handle_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
-
+	if (button == GLFW_MOUSE_BUTTON_LEFT)
+	{
+		if (action == GLFW_PRESS)
+		{
+			mouse_button_pressed = true;
+			glfwGetCursorPos(window, &old_x_pos, &old_y_pos);
+			//current_scene_flag = (current_scene_flag + 1) % 2;
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			mouse_button_pressed = false;
+		}
+	}
 }
 
 void FourierSeriesRendererEventHandler::handle_framebuffer_size(GLFWwindow* window, int width, int height)

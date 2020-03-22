@@ -74,8 +74,13 @@ public:
 	void handle_framebuffer_size(GLFWwindow* window, int width, int height);
 
 	void handle_key(GLFWwindow* window, int key, int scancode, int action, int mode);
-protected:
+private:
+	bool mouse_button_pressed = false;
 
+	double old_x_pos = 0;
+	double old_y_pos = 0;
+	double x_pos_diff = 0;
+	double y_pos_diff = 0;
 };
 
 

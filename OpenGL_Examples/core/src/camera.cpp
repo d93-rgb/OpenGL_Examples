@@ -14,24 +14,33 @@ Camera::Camera(std::shared_ptr<GUIParameter> gui_params, glm::mat4 lookAt) noexc
 
 OrthographicCamera::OrthographicCamera(std::shared_ptr<GUIParameter> gui_params, 
 	glm::mat4 lookAt,
-	float left, float right, float top, float bottom, float near_val, float far_val) noexcept :
+	float left, float right, float top, float bottom, float near_val, float far_val,
+	float* zoom_factor,
+	glm::vec2* translation) noexcept :
 	Camera(std::move(gui_params), std::move(lookAt)),
 	half_width((right - left) * 0.5),
 	half_height((top - bottom) * 0.5),
 	aspect_ratio(half_width / half_height), inv_aspect_ratio(1.0f / aspect_ratio),
-	near_val(near_val), far_val(far_val)
+	near_val(near_val), far_val(far_val),
+	zoom_factor(zoom_factor),
+	translation_vec(translation)
+
 {
 	worldToRaster = glm::ortho(left, right, bottom, top, near_val, far_val) * worldToCamera;
 }
 
 OrthographicCamera::OrthographicCamera(std::shared_ptr<GUIParameter> gui_params,
 	glm::mat4 lookAt,
-	float width, float aspect_ratio, float near_val, float far_val) noexcept :
+	float width, float aspect_ratio, float near_val, float far_val,
+	float* zoom_factor,
+	glm::vec2* translation) noexcept :
 	Camera(std::move(gui_params), std::move(lookAt)), 
 	half_width(width * 0.5),
 	half_height(half_width / aspect_ratio),
 	aspect_ratio(aspect_ratio), inv_aspect_ratio(1.0f / aspect_ratio),
-	near_val(near_val), far_val(far_val)
+	near_val(near_val), far_val(far_val),
+	zoom_factor(zoom_factor),
+	translation_vec(translation)
 {
 	worldToRaster = glm::ortho(
 		-half_width, 
@@ -42,16 +51,21 @@ OrthographicCamera::OrthographicCamera(std::shared_ptr<GUIParameter> gui_params,
 		far_val) * worldToCamera;
 }
 
-void OrthographicCamera::update(float zoom_factor) noexcept
+void OrthographicCamera::update() noexcept
 {
-	float half_width_tmp = half_width * zoom_factor;
-	float half_height_tmp = half_height * zoom_factor;
+	if (!zoom_factor || !translation_vec)
+	{
+		return;
+	}
+
+	float half_width_tmp = half_width * (*zoom_factor);
+	float half_height_tmp = half_height * (*zoom_factor);
 
 	worldToRaster = glm::ortho(
-		-half_width_tmp,
-		half_width_tmp,
-		-half_height_tmp,
-		half_height_tmp,
+		-half_width_tmp + (*translation_vec).x,
+		half_width_tmp + (*translation_vec).x,
+		-half_height_tmp + (*translation_vec).y,
+		half_height_tmp + (*translation_vec).y,
 		near_val,
 		far_val) * worldToCamera;
 }
@@ -65,7 +79,7 @@ PerspectiveCamera::PerspectiveCamera(std::shared_ptr<GUIParameter> gui_params,
 
 }
 
-void PerspectiveCamera::update(float zoom_factor) noexcept
+void PerspectiveCamera::update() noexcept
 {
 
 }

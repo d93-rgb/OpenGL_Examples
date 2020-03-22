@@ -315,7 +315,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		std::vector<float> b_k;
 
 		int highest_coeff_k = 5;
-		int sample_count = 500;
+		int sample_count = 1000;
 		fill_func_values(rectangle_func, period, sample_count);
 		fill_fourier_coeff(highest_coeff_k);
 
@@ -362,7 +362,7 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 
 	float ar = static_cast<float>(this->gui_params->screen_width) / this->gui_params->screen_height;
 	cam.reset(new OrthographicCamera(
-		gui_params,
+		this->gui_params,
 		glm::lookAt(glm::vec3(0.0, 0.0, 1.0),
 			glm::vec3(0.0),
 			glm::vec3(0.0, 1.0, 0.0)),
@@ -370,7 +370,9 @@ FourierSeriesRenderer::FourierSeriesRenderer(
 		4.0f,
 		ar,
 		0.1,
-		100));
+		100,
+		&(this->gui_params->fourierseries_renderer_params.camera_zoom),
+		&this->gui_params->fourierseries_renderer_params.camera_translation));
 
 	use_shader(ring_shader_name).
 		create_uniform("worldToRaster",
@@ -428,7 +430,7 @@ void FourierSeriesRenderer::render()
 	if (gui_params->fourierseries_renderer_params.update_camera)
 	{
 		gui_params->fourierseries_renderer_params.update_camera = false;
-		cam->update(gui_params->fourierseries_renderer_params.camera_zoom);
+		cam->update();
 	}
 
 	current_shader = &use_shader(vector_shader_name);
@@ -954,17 +956,13 @@ void FourierSeriesRenderer::fill_func_values(
 	function_data.resize(n);
 	function_period = period;
 	inv_function_period = 1.0f / period;
-	auto function_data_2 = function_data;
 
 	dx = period / n;
 	float x = 0;
-	float x2 = 0;
 	for (int i = 0; i < n; ++i)
 	{
 		x = static_cast<float>(i) * dx;
 		function_data[i] = { x, func(x) };
-		//function_data_2[i] = { x2, func(x2) };
-		//x += dx;
 	}
 }
 

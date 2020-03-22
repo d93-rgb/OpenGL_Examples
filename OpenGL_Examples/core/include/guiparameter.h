@@ -50,7 +50,7 @@ public:
 
 	private:
 		friend class WindowManager;
-		friend class FourierSeriesEventHandler;
+		friend class FourierSeriesRendererEventHandler;
 		friend class FourierSeriesRenderer;
 		friend class OrthographicCamera;
 
@@ -63,6 +63,8 @@ public:
 		bool update_vector_colors = false;
 		
 		bool update_camera = false;
+		float camera_zoom = 1.0f;
+		glm::vec2 camera_translation = glm::vec2(0);
 
 		float stop_time = 0.0f;
 		float resume_delta = 0.0f;
@@ -74,8 +76,6 @@ public:
 		float vector_length = 0.5;
 		float vector_line_height = 0.012;
 		float vector_arrow_base_width = 0.120;
-
-		float camera_zoom = 1.0f;
 
 		glm::vec4 ring_color = glm::vec4(0.4, 0.4, 0.4, 0.3);
 		glm::vec4 vector_color = glm::vec4(0.2, 0.3, 0.8, 1.0);
