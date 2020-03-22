@@ -189,9 +189,9 @@ void WindowManager::run()
 			}
 
 			gui_params->fourierseries_renderer_params.update_rings |=
-				ImGui::SliderFloat("thickness", fourier_series_circle_thickness, 0, 1.0f);
+				ImGui::SliderFloat("ring thickness", fourier_series_circle_thickness, 0, 1.0f);
 			gui_params->fourierseries_renderer_params.update_rings |=
-				ImGui::SliderInt("vertices", fourier_series_circle_vertices, 3, 100);
+				ImGui::SliderInt("ring vertices", fourier_series_circle_vertices, 3, 100);
 			gui_params->fourierseries_renderer_params.update_ring_colors =
 				ImGui::ColorEdit4("ring color", fourier_series_circle_color);
 
