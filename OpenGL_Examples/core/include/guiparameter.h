@@ -70,7 +70,6 @@ public:
 		float resume_delta = 0.0f;
 
 		int ring_vertices = 15;
-		float ring_radius = 0.7f;
 		float ring_thickness = 0.005f;
 
 		float vector_length = 0.5;

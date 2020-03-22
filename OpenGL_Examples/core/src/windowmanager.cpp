@@ -135,7 +135,6 @@ void WindowManager::run()
 	bool* fourier_series_animate = &gui_params->fourierseries_renderer_params.animate;
 	bool fourier_series_stopped = false;
 
-	float* fourier_series_circle_radius = &gui_params->fourierseries_renderer_params.ring_radius;
 	float* fourier_series_circle_thickness = &gui_params->fourierseries_renderer_params.ring_thickness;
 	int* fourier_series_circle_vertices = &gui_params->fourierseries_renderer_params.ring_vertices;
 	float* fourier_series_circle_color = &gui_params->fourierseries_renderer_params.ring_color.x;
@@ -189,8 +188,6 @@ void WindowManager::run()
 					glfwGetTime() - gui_params->fourierseries_renderer_params.stop_time;
 			}
 
-			gui_params->fourierseries_renderer_params.update_rings |=
-				ImGui::SliderFloat("radius", fourier_series_circle_radius, 0, 1.0f);
 			gui_params->fourierseries_renderer_params.update_rings |=
 				ImGui::SliderFloat("thickness", fourier_series_circle_thickness, 0, 1.0f);
 			gui_params->fourierseries_renderer_params.update_rings |=
